@@ -31,7 +31,7 @@ export function tokenizeCsv(input: string): { line: number; cells: string[] }[] 
   }
   if (inQuotes) throw new Error(`Unterminated quoted field starting near line ${rowStart}`);
   if (cell !== "" || cells.length) { cells.push(cell); rows.push({ line: rowStart, cells }); }
-  return rows.filter((r) => !(r.cells.length === 1 && r.cells[0].trim() === ""));
+  return rows.filter((r) => !(r.cells.length === 1 && (r.cells[0] ?? "").trim() === ""));
 }
 
 const SOURCES: FeedbackSource[] = ["support_ticket", "app_review", "survey", "sales_call"];
