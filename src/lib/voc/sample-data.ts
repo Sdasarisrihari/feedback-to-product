@@ -67,4 +67,4 @@ export const SAMPLE_FILENAME = "trellis_synthetic_feedback.csv";
 export const SAMPLE_CSV =
   "id,source,segment,created_at,rating,text\n" +
   rows.map((r) => r.map(esc).join(",")).join("\n") +
-  "\nFB-1051,survey,smb,2026-08-18,3,Too few columns row\n".replace(",Too few columns row", "") ; // malformed column count
+  "\nFB-1051,survey,smb,2026-08-18,3\n"; // malformed: missing a column
