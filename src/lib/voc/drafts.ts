@@ -34,7 +34,7 @@ export function buildPrdDraft(insight: Insight, records: FeedbackRecord[]): PrdD
     const seg = byId.get(e.id)?.segment ?? "unknown";
     return {
       id: `US-${insight.themeId}-${i + 1}`,
-      persona: SEGMENT_PERSONA[seg],
+      persona: SEGMENT_PERSONA[seg] ?? "Trellis user",
       want: `the problem described in ${e.id} to be resolved in ${insight.productArea}`,
       benefit: "I can rely on Trellis for this part of my workflow",
       acceptance: [

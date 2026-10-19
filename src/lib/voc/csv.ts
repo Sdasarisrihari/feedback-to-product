@@ -10,7 +10,7 @@ export function tokenizeCsv(input: string): { line: number; cells: string[] }[] 
   let rowStart = 1;
   const text = input.replace(/^\uFEFF/, "");
   for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
+    const ch = text[i]!;
     if (inQuotes) {
       if (ch === '"') {
         if (text[i + 1] === '"') { cell += '"'; i++; } else inQuotes = false;
@@ -73,7 +73,7 @@ export function parseFeedbackCsv(
   try { rows = tokenizeCsv(input); } catch (e) {
     return { run: { ...run, fatalError: (e as Error).message }, records: [] };
   }
-  const [header, ...body] = rows;
+  const [header, ...body] = rows as [(typeof rows)[number], ...typeof rows];
   const cols = header.cells.map((c) => c.trim().toLowerCase());
   const idx = (n: string) => cols.indexOf(n);
   if (idx("text") === -1) return { run: { ...run, fatalError: `Missing required column "text". Found: ${cols.join(", ") || "none"}` }, records: [] };
@@ -91,7 +91,7 @@ export function parseFeedbackCsv(
       rejected.push({ line: row.line, reason: `Expected ${cols.length} columns, got ${row.cells.length}`, raw });
       continue;
     }
-    const get = (n: string) => (idx(n) >= 0 ? row.cells[idx(n)].trim() : "");
+    const get = (n: string) => (idx(n) >= 0 ? (row.cells[idx(n)] ?? "").trim() : "");
     const text = get("text");
     if (!text) { rejected.push({ line: row.line, reason: "Empty feedback text", raw }); continue; }
     const warnings: string[] = [];

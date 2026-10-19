@@ -11,7 +11,7 @@ export interface FeedbackRecord {
   importId: string; // provenance: which import produced this record
   line: number; // provenance: line in the source file
   warnings: string[];
-  duplicateOf?: string;
+  duplicateOf?: string | undefined;
   suspectedInjection: boolean;
 }
 
@@ -71,5 +71,5 @@ export interface DraftTask {
   acceptance: string[];
   evidenceIds: string[];
   status: TaskStatus;
-  reviewedAt?: string;
+  reviewedAt?: string | undefined;
 }
