@@ -96,10 +96,12 @@ export function parseFeedbackCsv(
     if (!text) { rejected.push({ line: row.line, reason: "Empty feedback text", raw }); continue; }
     const warnings: string[] = [];
     let id = get("id");
+    const norm = normalizeText(text);
+    const dupOf: string | undefined = seenText.get(norm);
     if (!id) { id = `${importId}-L${row.line}`; warnings.push("Missing id — generated from import + line"); }
-    else if (seenIds.has(id) && normalizeText(text) !== [...existing, ...records].find((r) => r.id === id)?.text && seenText.get(normalizeText(text)) === undefined) {
-      const newId = `${id}~${row.line}`;
-      warnings.push(`ID ${id} reused with different text — renamed to ${newId}`);
+    if (seenIds.has(id)) {
+      const newId = `${id}~L${row.line}`;
+      if (!dupOf) warnings.push(`ID ${id} reused with different text — stored as ${newId}`);
       id = newId;
     }
     const srcRaw = get("source").toLowerCase() as FeedbackSource;
@@ -117,11 +119,8 @@ export function parseFeedbackCsv(
       const n = Number(rRaw);
       if (Number.isInteger(n) && n >= 1 && n <= 5) rating = n; else warnings.push(`Invalid rating "${rRaw}"`);
     }
-    const norm = normalizeText(text);
-    const dupOf = seenIds.get(id) ?? seenText.get(norm);
     const rec: FeedbackRecord = {
-      id: dupOf && seenIds.has(id) ? `${id}~dup${row.line}` : id,
-      source, segment, createdAt, rating, text, importId, line: row.line, warnings,
+      id, source, segment, createdAt, rating, text, importId, line: row.line, warnings,
       duplicateOf: dupOf, suspectedInjection: detectInjection(text),
     };
     if (rec.duplicateOf) run.duplicates++; else run.accepted++;
