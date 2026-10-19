@@ -71,9 +71,13 @@ async def main(step):
             await pg.goto(BASE + "/knowledge"); await saved(pg)
             await pg.get_by_label("Search or question").fill("Does the documentation confirm offline mode on mobile?")
             await pg.get_by_role("button", name="Ask AI").click()
-            await pg.wait_for_selector("text=Sources checked on the server, [role=alert]", timeout=300000)
-            alert = await pg.locator("[role=alert]").all_inner_texts()
-            out(not alert, "Knowledge Base answer shows 'checked on the server'", "; ".join(alert))
+            ok, msg = False, "no answer within 300s"
+            for _ in range(60):
+                await pg.wait_for_timeout(5000)
+                if await pg.get_by_text("Sources checked on the server").count(): ok, msg = True, ""; break
+                al = [a for a in await pg.locator("p[role=alert]").all_inner_texts() if a.strip()]
+                if al: msg = al[0]; break
+            out(ok, "Knowledge Base answer shows 'checked on the server'", msg)
         if step == "tamper":
             await pg.goto(BASE + "/knowledge"); await saved(pg)
             res = await pg.evaluate("""async () => { const m = await import('/src/lib/voc/generate.functions.ts');
