@@ -6,7 +6,7 @@ import { TABLES, UPSERT_ORDER, INSERT_ONLY, type Rows, type Table } from "./pers
 const PK: Record<Table, string> = {
   feedback_records: "owner_id,id", import_runs: "owner_id,id", product_docs: "owner_id,id", doc_sections: "owner_id,id",
   analysis_runs: "owner_id,id", ai_analyses: "owner_id", ai_prds: "owner_id,id", prd_revisions: "owner_id,prd_id,rev_no",
-  draft_tasks: "owner_id,id", workspace_settings: "owner_id",
+  draft_tasks: "owner_id,id", workspace_settings: "owner_id", human_reviews: "owner_id,id",
 };
 
 const rowArr = z.array(z.record(z.string(), z.unknown())).max(5000);
@@ -33,7 +33,7 @@ export const loadWorkspace = createServerFn({ method: "POST" })
   .handler(async ({ context }): Promise<{ ok: true; rowsJson: string } | { ok: false; message: string }> => {
     try {
       const rows: Partial<Rows> = {};
-      for (const t of TABLES) rows[t] = (await selectAll(context.supabase as unknown as Db, t)).map(({ owner_id: _o, updated_at: _u, ...r }) => r);
+      for (const t of TABLES) rows[t] = (await selectAll(context.supabase as unknown as Db, t)).map(({ owner_id: _o, updated_at: u, ...r }) => (t === "human_reviews" ? { ...r, updated_at: u } : r));
       return { ok: true, rowsJson: JSON.stringify(rows) };
     } catch (e) {
       console.error("[voc] loadWorkspace failed", (e as Error).message);

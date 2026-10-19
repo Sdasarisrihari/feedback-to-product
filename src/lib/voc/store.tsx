@@ -13,6 +13,7 @@ import { search } from "./retrieval";
 import { generatePrd } from "./generate.functions";
 import type { PrdContent, PrdSourceInput } from "./prd-schema";
 import { DEFAULT_WEIGHTS } from "./prioritize";
+import type { HumanReview } from "./human-eval";
 import { SAMPLE_CSV, SAMPLE_FILENAME } from "./sample-data";
 import type { DraftTask, FeedbackRecord, ImportRun, Insight, Weights } from "./types";
 
@@ -30,6 +31,7 @@ interface Persisted {
   tasks: DraftTask[];
   llm: (Extract<AnalysisResult, { ok: true }> & { at: string; signature: string }) | null;
   browserImportDone?: boolean;
+  reviews?: HumanReview[];
 }
 
 export type CloudStatus =
@@ -55,6 +57,9 @@ interface Ctx extends Persisted {
   acceptImport: () => void;
   declineImport: () => void;
   signOut: () => Promise<void>;
+  flushBeforeAi: () => Promise<boolean>;
+  saveReview: (r: HumanReview) => void;
+  deleteReview: (id: string) => void;
   insights: Insight[];
   baselineInsights: Insight[];
   analysisSource: "llm" | "baseline";
@@ -273,6 +278,9 @@ export function VocProvider({ children }: { children: ReactNode }) {
     },
     declineImport: () => { setState((s) => ({ ...s, browserImportDone: true })); setPendingImport(null); },
     signOut: async () => { await supabase.auth.signOut(); },
+    flushBeforeAi,
+    saveReview: (r) => setState((s) => ({ ...s, reviews: [...(s.reviews ?? []).filter((x) => x.id !== r.id), r] })),
+    deleteReview: (id) => setState((s) => ({ ...s, reviews: (s.reviews ?? []).filter((x) => x.id !== id) })),
     insights, baselineInsights, analysisSource: useLlm ? "llm" : "baseline", llmStale, llmStatus, runLlm, importCsv,
     loadSample: () => importCsv(SAMPLE_CSV, SAMPLE_FILENAME) && undefined,
     reset: () => setState(empty),
