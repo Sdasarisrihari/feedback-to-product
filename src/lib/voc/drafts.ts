@@ -1,78 +1,33 @@
-/**
- * TEMPLATE drafts (Phase 2). Assembled deterministically from an insight and its evidence —
- * not LLM-written. Phase 3 replaces `buildPrdDraft` with a server-side model call that
- * returns the same shape, validated against a schema.
- */
-import type { DraftTask, FeedbackRecord, Insight } from "./types";
+/** AI PRD documents (with revisions) and the human task-review workflow. */
+import type { DraftTask } from "./types";
+import type { GroundingReport, PrdContent, PrdSourceInput } from "./prd-schema";
 
-export interface UserStory { id: string; persona: string; want: string; benefit: string; acceptance: string[]; evidenceIds: string[] }
-export interface PrdDraft {
-  themeId: string;
-  title: string;
-  problem: string;
-  evidenceSummary: string;
-  goals: string[];
-  nonGoals: string[];
-  openQuestions: string[];
-  stories: UserStory[];
-  nextActions: string[];
-  generator: "template" | "llm";
+export interface PrdRevision { at: string; by: "ai" | "human"; content: PrdContent; report: GroundingReport | null }
+export interface AiPrd {
+  id: string; themeId: string; themeName: string; createdAt: string; model: string;
+  review: "draft" | "accepted" | "needs_changes";
+  sources: PrdSourceInput; // snapshot of exactly what the citations were verified against
+  revisions: PrdRevision[];
 }
 
-const SEGMENT_PERSONA: Record<string, string> = {
-  enterprise: "workspace admin at an enterprise customer",
-  mid_market: "team lead at a mid-market customer",
-  smb: "member of a small team",
-  unknown: "Trellis user",
-};
+export const latest = (p: AiPrd) => p.revisions[p.revisions.length - 1]!;
 
-export function buildPrdDraft(insight: Insight, records: FeedbackRecord[]): PrdDraft {
-  const byId = new Map(records.map((r) => [r.id, r]));
-  const ev = insight.evidence.slice(0, 6);
-  const segs = [...new Set(ev.map((e) => byId.get(e.id)?.segment ?? "unknown"))];
-  const stories: UserStory[] = ev.slice(0, 3).map((e, i) => {
-    const seg = byId.get(e.id)?.segment ?? "unknown";
-    return {
-      id: `US-${insight.themeId}-${i + 1}`,
-      persona: SEGMENT_PERSONA[seg] ?? "Trellis user",
-      want: `the problem described in ${e.id} to be resolved in ${insight.productArea}`,
-      benefit: "I can rely on Trellis for this part of my workflow",
-      acceptance: [
-        `Given the scenario reported in ${e.id}, when the user repeats it, then the reported failure does not occur.`,
-        "The behaviour is covered by an automated test.",
-        "[PM to refine with specific, measurable criteria]",
-      ],
-      evidenceIds: [e.id],
-    };
-  });
-  return {
-    themeId: insight.themeId,
-    title: `PRD: ${insight.name}`,
-    problem: `${insight.frequency} feedback records (${segs.join(", ")}) match the "${insight.productArea}" theme. Representative evidence is quoted below; the problem statement should be refined by the PM.`,
-    evidenceSummary: ev.map((e) => `${e.id}: "${e.excerpt}"`).join("\n"),
-    goals: [`Reduce feedback volume for "${insight.name}" [target to be set by PM — no baseline measured yet]`],
-    nonGoals: ["[PM to define]"],
-    openQuestions: [
-      "How many affected accounts does this represent outside this sample?",
-      "Is there usage telemetry that confirms or contradicts the reported pattern?",
-      insight.confidence !== "high" ? `Evidence confidence is ${insight.confidence}: ${insight.confidenceReason}` : "Which segment should be prioritized first?",
-    ],
-    stories,
-    nextActions: ["Validate theme with 3–5 customer conversations", "Confirm effort estimate with engineering", "Review and approve draft tasks"],
-    generator: "template",
-  };
-}
-
-export function tasksFromPrd(prd: PrdDraft): DraftTask[] {
-  return prd.stories.map((s) => ({
-    id: `TASK-${s.id}`,
-    themeId: prd.themeId,
-    title: `As a ${s.persona}, I want ${s.want}`,
-    description: `So that ${s.benefit}.\n\nSource: ${prd.title}`,
-    acceptance: s.acceptance,
-    evidenceIds: s.evidenceIds,
+export function tasksFromAiPrd(p: AiPrd): DraftTask[] {
+  const c = latest(p).content;
+  return c.stories.map((s) => ({
+    id: `TASK-${p.id}-${s.id}`,
+    themeId: p.themeId,
+    title: `As a ${s.persona}, I want ${s.capability}, so that ${s.outcome}`,
+    description: `${s.supported ? "Supported by verified customer evidence." : "NEEDS VALIDATION: no verified customer evidence."}\n\nSource PRD: ${c.title} (${p.id}, revision ${p.revisions.length})`,
+    acceptance: s.acceptanceCriteria,
+    evidenceIds: [...new Set(s.verified.map((v) => v.id))],
     status: "draft",
   }));
+}
+
+/** Append a revision; never overwrite history. */
+export function addRevision(p: AiPrd, rev: PrdRevision): AiPrd {
+  return { ...p, revisions: [...p.revisions, rev], review: "draft" };
 }
 
 export type TaskAction = { type: "approve" | "reject"; id: string; at: string } | { type: "edit"; id: string; title: string; description: string } | { type: "add"; tasks: DraftTask[] };

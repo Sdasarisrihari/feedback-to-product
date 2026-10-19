@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as InsightsRouteImport } from './routes/insights'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as PrdRouteImport } from './routes/prd'
 import { Route as PrioritizationRouteImport } from './routes/prioritization'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -30,6 +31,11 @@ const FeedbackRoute = FeedbackRouteImport.update({
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrdRoute = PrdRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/feedback': typeof FeedbackRoute
   '/insights': typeof InsightsRoute
+  '/knowledge': typeof KnowledgeRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
   '/settings': typeof SettingsRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/feedback': typeof FeedbackRoute
   '/insights': typeof InsightsRoute
+  '/knowledge': typeof KnowledgeRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
   '/settings': typeof SettingsRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/feedback': typeof FeedbackRoute
   '/insights': typeof InsightsRoute
+  '/knowledge': typeof KnowledgeRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
   '/settings': typeof SettingsRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/feedback'
     | '/insights'
+    | '/knowledge'
     | '/prd'
     | '/prioritization'
     | '/settings'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/feedback'
     | '/insights'
+    | '/knowledge'
     | '/prd'
     | '/prioritization'
     | '/settings'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/feedback'
     | '/insights'
+    | '/knowledge'
     | '/prd'
     | '/prioritization'
     | '/settings'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   FeedbackRoute: typeof FeedbackRoute
   InsightsRoute: typeof InsightsRoute
+  KnowledgeRoute: typeof KnowledgeRoute
   PrdRoute: typeof PrdRoute
   PrioritizationRoute: typeof PrioritizationRoute
   SettingsRoute: typeof SettingsRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/insights'
       fullPath: '/insights'
       preLoaderRoute: typeof InsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/prd': {
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   FeedbackRoute: FeedbackRoute,
   InsightsRoute: InsightsRoute,
+  KnowledgeRoute: KnowledgeRoute,
   PrdRoute: PrdRoute,
   PrioritizationRoute: PrioritizationRoute,
   SettingsRoute: SettingsRoute,

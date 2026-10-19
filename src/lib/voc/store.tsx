@@ -3,7 +3,12 @@ import { analyzeFeedback } from "./analysis";
 import { analyzeWithLlm } from "./analyze.functions";
 import type { AnalysisResult } from "./llm-schema";
 import { parseFeedbackCsv } from "./csv";
-import { reduceTasks, type PrdDraft, type TaskAction } from "./drafts";
+import { addRevision, reduceTasks, tasksFromAiPrd, type AiPrd, type TaskAction } from "./drafts";
+import type { ProductDoc } from "./docs";
+import { sampleDocs } from "./sample-docs";
+import { search } from "./retrieval";
+import { generatePrd } from "./generate.functions";
+import type { PrdContent, PrdSourceInput } from "./prd-schema";
 import { DEFAULT_WEIGHTS } from "./prioritize";
 import { SAMPLE_CSV, SAMPLE_FILENAME } from "./sample-data";
 import type { DraftTask, FeedbackRecord, ImportRun, Insight, Weights } from "./types";
@@ -16,7 +21,9 @@ interface Persisted {
   runs: AnalysisRun[];
   weights: Weights;
   effort: Record<string, number>;
-  prds: Record<string, PrdDraft>;
+  prds: Record<string, unknown>; // legacy template drafts — kept untouched in storage, no longer shown
+  docs: ProductDoc[];
+  aiPrds: AiPrd[];
   tasks: DraftTask[];
   llm: (Extract<AnalysisResult, { ok: true }> & { at: string; signature: string }) | null;
 }
@@ -29,7 +36,7 @@ export function recordsSignature(records: FeedbackRecord[]) {
 }
 
 const KEY = "voc-workspace-v1";
-const empty: Persisted = { records: [], imports: [], runs: [], weights: DEFAULT_WEIGHTS, effort: {}, prds: {}, tasks: [], llm: null };
+const empty: Persisted = { records: [], imports: [], runs: [], weights: DEFAULT_WEIGHTS, effort: {}, prds: {}, tasks: [], llm: null, docs: [], aiPrds: [] };
 
 interface Ctx extends Persisted {
   ready: boolean;
@@ -45,7 +52,14 @@ interface Ctx extends Persisted {
   runAnalysis: () => void;
   setWeights: (w: Weights) => void;
   setEffort: (themeId: string, v: number) => void;
-  savePrd: (p: PrdDraft) => void;
+  addDoc: (d: ProductDoc) => void;
+  removeDoc: (id: string) => void;
+  loadSampleDocs: () => void;
+  prdStatus: Record<string, LlmStatus>;
+  generatePrdFor: (insight: Insight, existingPrdId?: string) => Promise<string | null>;
+  savePrdEdit: (id: string, content: PrdContent) => void;
+  setPrdReview: (id: string, review: AiPrd["review"]) => void;
+  sendPrdToTasks: (id: string) => number;
   dispatchTask: (a: TaskAction) => void;
 }
 
@@ -67,10 +81,15 @@ export function VocProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) { setState({ ...empty, ...JSON.parse(raw) }); setReady(true); return; }
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<Persisted>;
+        // Additive migration only: older workspaces get sample docs; nothing existing is removed.
+        setState({ ...empty, ...parsed, docs: parsed.docs ?? sampleDocs(), aiPrds: parsed.aiPrds ?? [] });
+        setReady(true); return;
+      }
     } catch { /* corrupted storage: fall back to sample */ }
     const { run, records } = parseFeedbackCsv(SAMPLE_CSV, SAMPLE_FILENAME, [], "imp_sample");
-    setState({ ...empty, records, imports: [run], runs: [runBaseline(records).run] });
+    setState({ ...empty, records, imports: [run], runs: [runBaseline(records).run], docs: sampleDocs() });
     setReady(true);
   }, []);
 
@@ -111,6 +130,39 @@ export function VocProvider({ children }: { children: ReactNode }) {
     return out;
   }, []);
 
+  const [prdStatus, setPrdStatus] = useState<Record<string, LlmStatus>>({});
+
+  const generatePrdFor = useCallback(async (insight: Insight, existingPrdId?: string) => {
+    const key = existingPrdId ?? insight.themeId;
+    setPrdStatus((m) => ({ ...m, [key]: { state: "running" } }));
+    const byId = new Map(state.records.map((r) => [r.id, r]));
+    const feedback = insight.evidence.map((e) => byId.get(e.id)).filter((r): r is FeedbackRecord => !!r).slice(0, 30)
+      .map((r) => ({ id: r.id, text: r.text.slice(0, 4000), segment: r.segment, source: r.source }));
+    const docHits = search([], state.docs, `${insight.name} ${insight.summary ?? ""} ${insight.productArea}`, "docs", 8);
+    const sources: PrdSourceInput = {
+      theme: { name: insight.name, summary: insight.summary ?? "", productArea: insight.productArea, kind: insight.kind },
+      feedback, docs: docHits.map((h) => ({ id: h.id, title: h.label, text: h.text.slice(0, 4000) })),
+    };
+    try {
+      const res = await generatePrd({ data: sources });
+      if (!res.ok) { setPrdStatus((m) => ({ ...m, [key]: { state: "error", code: res.code, message: res.message } })); return null; }
+      const at = new Date().toISOString();
+      const rev = { at, by: "ai" as const, content: res.content, report: res.report };
+      const id = existingPrdId ?? `PRD-${Date.now().toString(36)}`;
+      setState((s) => {
+        const prev = s.aiPrds.find((p) => p.id === id);
+        const next: AiPrd = prev ? { ...addRevision(prev, rev), sources, model: res.model }
+          : { id, themeId: insight.themeId, themeName: insight.name, createdAt: at, model: res.model, review: "draft", sources, revisions: [rev] };
+        return { ...s, aiPrds: prev ? s.aiPrds.map((p) => (p.id === id ? next : p)) : [next, ...s.aiPrds] };
+      });
+      setPrdStatus((m) => ({ ...m, [key]: { state: "idle" } }));
+      return id;
+    } catch {
+      setPrdStatus((m) => ({ ...m, [key]: { state: "error", code: "network", message: "Could not reach the server. Check your connection and retry." } }));
+      return null;
+    }
+  }, [state.records, state.docs]);
+
   const value: Ctx = {
     ...state, ready, insights, baselineInsights, analysisSource: useLlm ? "llm" : "baseline", llmStale, llmStatus, runLlm, importCsv,
     loadSample: () => importCsv(SAMPLE_CSV, SAMPLE_FILENAME) && undefined,
@@ -118,7 +170,22 @@ export function VocProvider({ children }: { children: ReactNode }) {
     runAnalysis: () => setState((s) => ({ ...s, runs: [runBaseline(s.records).run, ...s.runs].slice(0, 20) })),
     setWeights: (weights) => setState((s) => ({ ...s, weights })),
     setEffort: (id, v) => setState((s) => ({ ...s, effort: { ...s.effort, [id]: v } })),
-    savePrd: (p) => setState((s) => ({ ...s, prds: { ...s.prds, [p.themeId]: p } })),
+    addDoc: (d) => setState((s) => ({ ...s, docs: [...s.docs, d] })),
+    removeDoc: (id) => setState((s) => ({ ...s, docs: s.docs.filter((d) => d.id !== id) })),
+    loadSampleDocs: () => setState((s) => {
+      const have = new Set(s.docs.map((d) => d.id));
+      return { ...s, docs: [...s.docs, ...sampleDocs().filter((d) => !have.has(d.id))] };
+    }),
+    prdStatus, generatePrdFor,
+    savePrdEdit: (id, content) => setState((s) => ({ ...s, aiPrds: s.aiPrds.map((p) => (p.id === id ? addRevision(p, { at: new Date().toISOString(), by: "human", content, report: null }) : p)) })),
+    setPrdReview: (id, review) => setState((s) => ({ ...s, aiPrds: s.aiPrds.map((p) => (p.id === id ? { ...p, review } : p)) })),
+    sendPrdToTasks: (id) => {
+      const p = state.aiPrds.find((x) => x.id === id);
+      if (!p) return 0;
+      const tasks = tasksFromAiPrd(p);
+      setState((s) => ({ ...s, tasks: reduceTasks(s.tasks, { type: "add", tasks }) }));
+      return tasks.length;
+    },
     dispatchTask: (a) => setState((s) => ({ ...s, tasks: reduceTasks(s.tasks, a) })),
   };
   return <VocContext.Provider value={value}>{children}</VocContext.Provider>;

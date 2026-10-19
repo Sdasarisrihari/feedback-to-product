@@ -22,11 +22,11 @@ export const Route = createFileRoute("/settings")({
 });
 
 const INTEGRATIONS = [
-  { name: "Retrieval: BM25 lexical index", status: "Active", phase: "Phase 2–3", setup: "Baseline themes, related-record retrieval for AI themes, and PRD evidence. Embeddings only if evaluation shows value." },
-  { name: "Persistent storage", status: "Browser only", phase: "Phase 3", setup: "Data is saved in this browser. A database is added with the backend." },
-  { name: "MCP server", status: "Planned", phase: "Phase 4", setup: "Tools: search_feedback, get_theme_evidence, create_draft_task (draft-only, least privilege)." },
-  { name: "n8n workflow", status: "Planned", phase: "Phase 4", setup: "Self-hosted n8n receives a validated insight batch, produces a digest, records run status." },
-  { name: "GitHub Issues", status: "Not connected", phase: "Phase 4", setup: "Only approved tasks, with idempotency keys and a second confirmation." },
+  { name: "Retrieval: BM25 lexical index", status: "Active", setup: "Baseline themes, related-record retrieval for AI themes, and PRD evidence. Embeddings only if evaluation shows value." },
+  { name: "Persistent storage", status: "Browser only", setup: "Data is saved in this browser. A database is added with the backend." },
+  { name: "MCP server", status: "Planned", setup: "Tools: search_feedback, get_theme_evidence, create_draft_task (draft-only, least privilege)." },
+  { name: "n8n workflow", status: "Planned", setup: "Self-hosted n8n receives a validated insight batch, produces a digest, records run status." },
+  { name: "GitHub Issues", status: "Not connected", setup: "Only approved tasks, with idempotency keys and a second confirmation." },
 ];
 
 function Settings() {
@@ -55,7 +55,7 @@ function Settings() {
           {INTEGRATIONS.map((i) => (
             <div key={i.name} className="grid gap-1 py-3 text-sm sm:grid-cols-[1fr_auto]">
               <div><div className="font-medium">{i.name}</div><div className="text-muted-foreground">{i.setup}</div></div>
-              <div className="flex gap-2 sm:justify-end"><Badge variant="secondary">{i.status}</Badge><Badge variant="outline">{i.phase}</Badge></div>
+              <div className="flex gap-2 sm:justify-end"><Badge variant="secondary">{i.status}</Badge></div>
             </div>
           ))}
         </CardContent></Card>

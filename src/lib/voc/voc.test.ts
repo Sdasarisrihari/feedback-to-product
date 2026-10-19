@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { analyzeFeedback } from "./analysis";
 import { Bm25Index, bestExcerpt } from "./bm25";
 import { detectInjection, parseFeedbackCsv, tokenizeCsv } from "./csv";
-import { buildPrdDraft, reduceTasks, tasksFromPrd } from "./drafts";
+import { reduceTasks } from "./drafts";
+import type { DraftTask } from "./types";
 import { DEFAULT_WEIGHTS, scoreOpportunities } from "./prioritize";
 import { SAMPLE_CSV } from "./sample-data";
 
@@ -81,16 +82,10 @@ describe("analysis + prioritization", () => {
     const hi = scoreOpportunities([insights[0]!], DEFAULT_WEIGHTS, { [t]: 5 })[0]!.score;
     expect(lo).toBeGreaterThan(hi);
   });
-  it("PRD stories cite evidence from the insight", () => {
-    const prd = buildPrdDraft(insights[0]!, records);
-    const ev = new Set(insights[0]!.evidence.map((e) => e.id));
-    prd.stories.forEach((s) => s.evidenceIds.forEach((id) => expect(ev.has(id)).toBe(true)));
-  });
 });
 
 describe("approval workflow", () => {
-  const { records } = parseFeedbackCsv(SAMPLE_CSV, "s.csv");
-  const tasks = tasksFromPrd(buildPrdDraft(analyzeFeedback(records)[0]!, records));
+  const tasks: DraftTask[] = ["T1", "T2"].map((id) => ({ id, themeId: "x", title: id, description: "", acceptance: [], evidenceIds: ["FB-1"], status: "draft" }));
   it("new tasks start as draft and adding twice is idempotent", () => {
     const s = reduceTasks(reduceTasks([], { type: "add", tasks }), { type: "add", tasks });
     expect(s).toHaveLength(tasks.length);
