@@ -93,7 +93,7 @@ function Studio() {
                   <div className="flex flex-wrap items-center gap-2"><SourceId id={prd.id} /><AiTag /><Badge variant="secondary">{prd.review.replace("_", " ")}</Badge>{rev.by === "human" && <Badge variant="outline">edited by human</Badge>}</div>
                   <CardTitle className="mt-2 text-xl">{rev.content.title}</CardTitle>
                   <p className="text-xs text-muted-foreground">Theme: {prd.themeName} · {prd.model} · revision {prd.revisions.length} · {new Date(rev.at).toLocaleString()}</p>
-                  {rev.by === "ai" && rev.report && <ProvenanceNote provenance={rev.report.provenance} rejections={rev.report.sourceRejections} />}
+                  {(() => { const ai = [...prd.revisions].reverse().find((r) => r.by === "ai"); return ai?.report ? <ProvenanceNote provenance={ai.report.provenance} rejections={ai.report.sourceRejections} /> : null; })()}
                   {rev.report && rev.report.downgrades.length > 0 && (
                     <details className="mt-2 rounded-md bg-destructive/5 p-2 text-xs text-destructive"><summary className="cursor-pointer">{rev.report.downgrades.length} item(s) downgraded by citation checks</summary><ul className="mt-1 list-disc pl-5">{rev.report.downgrades.map((d, i) => <li key={i}>{d}</li>)}</ul></details>
                   )}

@@ -8,14 +8,26 @@ import { groundAnswer, qaOutputSchema, type QaInput, type QaResult } from "./qa-
 export const ANALYSIS_MODEL = "openai/gpt-6-astra";
 const GATEWAY = "https://ai.gateway.lovable.dev/v1";
 
+/** Streaming errors wrap the HTTP status in a cause chain (e.g. NoOutputGenerated → APICallError 402). */
+export function findStatus(err: unknown, depth = 0): number | undefined {
+  if (!err || typeof err !== "object" || depth > 5) return undefined;
+  const e = err as { statusCode?: number; status?: number; cause?: unknown; lastError?: unknown; errors?: unknown[] };
+  const own = e.statusCode ?? (typeof e.status === "number" ? e.status : undefined);
+  if (own) return own;
+  for (const next of [e.cause, e.lastError, ...(Array.isArray(e.errors) ? e.errors : [])]) {
+    const s = findStatus(next, depth + 1); if (s) return s;
+  }
+  return undefined;
+}
+
 export function mapGatewayError(err: unknown): Extract<AnalysisResult, { ok: false }> {
   const e = err as { statusCode?: number; status?: number; message?: string; name?: string };
-  const status = e?.statusCode ?? e?.status;
+  const status = findStatus(err);
   if (status === 429) return { ok: false, code: "rate_limited", message: "The AI service is rate limited. Wait a minute and try again." };
   if (status === 402) return { ok: false, code: "credits", message: "AI credits are exhausted. Add credits in Settings → Plans & credits, then retry." };
   if (status === 401) return { ok: false, code: "not_configured", message: "The AI service key is missing or invalid on the server." };
   if (status === 403) return { ok: false, code: "denied", message: "The AI service denied this request (workspace limit or policy)." };
-  if (e?.name?.includes("NoObjectGenerated") || e?.name?.includes("TypeValidation")) return { ok: false, code: "bad_output", message: "The model returned output that failed schema validation. Nothing was saved." };
+  if (e?.name?.includes("NoObjectGenerated") || e?.name?.includes("NoOutputGenerated") || e?.name?.includes("TypeValidation")) return { ok: false, code: "bad_output", message: "The model returned output that failed schema validation. Nothing was saved." };
   return { ok: false, code: "upstream", message: "The AI service is unavailable right now. The keyword baseline is still available." };
 }
 
@@ -24,8 +36,10 @@ type Fail = Extract<AnalysisResult, { ok: false }>;
 /** One structured, streamed model call. Returns a typed failure instead of throwing. */
 export async function callStructured<T>(schema: { safeParse: (v: unknown) => { success: true; data: T } | { success: false } }, instructions: string, prompt: string, apiKey: string, effort: "low" | "medium" = "low"): Promise<{ ok: true; data: T } | Fail> {
   const provider = createOpenAI({ baseURL: GATEWAY, apiKey, headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" } });
+  let streamError: unknown;
   try {
     const result = streamText({
+      onError: ({ error }) => { streamError = error; }, // the HTTP error (e.g. 402) arrives here, not on the thrown NoOutput error
       model: provider.responses(ANALYSIS_MODEL),
       instructions,
       prompt,
@@ -38,8 +52,10 @@ export async function callStructured<T>(schema: { safeParse: (v: unknown) => { s
     return { ok: true, data: parsed.data };
   } catch (err) {
     const e = err as { statusCode?: number; name?: string };
-    console.error("[voc] model call failed", { status: e?.statusCode, name: e?.name });
-    return mapGatewayError(err);
+    await new Promise((r) => setTimeout(r, 50)); // onError can fire after the output promise rejects
+    const cause = findStatus(err) ? err : streamError ?? err;
+    console.error("[voc] model call failed", { status: findStatus(cause), name: e?.name, streamError: (streamError as { name?: string })?.name ?? null });
+    return mapGatewayError(cause);
   }
 }
 

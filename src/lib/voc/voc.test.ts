@@ -101,3 +101,21 @@ describe("approval workflow", () => {
     expect(s[1]!.status).toBe("rejected");
   });
 });
+
+describe("repeated import of the same file", () => {
+  it("adds nothing when every row already exists, and says so", async () => {
+    const { parseFeedbackCsv: parse } = await import("./csv");
+    const { SAMPLE_CSV: csv } = await import("./sample-data");
+    const first = parse(csv, "a.csv", [], "imp_a");
+    const again = parse(csv, "a.csv", first.records, "imp_b");
+    expect(again.records).toHaveLength(0);
+    expect(again.run.fatalError).toMatch(/Already imported/);
+  });
+  it("still imports a file that mixes new rows with duplicates (duplicates flagged)", async () => {
+    const { parseFeedbackCsv: parse } = await import("./csv");
+    const first = parse("id,text\nA1,Exports time out on big boards", "a.csv", [], "imp_a");
+    const mixed = parse("id,text\nB1,Exports time out on big boards\nB2,Calendar sync is great", "b.csv", first.records, "imp_b");
+    expect(mixed.records).toHaveLength(2);
+    expect(mixed.records[0]!.duplicateOf).toBe("A1");
+  });
+});

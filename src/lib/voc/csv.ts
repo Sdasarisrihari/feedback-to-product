@@ -130,5 +130,10 @@ export function parseFeedbackCsv(
     records.push(rec);
   }
   run.rejected = rejected;
+  // Whole-file re-import: every row matches feedback already in the workspace → add nothing.
+  const existingIds = new Set(existing.map((r) => r.id));
+  if (existing.length && records.length && records.every((r) => r.duplicateOf && existingIds.has(r.duplicateOf))) {
+    return { run: { ...run, accepted: 0, duplicates: 0, fatalError: `Already imported: all ${records.length} rows match existing feedback, so nothing was added.` }, records: [] };
+  }
   return { run, records };
 }
