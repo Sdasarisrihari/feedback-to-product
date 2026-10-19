@@ -49,7 +49,12 @@ export interface PrdContent {
 }
 export interface PrdStory extends Grounded { id: string; persona: string; capability: string; outcome: string; acceptanceCriteria: string[]; supported: boolean }
 
-export interface GroundingReport { citations: number; verified: number; rejected: number; downgrades: string[] }
+export interface GroundingReport {
+  citations: number; verified: number; rejected: number; downgrades: string[];
+  /** Where the evidence came from: saved workspace (server-checked) or browser demo. */
+  provenance?: "server_verified" | "browser_supplied";
+  sourceRejections?: { id: string; kind: "feedback" | "doc"; reason: "unknown_or_not_owned" | "text_mismatch" }[];
+}
 
 export interface PrdSourceInput {
   theme: { name: string; summary: string; productArea: string; kind: string };

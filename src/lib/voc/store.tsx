@@ -152,28 +152,43 @@ export function VocProvider({ children }: { children: ReactNode }) {
     return () => { alive = false; sub.subscription.unsubscribe(); };
   }, [enterCloud, loadLocal, retryTick]);
 
+  const stateRef = useRef(state);
+  stateRef.current = state;
+  const cloudRef = useRef(cloud);
+  cloudRef.current = cloud;
+
+  /** Saves every pending change now. Serialised: concurrent callers wait for the in-flight save. */
+  const syncNow = useCallback(async (): Promise<boolean> => {
+    while (saving.current) await new Promise((r) => setTimeout(r, 100));
+    const c = cloudRef.current;
+    if (c.mode !== "cloud" || c.load !== "ready") return c.mode === "local";
+    const snap = stateRef.current;
+    const next = toRows({ ...snap, browserImportDone: snap.browserImportDone ?? false });
+    const diff = diffRows(synced.current, next);
+    if (isEmptyDiff(diff)) return true;
+    saving.current = true;
+    setCloud((x) => (x.mode === "cloud" ? { ...x, save: "saving" } : x));
+    try {
+      const res = await syncWorkspace({ data: diff });
+      if (res.ok) synced.current = next;
+      setCloud((x) => (x.mode === "cloud" ? { ...x, save: res.ok ? "saved" : "error", ...(res.ok ? {} : { message: res.message }) } : x));
+      return res.ok;
+    } catch {
+      setCloud((x) => (x.mode === "cloud" ? { ...x, save: "error", message: "Could not reach the server. Your changes are kept on screen — retry to save." } : x));
+      return false;
+    } finally { saving.current = false; }
+  }, []);
+  /** Signed-in AI calls are checked against saved rows, so pending edits must be saved first. */
+  const flushBeforeAi = useCallback(async () => (cloudRef.current.mode === "local" ? true : syncNow()), [syncNow]);
+
   // Local mode: browser storage. Cloud mode: debounced row-level sync; browser storage is left untouched.
   useEffect(() => {
     if (!ready) return;
     if (cloud.mode === "local") { localStorage.setItem(KEY, JSON.stringify(state)); return; }
     if (cloud.load !== "ready") return;
-    const t = setTimeout(async () => {
-      if (saving.current) return;
-      const next = toRows({ ...state, browserImportDone: state.browserImportDone ?? false });
-      const diff = diffRows(synced.current, next);
-      if (isEmptyDiff(diff)) return;
-      saving.current = true;
-      setCloud((c) => (c.mode === "cloud" ? { ...c, save: "saving" } : c));
-      try {
-        const res = await syncWorkspace({ data: diff });
-        if (res.ok) synced.current = next;
-        setCloud((c) => (c.mode === "cloud" ? { ...c, save: res.ok ? "saved" : "error", ...(res.ok ? {} : { message: res.message }) } : c));
-      } catch {
-        setCloud((c) => (c.mode === "cloud" ? { ...c, save: "error", message: "Could not reach the server. Your changes are kept on screen — retry to save." } : c));
-      } finally { saving.current = false; }
-    }, 800);
+    const t = setTimeout(() => { void syncNow(); }, 800);
     return () => clearTimeout(t);
-  }, [state, ready, cloud.mode, cloud.mode === "cloud" ? cloud.load : null, retryTick]);
+  }, [state, ready, cloud.mode, cloud.mode === "cloud" ? cloud.load : null, retryTick, syncNow]);
 
   const [llmStatus, setLlmStatus] = useState<LlmStatus>({ state: "idle" });
   const baselineInsights = useMemo(() => analyzeFeedback(state.records), [state.records]);
@@ -184,6 +199,7 @@ export function VocProvider({ children }: { children: ReactNode }) {
 
   const runLlm = useCallback(async () => {
     setLlmStatus({ state: "running" });
+    if (!(await flushBeforeAi())) { setLlmStatus({ state: "error", code: "unsaved", message: "Your latest changes are not saved yet, so sources can't be checked. Retry saving, then run again." }); return; }
     const unique = state.records.filter((r) => !r.duplicateOf);
     try {
       const res = await analyzeWithLlm({ data: { records: unique.map((r) => ({ id: r.id, text: r.text, source: r.source, segment: r.segment, rating: r.rating })) } });
@@ -215,6 +231,7 @@ export function VocProvider({ children }: { children: ReactNode }) {
   const generatePrdFor = useCallback(async (insight: Insight, existingPrdId?: string) => {
     const key = existingPrdId ?? insight.themeId;
     setPrdStatus((m) => ({ ...m, [key]: { state: "running" } }));
+    if (!(await flushBeforeAi())) { setPrdStatus((m) => ({ ...m, [key]: { state: "error", code: "unsaved", message: "Your latest changes are not saved yet, so evidence can't be checked. Retry saving, then generate again." } })); return null; }
     const byId = new Map(state.records.map((r) => [r.id, r]));
     const feedback = insight.evidence.map((e) => byId.get(e.id)).filter((r): r is FeedbackRecord => !!r).slice(0, 30)
       .map((r) => ({ id: r.id, text: r.text.slice(0, 4000), segment: r.segment, source: r.source }));
@@ -227,7 +244,7 @@ export function VocProvider({ children }: { children: ReactNode }) {
       const res = await generatePrd({ data: sources });
       if (!res.ok) { setPrdStatus((m) => ({ ...m, [key]: { state: "error", code: res.code, message: res.message } })); return null; }
       const at = new Date().toISOString();
-      const rev = { at, by: "ai" as const, content: res.content, report: res.report };
+      const rev = { at, by: "ai" as const, content: res.content, report: { ...res.report, provenance: res.provenance ?? "browser_supplied", sourceRejections: res.sourceRejections ?? [] } };
       const id = existingPrdId ?? `PRD-${Date.now().toString(36)}`;
       setState((s) => {
         const prev = s.aiPrds.find((p) => p.id === id);
