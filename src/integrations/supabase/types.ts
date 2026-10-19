@@ -14,7 +14,388 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_analyses: {
+        Row: {
+          analysed_at: string
+          duration_ms: number
+          input_count: number
+          insights: Json
+          model: string
+          notes: string
+          owner_id: string
+          run_id: string
+          signature: string
+          truncated: boolean
+          updated_at: string
+        }
+        Insert: {
+          analysed_at: string
+          duration_ms: number
+          input_count: number
+          insights: Json
+          model: string
+          notes?: string
+          owner_id?: string
+          run_id: string
+          signature: string
+          truncated?: boolean
+          updated_at?: string
+        }
+        Update: {
+          analysed_at?: string
+          duration_ms?: number
+          input_count?: number
+          insights?: Json
+          model?: string
+          notes?: string
+          owner_id?: string
+          run_id?: string
+          signature?: string
+          truncated?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      ai_prds: {
+        Row: {
+          created_at: string
+          id: string
+          model: string
+          owner_id: string
+          review: string
+          sources: Json
+          theme_id: string
+          theme_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at: string
+          id: string
+          model: string
+          owner_id?: string
+          review?: string
+          sources: Json
+          theme_id: string
+          theme_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          model?: string
+          owner_id?: string
+          review?: string
+          sources?: Json
+          theme_id?: string
+          theme_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      analysis_runs: {
+        Row: {
+          duration_ms: number
+          id: string
+          method: string
+          model: string | null
+          owner_id: string
+          ran_at: string
+          record_count: number
+          status: string
+          theme_count: number
+        }
+        Insert: {
+          duration_ms: number
+          id: string
+          method: string
+          model?: string | null
+          owner_id?: string
+          ran_at: string
+          record_count: number
+          status?: string
+          theme_count: number
+        }
+        Update: {
+          duration_ms?: number
+          id?: string
+          method?: string
+          model?: string | null
+          owner_id?: string
+          ran_at?: string
+          record_count?: number
+          status?: string
+          theme_count?: number
+        }
+        Relationships: []
+      }
+      doc_sections: {
+        Row: {
+          body: string
+          doc_id: string
+          heading: string
+          id: string
+          owner_id: string
+          page: number | null
+          position: number
+          suspected_injection: boolean
+        }
+        Insert: {
+          body: string
+          doc_id: string
+          heading: string
+          id: string
+          owner_id?: string
+          page?: number | null
+          position: number
+          suspected_injection?: boolean
+        }
+        Update: {
+          body?: string
+          doc_id?: string
+          heading?: string
+          id?: string
+          owner_id?: string
+          page?: number | null
+          position?: number
+          suspected_injection?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "doc_sections_owner_id_doc_id_fkey"
+            columns: ["owner_id", "doc_id"]
+            isOneToOne: false
+            referencedRelation: "product_docs"
+            referencedColumns: ["owner_id", "id"]
+          },
+        ]
+      }
+      draft_tasks: {
+        Row: {
+          acceptance: Json
+          description: string
+          evidence_ids: string[]
+          id: string
+          owner_id: string
+          reviewed_at: string | null
+          status: string
+          theme_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          acceptance?: Json
+          description: string
+          evidence_ids?: string[]
+          id: string
+          owner_id?: string
+          reviewed_at?: string | null
+          status?: string
+          theme_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          acceptance?: Json
+          description?: string
+          evidence_ids?: string[]
+          id?: string
+          owner_id?: string
+          reviewed_at?: string | null
+          status?: string
+          theme_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      feedback_records: {
+        Row: {
+          body: string
+          duplicate_of: string | null
+          feedback_date: string
+          id: string
+          import_id: string
+          line: number
+          owner_id: string
+          rating: number | null
+          segment: string
+          source: string
+          suspected_injection: boolean
+          updated_at: string
+          warnings: Json
+        }
+        Insert: {
+          body: string
+          duplicate_of?: string | null
+          feedback_date?: string
+          id: string
+          import_id: string
+          line: number
+          owner_id?: string
+          rating?: number | null
+          segment?: string
+          source?: string
+          suspected_injection?: boolean
+          updated_at?: string
+          warnings?: Json
+        }
+        Update: {
+          body?: string
+          duplicate_of?: string | null
+          feedback_date?: string
+          id?: string
+          import_id?: string
+          line?: number
+          owner_id?: string
+          rating?: number | null
+          segment?: string
+          source?: string
+          suspected_injection?: boolean
+          updated_at?: string
+          warnings?: Json
+        }
+        Relationships: []
+      }
+      import_runs: {
+        Row: {
+          accepted: number
+          duplicates: number
+          fatal_error: string | null
+          filename: string
+          id: string
+          imported_at: string
+          owner_id: string
+          rejected: Json
+          total: number
+          updated_at: string
+          warnings: number
+        }
+        Insert: {
+          accepted: number
+          duplicates: number
+          fatal_error?: string | null
+          filename: string
+          id: string
+          imported_at: string
+          owner_id?: string
+          rejected?: Json
+          total: number
+          updated_at?: string
+          warnings: number
+        }
+        Update: {
+          accepted?: number
+          duplicates?: number
+          fatal_error?: string | null
+          filename?: string
+          id?: string
+          imported_at?: string
+          owner_id?: string
+          rejected?: Json
+          total?: number
+          updated_at?: string
+          warnings?: number
+        }
+        Relationships: []
+      }
+      prd_revisions: {
+        Row: {
+          author: string
+          content: Json
+          created_at: string
+          owner_id: string
+          prd_id: string
+          report: Json | null
+          rev_no: number
+        }
+        Insert: {
+          author: string
+          content: Json
+          created_at: string
+          owner_id?: string
+          prd_id: string
+          report?: Json | null
+          rev_no: number
+        }
+        Update: {
+          author?: string
+          content?: Json
+          created_at?: string
+          owner_id?: string
+          prd_id?: string
+          report?: Json | null
+          rev_no?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prd_revisions_owner_id_prd_id_fkey"
+            columns: ["owner_id", "prd_id"]
+            isOneToOne: false
+            referencedRelation: "ai_prds"
+            referencedColumns: ["owner_id", "id"]
+          },
+        ]
+      }
+      product_docs: {
+        Row: {
+          filename: string
+          id: string
+          imported_at: string
+          kind: string
+          owner_id: string
+          title: string
+          updated_at: string
+          version: string
+          warnings: Json
+        }
+        Insert: {
+          filename: string
+          id: string
+          imported_at: string
+          kind: string
+          owner_id?: string
+          title: string
+          updated_at?: string
+          version?: string
+          warnings?: Json
+        }
+        Update: {
+          filename?: string
+          id?: string
+          imported_at?: string
+          kind?: string
+          owner_id?: string
+          title?: string
+          updated_at?: string
+          version?: string
+          warnings?: Json
+        }
+        Relationships: []
+      }
+      workspace_settings: {
+        Row: {
+          browser_import_done: boolean
+          effort: Json
+          owner_id: string
+          updated_at: string
+          weights: Json
+        }
+        Insert: {
+          browser_import_done?: boolean
+          effort?: Json
+          owner_id?: string
+          updated_at?: string
+          weights: Json
+        }
+        Update: {
+          browser_import_done?: boolean
+          effort?: Json
+          owner_id?: string
+          updated_at?: string
+          weights?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
