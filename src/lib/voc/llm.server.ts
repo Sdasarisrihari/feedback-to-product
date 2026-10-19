@@ -52,8 +52,9 @@ export async function callStructured<T>(schema: { safeParse: (v: unknown) => { s
     return { ok: true, data: parsed.data };
   } catch (err) {
     const e = err as { statusCode?: number; name?: string };
+    await new Promise((r) => setTimeout(r, 50)); // onError can fire after the output promise rejects
     const cause = findStatus(err) ? err : streamError ?? err;
-    console.error("[voc] model call failed", { status: findStatus(cause), name: e?.name });
+    console.error("[voc] model call failed", { status: findStatus(cause), name: e?.name, streamError: (streamError as { name?: string })?.name ?? null });
     return mapGatewayError(cause);
   }
 }
