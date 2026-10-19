@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MockNotice, PageHeader, ReadyGate, SourceId, EmptyState } from "@/components/voc/shared";
+import { PageHeader, ReadyGate, SourceId, EmptyState } from "@/components/voc/shared";
 import { useVoc } from "@/lib/voc/store";
+import { AnalysisBar } from "@/components/voc/AnalysisBar";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,8 +45,8 @@ function Overview() {
 
   return (
     <>
-      <PageHeader title="Overview" description="Where customer pain is concentrating, and what the evidence says." actions={<Button onClick={runAnalysis}><Play className="mr-1 h-4 w-4" />Run baseline analysis</Button>} />
-      <MockNotice>Themes here come from a deterministic <strong>BM25 keyword baseline</strong> over PM-defined seed themes, not an LLM. All counts are computed from the {unique.length} imported synthetic records.</MockNotice>
+      <PageHeader title="Overview" description="Where customer pain is concentrating, and what the evidence says." actions={<Button variant="outline" onClick={runAnalysis}><Play className="mr-1 h-4 w-4" />Run baseline</Button>} />
+      <AnalysisBar />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Feedback records" value={unique.length} hint={`${records.length - unique.length} duplicates excluded`} />
         <Stat label="Themes with evidence" value={insights.length} />
@@ -91,7 +92,7 @@ function Overview() {
         <Card>
           <CardHeader><CardTitle className="text-base">Recent runs</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            {runs.slice(0, 4).map((r) => (<div key={r.id} className="flex justify-between border-b pb-2"><span><SourceId id={r.id} /> BM25 baseline · {r.records} records → {r.themes} themes</span><span className="text-muted-foreground">{new Date(r.at).toLocaleString()}</span></div>))}
+            {runs.slice(0, 4).map((r) => (<div key={r.id} className="flex justify-between border-b pb-2"><span><SourceId id={r.id} /> {r.method === "llm" ? `AI (${r.model})` : "BM25 baseline"} · {r.records} records → {r.themes} themes</span><span className="text-muted-foreground">{new Date(r.at).toLocaleString()}</span></div>))}
             {imports.slice(0, 3).map((i) => (<div key={i.id} className="flex justify-between border-b pb-2"><span>Import <span className="font-mono text-xs">{i.filename}</span>: {i.accepted} ok, {i.duplicates} dup, {i.rejected.length} rejected</span><span className="text-muted-foreground">{new Date(i.at).toLocaleDateString()}</span></div>))}
           </CardContent>
         </Card>

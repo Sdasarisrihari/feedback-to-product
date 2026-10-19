@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader, ReadyGate } from "@/components/voc/shared";
 import { useVoc } from "@/lib/voc/store";
+import { useQuery } from "@tanstack/react-query";
+import { getModelStatus } from "@/lib/voc/analyze.functions";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -20,8 +22,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 const INTEGRATIONS = [
-  { name: "LLM (server-side model call)", status: "Not connected", phase: "Phase 3", setup: "Enable the backend and connect the built-in AI service. Keys stay on the server; outputs are schema-validated." },
-  { name: "Retrieval: BM25 lexical index", status: "Active (in browser)", phase: "Phase 2", setup: "Moves server-side in Phase 3. Embeddings only if evaluation shows value." },
+  { name: "Retrieval: BM25 lexical index", status: "Active", phase: "Phase 2–3", setup: "Baseline themes, related-record retrieval for AI themes, and PRD evidence. Embeddings only if evaluation shows value." },
   { name: "Persistent storage", status: "Browser only", phase: "Phase 3", setup: "Data is saved in this browser. A database is added with the backend." },
   { name: "MCP server", status: "Planned", phase: "Phase 4", setup: "Tools: search_feedback, get_theme_evidence, create_draft_task (draft-only, least privilege)." },
   { name: "n8n workflow", status: "Planned", phase: "Phase 4", setup: "Self-hosted n8n receives a validated insight batch, produces a digest, records run status." },
@@ -29,16 +30,18 @@ const INTEGRATIONS = [
 ];
 
 function Settings() {
-  const { reset, loadSample, records } = useVoc();
+  const { reset, loadSample, records, analysisSource } = useVoc();
+  const status = useQuery({ queryKey: ["model-status"], queryFn: () => getModelStatus() });
   return (
     <>
       <PageHeader title="Settings" description="What is connected, what is not, and how to set it up." />
       <div className="grid gap-5 lg:grid-cols-2">
         <Card><CardHeader><CardTitle className="text-base">Model configuration</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div className="flex justify-between"><span>Analysis method</span><span className="font-mono">bm25-baseline</span></div>
-            <div className="flex justify-between"><span>LLM provider</span><Badge variant="outline" className="text-destructive">not configured</Badge></div>
-            <p className="text-muted-foreground">No AI results are simulated. Until a model is connected, insights come from the transparent keyword baseline and drafts from templates.</p>
+            <div className="flex justify-between"><span>Insights currently shown</span><span className="font-mono">{analysisSource === "llm" ? "AI analysis" : "bm25-baseline"}</span></div>
+            <div className="flex justify-between"><span>AI model (server-side)</span><span className="font-mono">{status.data?.model ?? "…"}</span></div>
+            <div className="flex justify-between"><span>Server AI key</span>{status.isLoading ? <span>checking…</span> : status.data?.configured ? <Badge className="bg-accent text-accent-foreground">configured</Badge> : <Badge variant="outline" className="text-destructive">not configured</Badge>}</div>
+            <p className="text-muted-foreground">The key never reaches the browser. Model output is schema-validated and every quote is verified against the source record. PRD drafts are still templates.</p>
           </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-base">Data</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
