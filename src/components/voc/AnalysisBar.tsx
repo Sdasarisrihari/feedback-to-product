@@ -1,6 +1,6 @@
 import { AlertTriangle, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MockNotice } from "@/components/voc/shared";
+import { MockNotice , ProvenanceNote } from "@/components/voc/shared";
 import { useVoc } from "@/lib/voc/store";
 
 /** Shows which analysis is on screen, lets the user run the AI step, and surfaces failures plainly. */
@@ -29,6 +29,7 @@ export function AnalysisBar() {
         <div className="rounded-md border border-primary/30 bg-accent px-3 py-2 text-sm text-accent-foreground">
           Theme names, summaries and severity are <strong>AI suggestions</strong>. Quotes marked <em>verified</em> were checked server-side to appear word-for-word in the cited record; citations that failed are listed separately.
           {llm?.truncated && " Only the first 300 records were analysed."}
+          <ProvenanceNote provenance={llm?.provenance} rejections={llm?.sourceRejections} />
         </div>
       ) : (
         <MockNotice>Themes below come from a deterministic <strong>BM25 keyword baseline</strong> over PM-defined seed themes, not an AI model.</MockNotice>

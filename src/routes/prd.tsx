@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EmptyState, PageHeader, ReadyGate, SourceId } from "@/components/voc/shared";
+import { EmptyState, PageHeader, ReadyGate, SourceId , ProvenanceNote } from "@/components/voc/shared";
 import { AiTag, PrdEdit, PrdRead } from "@/components/voc/PrdView";
 import { latest } from "@/lib/voc/drafts";
 import { scoreOpportunities } from "@/lib/voc/prioritize";
@@ -93,6 +93,7 @@ function Studio() {
                   <div className="flex flex-wrap items-center gap-2"><SourceId id={prd.id} /><AiTag /><Badge variant="secondary">{prd.review.replace("_", " ")}</Badge>{rev.by === "human" && <Badge variant="outline">edited by human</Badge>}</div>
                   <CardTitle className="mt-2 text-xl">{rev.content.title}</CardTitle>
                   <p className="text-xs text-muted-foreground">Theme: {prd.themeName} · {prd.model} · revision {prd.revisions.length} · {new Date(rev.at).toLocaleString()}</p>
+                  {rev.by === "ai" && rev.report && <ProvenanceNote provenance={rev.report.provenance} rejections={rev.report.sourceRejections} />}
                   {rev.report && rev.report.downgrades.length > 0 && (
                     <details className="mt-2 rounded-md bg-destructive/5 p-2 text-xs text-destructive"><summary className="cursor-pointer">{rev.report.downgrades.length} item(s) downgraded by citation checks</summary><ul className="mt-1 list-disc pl-5">{rev.report.downgrades.map((d, i) => <li key={i}>{d}</li>)}</ul></details>
                   )}

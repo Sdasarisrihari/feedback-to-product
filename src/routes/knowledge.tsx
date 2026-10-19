@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EmptyState, InjectionBadge, PageHeader, ReadyGate, SourceId } from "@/components/voc/shared";
+import { EmptyState, InjectionBadge, PageHeader, ReadyGate, SourceId , ProvenanceNote } from "@/components/voc/shared";
 import { AiTag, Cites, StatusTag } from "@/components/voc/PrdView";
 import { buildDoc, SUPPORTED_DOC_EXT, type DocKind } from "@/lib/voc/docs";
 import { askQuestion } from "@/lib/voc/generate.functions";
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/knowledge")({
 const MAX_BYTES = 5 * 1024 * 1024;
 
 function Knowledge() {
-  const { docs, records, addDoc, removeDoc, loadSampleDocs } = useVoc();
+  const { docs, records, addDoc, removeDoc, loadSampleDocs , flushBeforeAi } = useVoc();
   const fileRef = useRef<HTMLInputElement>(null);
   const [meta, setMeta] = useState<{ title: string; version: string; kind: DocKind }>({ title: "", version: "", kind: "help_doc" });
   const [busy, setBusy] = useState(false);
@@ -40,6 +40,7 @@ function Knowledge() {
   const [filter, setFilter] = useState<SourceFilter>("all");
   const [asking, setAsking] = useState(false);
   const [answer, setAnswer] = useState<QaAnswer | null>(null);
+  const [prov, setProv] = useState<{ provenance?: "server_verified" | "browser_supplied" | undefined; rejections?: { id: string; kind: string; reason: string }[] | undefined }>({});
   const [askError, setAskError] = useState<string | null>(null);
   const hits = useMemo(() => search(records, docs, q, filter, 10), [records, docs, q, filter]);
 
@@ -66,9 +67,10 @@ function Knowledge() {
     setAsking(true); setAskError(null); setAnswer(null);
     const fb = search(records, [], q, "feedback", 8).map((h) => ({ id: h.id, text: h.text }));
     const dc = search([], docs, q, "docs", 8).map((h) => ({ id: h.id, title: h.label, text: h.text }));
+    if (!(await flushBeforeAi())) { setAskError("Your latest changes are not saved yet, so sources can't be checked. Retry saving, then ask again."); setAsking(false); return; }
     try {
       const res = await askQuestion({ data: { question: q, feedback: fb, docs: dc } });
-      if (res.ok) setAnswer(res.result); else setAskError(res.message);
+      if (res.ok) { setAnswer(res.result); setProv({ provenance: res.provenance, rejections: res.sourceRejections }); } else setAskError(res.message);
     } catch { setAskError("Could not reach the server. Check your connection and retry."); }
     finally { setAsking(false); }
   }
@@ -94,6 +96,7 @@ function Knowledge() {
           {answer && (
             <Card className="border-primary/30"><CardContent className="space-y-3 pt-5">
               <div className="flex items-center gap-2"><AiTag>AI answer</AiTag><span className="text-xs text-muted-foreground">“{answer.question}”</span></div>
+              <ProvenanceNote provenance={prov.provenance} rejections={prov.rejections} />
               <p className="text-sm">{answer.answer}</p>
               <ul className="space-y-2">{answer.claims.map((c, i) => (
                 <li key={i} className="rounded-md border p-3 text-sm">

@@ -58,3 +58,20 @@ export function ReadyGate({ children }: { children: ReactNode }) {
   if (!ready) return <div className="space-y-3" aria-busy="true"><Skeleton className="h-8 w-64" /><Skeleton className="h-32 w-full" /><Skeleton className="h-64 w-full" /></div>;
   return <>{children}</>;
 }
+
+/** Where the evidence behind an AI result came from, plus any sources the server refused. */
+export function ProvenanceNote({ provenance, rejections }: { provenance?: "server_verified" | "browser_supplied" | undefined; rejections?: { id: string; kind: string; reason: string }[] | undefined }) {
+  const n = rejections?.length ?? 0;
+  return (
+    <div className="text-xs text-muted-foreground">
+      {provenance === "server_verified"
+        ? <span>Sources checked on the server against your saved workspace.</span>
+        : <span>Demo mode: sources came from this browser and were not checked against a saved workspace.</span>}
+      {n > 0 && (
+        <details className="mt-1 text-destructive"><summary className="cursor-pointer">{n} source(s) refused and not sent to the AI</summary>
+          <ul className="list-disc pl-5">{rejections!.map((r) => <li key={r.kind + r.id}><span className="font-mono">{r.id}</span> — {r.reason === "text_mismatch" ? "text differs from the saved copy" : "not found in your saved workspace"}</li>)}</ul>
+        </details>
+      )}
+    </div>
+  );
+}

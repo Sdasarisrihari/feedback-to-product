@@ -4,15 +4,16 @@
  */
 import type { AiPrd } from "./drafts";
 import type { ProductDoc } from "./docs";
+import type { HumanReview } from "./human-eval";
 import type { DraftTask, FeedbackRecord, ImportRun, Insight, Weights } from "./types";
 
-export const TABLES = ["feedback_records", "import_runs", "product_docs", "doc_sections", "analysis_runs", "ai_analyses", "ai_prds", "prd_revisions", "draft_tasks", "workspace_settings"] as const;
+export const TABLES = ["feedback_records", "import_runs", "product_docs", "doc_sections", "analysis_runs", "ai_analyses", "ai_prds", "prd_revisions", "draft_tasks", "workspace_settings", "human_reviews"] as const;
 export type Table = (typeof TABLES)[number];
 export type Row = Record<string, unknown>;
 export type Rows = Record<Table, Row[]>;
 
 /** Upsert order respects foreign keys; deletes run in reverse. */
-export const UPSERT_ORDER: Table[] = ["workspace_settings", "feedback_records", "import_runs", "product_docs", "doc_sections", "analysis_runs", "ai_analyses", "ai_prds", "prd_revisions", "draft_tasks"];
+export const UPSERT_ORDER: Table[] = ["workspace_settings", "feedback_records", "import_runs", "product_docs", "doc_sections", "analysis_runs", "ai_analyses", "ai_prds", "prd_revisions", "human_reviews", "draft_tasks"];
 export const INSERT_ONLY: Table[] = ["prd_revisions"];
 
 export function rowKey(t: Table, r: Row): string {
@@ -22,10 +23,10 @@ export function rowKey(t: Table, r: Row): string {
 }
 
 export interface RunLite { id: string; at: string; method: "bm25-baseline" | "llm"; model?: string | undefined; records: number; themes: number; durationMs: number }
-export interface LlmState { ok: true; model: string; durationMs: number; inputCount: number; truncated: boolean; insights: Insight[]; notes: string; at: string; signature: string }
+export interface LlmState { provenance?: "server_verified" | "browser_supplied"; sourceRejections?: { id: string; kind: "feedback" | "doc"; reason: "unknown_or_not_owned" | "text_mismatch" }[]; ok: true; model: string; durationMs: number; inputCount: number; truncated: boolean; insights: Insight[]; notes: string; at: string; signature: string }
 export interface WorkspaceData {
   records: FeedbackRecord[]; imports: ImportRun[]; runs: RunLite[]; weights: Weights; effort: Record<string, number>;
-  docs: ProductDoc[]; aiPrds: AiPrd[]; tasks: DraftTask[]; llm: LlmState | null; browserImportDone: boolean;
+  docs: ProductDoc[]; aiPrds: AiPrd[]; tasks: DraftTask[]; llm: LlmState | null; browserImportDone: boolean; reviews?: HumanReview[];
 }
 
 export function toRows(w: WorkspaceData): Rows {
@@ -36,7 +37,8 @@ export function toRows(w: WorkspaceData): Rows {
     product_docs: w.docs.map((d) => ({ id: d.id, title: d.title, version: d.version, kind: d.kind, filename: d.filename, imported_at: d.importedAt, warnings: d.warnings })),
     doc_sections: w.docs.flatMap((d) => d.sections.map((s, i) => ({ id: s.id, doc_id: d.id, position: i, heading: s.heading, page: s.page, body: s.text, suspected_injection: s.suspectedInjection }))),
     analysis_runs: w.runs.map((r) => ({ id: r.id, method: r.method, model: r.model ?? null, status: "succeeded", record_count: r.records, theme_count: r.themes, duration_ms: r.durationMs, ran_at: r.at })),
-    ai_analyses: w.llm ? [{ run_id: w.runs.find((r) => r.method === "llm")?.id ?? "unknown", model: w.llm.model, analysed_at: w.llm.at, signature: w.llm.signature, input_count: w.llm.inputCount, truncated: w.llm.truncated, duration_ms: w.llm.durationMs, notes: w.llm.notes, insights: w.llm.insights }] : [],
+    ai_analyses: w.llm ? [{ run_id: w.runs.find((r) => r.method === "llm")?.id ?? "unknown", model: w.llm.model, analysed_at: w.llm.at, signature: w.llm.signature, input_count: w.llm.inputCount, truncated: w.llm.truncated, duration_ms: w.llm.durationMs, notes: w.llm.notes, insights: w.llm.insights, provenance: w.llm.provenance ?? "browser_supplied", source_rejections: w.llm.sourceRejections ?? [] }] : [],
+    human_reviews: (w.reviews ?? []).map((r) => ({ id: r.id, prd_id: r.prdId, rev_no: r.revNo, target: r.target, story_id: r.storyId ?? null, reviewer: r.reviewer, scores: r.scores, unsupported_claims: r.unsupportedClaims, notes: r.notes, status: r.status, completed_at: r.completedAt ?? null })),
     ai_prds: w.aiPrds.map((p) => ({ id: p.id, theme_id: p.themeId, theme_name: p.themeName, model: p.model, review: p.review, sources: p.sources, created_at: p.createdAt })),
     prd_revisions: w.aiPrds.flatMap((p) => p.revisions.map((r, i) => ({ prd_id: p.id, rev_no: i + 1, author: r.by, content: r.content, report: r.report, created_at: r.at }))),
     draft_tasks: w.tasks.map((t) => ({ id: t.id, theme_id: t.themeId, title: t.title, description: t.description, acceptance: t.acceptance, evidence_ids: t.evidenceIds, status: t.status, reviewed_at: t.reviewedAt ?? null })),
@@ -71,7 +73,8 @@ export function fromRows(rows: Partial<Rows>, defaults: { weights: Weights }): W
     })).sort((x, y) => x.importedAt.localeCompare(y.importedAt)),
     runs: (rows.analysis_runs ?? []).map((r) => ({ id: s(r["id"]), at: iso(r["ran_at"]), method: s(r["method"]) as RunLite["method"], model: (r["model"] as string | null) ?? undefined, records: Number(r["record_count"]), themes: Number(r["theme_count"]), durationMs: Number(r["duration_ms"]) }))
       .sort((x, y) => y.at.localeCompare(x.at)),
-    llm: a ? { ok: true, model: s(a["model"]), at: iso(a["analysed_at"]), signature: s(a["signature"]), inputCount: Number(a["input_count"]), truncated: Boolean(a["truncated"]), durationMs: Number(a["duration_ms"]), notes: s(a["notes"]), insights: a["insights"] as Insight[] } : null,
+    llm: a ? { ok: true, model: s(a["model"]), at: iso(a["analysed_at"]), signature: s(a["signature"]), inputCount: Number(a["input_count"]), truncated: Boolean(a["truncated"]), durationMs: Number(a["duration_ms"]), notes: s(a["notes"]), insights: a["insights"] as Insight[], provenance: (s(a["provenance"]) || "browser_supplied") as "server_verified" | "browser_supplied", sourceRejections: (a["source_rejections"] as LlmState["sourceRejections"]) ?? [] } : null,
+    reviews: (rows.human_reviews ?? []).map((r) => ({ id: s(r["id"]), prdId: s(r["prd_id"]), revNo: Number(r["rev_no"]), target: s(r["target"]) as HumanReview["target"], ...(r["story_id"] ? { storyId: s(r["story_id"]) } : {}), reviewer: s(r["reviewer"]), scores: (r["scores"] as HumanReview["scores"]) ?? {}, unsupportedClaims: (r["unsupported_claims"] as number | null) ?? null, notes: s(r["notes"]), status: s(r["status"]) as HumanReview["status"], updatedAt: iso(r["updated_at"]) || iso(r["completed_at"]), ...(r["completed_at"] ? { completedAt: iso(r["completed_at"]) } : {}) })),
     aiPrds: (rows.ai_prds ?? []).map((p) => ({
       id: s(p["id"]), themeId: s(p["theme_id"]), themeName: s(p["theme_name"]), model: s(p["model"]), review: s(p["review"]) as AiPrd["review"], sources: p["sources"] as AiPrd["sources"], createdAt: iso(p["created_at"]),
       revisions: revs.filter((r) => r["prd_id"] === p["id"]).sort((x, y) => Number(x["rev_no"]) - Number(y["rev_no"]))

@@ -32,8 +32,8 @@ export type LlmOutput = z.infer<typeof llmOutputSchema>;
 export interface AnalysisInputRecord { id: string; text: string; source: string; segment: string; rating: number | null }
 
 export type AnalysisResult =
-  | { ok: true; model: string; durationMs: number; inputCount: number; truncated: boolean; insights: Insight[]; notes: string }
-  | { ok: false; code: "not_configured" | "rate_limited" | "credits" | "denied" | "invalid_input" | "bad_output" | "upstream"; message: string };
+  | { ok: true; model: string; durationMs: number; inputCount: number; truncated: boolean; insights: Insight[]; notes: string } & { provenance?: "server_verified" | "browser_supplied"; sourceRejections?: { id: string; kind: "feedback" | "doc"; reason: "unknown_or_not_owned" | "text_mismatch" }[] }
+  | { ok: false; code: "not_configured" | "rate_limited" | "credits" | "denied" | "invalid_input" | "bad_output" | "upstream" | "source_rejected" | "unauthorized"; message: string };
 
 function slug(s: string, i: number) {
   return `llm-${i + 1}-${s.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 30)}`;

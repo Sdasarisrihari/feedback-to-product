@@ -24,7 +24,7 @@ export interface QaClaim { text: string; claimed: QaOutput["claims"][number]["ty
 export interface CapabilityVerdict { capability: string; claimed: "documented" | "not_documented" | "unknown"; status: "documented" | "not_documented" | "unverified"; docs: Grounded }
 export interface QaAnswer { question: string; answer: string; claims: QaClaim[]; capabilityVerdicts: CapabilityVerdict[]; clarificationQuestions: string[] }
 export interface QaInput { question: string; feedback: { id: string; text: string }[]; docs: { id: string; title: string; text: string }[] }
-export type QaResult = { ok: true; model: string; durationMs: number; result: QaAnswer } | { ok: false; code: string; message: string };
+export type QaResult = ({ ok: true; model: string; durationMs: number; result: QaAnswer } & { provenance?: "server_verified" | "browser_supplied"; sourceRejections?: { id: string; kind: "feedback" | "doc"; reason: "unknown_or_not_owned" | "text_mismatch" }[] }) | { ok: false; code: string; message: string };
 
 export function groundAnswer(out: QaOutput, input: QaInput): QaAnswer {
   const fb = new Map(input.feedback.map((f) => [f.id, f.text]));
