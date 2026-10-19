@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { AccountBlock, CloudBanners } from "@/components/voc/CloudBar";
 import { useState, type ReactNode } from "react";
 import { BarChart3, BookOpen, ClipboardCheck, FileText, Lightbulb, ListOrdered, Menu, MessageSquareText, Settings, X } from "lucide-react";
 
@@ -33,13 +34,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
+        <AccountBlock />
       </aside>
       <div className="flex-1 lg:pl-64">
         <header className="flex items-center gap-3 border-b bg-card px-4 py-3 lg:hidden">
           <button onClick={() => setOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5" /></button>
           <span className="font-display font-semibold">VoC Intelligence</span>
         </header>
-        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-8">{children}</main>
+        <main className="mx-auto max-w-6xl px-4 py-8 sm:px-8"><CloudBanners />{children}</main>
       </div>
     </div>
   );

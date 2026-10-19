@@ -1,0 +1,3 @@
+-- Access-control regression check (run as a privileged session; ends with RAISE to roll back).
+-- Expected final error: RLS_CHECK_PASSED. Any "FAIL:" message is a security regression.
+-- See docs/ARCHITECTURE.md. Last run result recorded in docs/EVALUATION_RESULTS.md.

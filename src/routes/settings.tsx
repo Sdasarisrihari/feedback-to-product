@@ -23,7 +23,7 @@ export const Route = createFileRoute("/settings")({
 
 const INTEGRATIONS = [
   { name: "Retrieval: BM25 lexical index", status: "Active", setup: "Feedback and product documentation (Markdown, text, CSV, PDF). Embeddings not added: labeled doc Recall@5 is 100% on the current corpus." },
-  { name: "Persistent storage", status: "Browser only", setup: "Data is saved in this browser. A database is added with the backend." },
+  { name: "Persistent storage", status: "Cloud when signed in", setup: "Signed out: saved in this browser only. Signed in: saved to your private cloud workspace (only you can read it)." },
   { name: "MCP server", status: "Planned", setup: "Tools: search_feedback, get_theme_evidence, create_draft_task (draft-only, least privilege)." },
   { name: "n8n workflow", status: "Planned", setup: "Self-hosted n8n receives a validated insight batch, produces a digest, records run status." },
   { name: "GitHub Issues", status: "Not connected", setup: "Only approved tasks, with idempotency keys and a second confirmation." },

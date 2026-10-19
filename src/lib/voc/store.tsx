@@ -1,4 +1,7 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { loadWorkspace, syncWorkspace } from "./persist.functions";
+import { diffRows, fromRows, isEmptyDiff, toRows, type Rows } from "./persist-map";
 import { analyzeFeedback } from "./analysis";
 import { analyzeWithLlm } from "./analyze.functions";
 import type { AnalysisResult } from "./llm-schema";
@@ -26,7 +29,13 @@ interface Persisted {
   aiPrds: AiPrd[];
   tasks: DraftTask[];
   llm: (Extract<AnalysisResult, { ok: true }> & { at: string; signature: string }) | null;
+  browserImportDone?: boolean;
 }
+
+export type CloudStatus =
+  | { mode: "local" }
+  | { mode: "cloud"; email: string; load: "loading" | "ready" | "error"; save: "saved" | "saving" | "error"; message?: string };
+export interface PendingImport { records: number; docs: number; prds: number; tasks: number }
 
 export type LlmStatus = { state: "idle" } | { state: "running" } | { state: "error"; code: string; message: string };
 
@@ -40,6 +49,12 @@ const empty: Persisted = { records: [], imports: [], runs: [], weights: DEFAULT_
 
 interface Ctx extends Persisted {
   ready: boolean;
+  cloud: CloudStatus;
+  retryCloud: () => void;
+  pendingImport: PendingImport | null;
+  acceptImport: () => void;
+  declineImport: () => void;
+  signOut: () => Promise<void>;
   insights: Insight[];
   baselineInsights: Insight[];
   analysisSource: "llm" | "baseline";
@@ -78,22 +93,87 @@ export function VocProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<Persisted>(empty);
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
+  const [cloud, setCloud] = useState<CloudStatus>({ mode: "local" });
+  const [pendingImport, setPendingImport] = useState<PendingImport | null>(null);
+  const userRef = useRef<{ id: string; email: string } | null>(null);
+  const synced = useRef<Rows | null>(null); // last state confirmed saved in the cloud
+  const saving = useRef(false);
+  const localSnapshot = useRef<Persisted | null>(null);
+  const [retryTick, setRetryTick] = useState(0);
+
+  const loadLocal = useCallback(() => {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Persisted>;
         // Additive migration only: older workspaces get sample docs; nothing existing is removed.
-        setState({ ...empty, ...parsed, docs: parsed.docs ?? sampleDocs(), aiPrds: parsed.aiPrds ?? [] });
-        setReady(true); return;
+        return { ...empty, ...parsed, docs: parsed.docs ?? sampleDocs(), aiPrds: parsed.aiPrds ?? [] };
       }
     } catch { /* corrupted storage: fall back to sample */ }
     const { run, records } = parseFeedbackCsv(SAMPLE_CSV, SAMPLE_FILENAME, [], "imp_sample");
-    setState({ ...empty, records, imports: [run], runs: [runBaseline(records).run], docs: sampleDocs() });
-    setReady(true);
+    return { ...empty, records, imports: [run], runs: [runBaseline(records).run], docs: sampleDocs() };
   }, []);
 
-  useEffect(() => { if (ready) localStorage.setItem(KEY, JSON.stringify(state)); }, [state, ready]);
+  const enterCloud = useCallback(async (user: { id: string; email: string }) => {
+    userRef.current = user;
+    setReady(false);
+    setCloud({ mode: "cloud", email: user.email, load: "loading", save: "saved" });
+    const res = await loadWorkspace();
+    if (userRef.current?.id !== user.id) return; // signed out / switched meanwhile
+    if (!res.ok) { setCloud({ mode: "cloud", email: user.email, load: "error", save: "saved", message: res.message }); return; }
+    const w = fromRows(JSON.parse(res.rowsJson) as Partial<Rows>, { weights: DEFAULT_WEIGHTS });
+    const next: Persisted = { ...empty, ...w };
+    synced.current = toRows({ ...w });
+    setState(next);
+    const local = localSnapshot.current ?? loadLocal();
+    const cloudEmpty = !w.records.length && !w.docs.length && !w.aiPrds.length && !w.tasks.length;
+    if (cloudEmpty && !w.browserImportDone && (local.records.length || local.docs.length || local.aiPrds.length || local.tasks.length)) {
+      localSnapshot.current = local;
+      setPendingImport({ records: local.records.length, docs: local.docs.length, prds: local.aiPrds.length, tasks: local.tasks.length });
+    }
+    setCloud({ mode: "cloud", email: user.email, load: "ready", save: "saved" });
+    setReady(true);
+  }, [loadLocal]);
+
+  useEffect(() => {
+    let alive = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!alive) return;
+      if (data.user) enterCloud({ id: data.user.id, email: data.user.email ?? "" });
+      else { setState(loadLocal()); setReady(true); }
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user && userRef.current?.id !== session.user.id) enterCloud({ id: session.user.id, email: session.user.email ?? "" });
+      if (event === "SIGNED_OUT") {
+        userRef.current = null; synced.current = null; setPendingImport(null);
+        setCloud({ mode: "local" }); setState(loadLocal()); setReady(true);
+      }
+    });
+    return () => { alive = false; sub.subscription.unsubscribe(); };
+  }, [enterCloud, loadLocal, retryTick]);
+
+  // Local mode: browser storage. Cloud mode: debounced row-level sync; browser storage is left untouched.
+  useEffect(() => {
+    if (!ready) return;
+    if (cloud.mode === "local") { localStorage.setItem(KEY, JSON.stringify(state)); return; }
+    if (cloud.load !== "ready") return;
+    const t = setTimeout(async () => {
+      if (saving.current) return;
+      const next = toRows({ ...state, browserImportDone: state.browserImportDone ?? false });
+      const diff = diffRows(synced.current, next);
+      if (isEmptyDiff(diff)) return;
+      saving.current = true;
+      setCloud((c) => (c.mode === "cloud" ? { ...c, save: "saving" } : c));
+      try {
+        const res = await syncWorkspace({ data: diff });
+        if (res.ok) synced.current = next;
+        setCloud((c) => (c.mode === "cloud" ? { ...c, save: res.ok ? "saved" : "error", ...(res.ok ? {} : { message: res.message }) } : c));
+      } catch {
+        setCloud((c) => (c.mode === "cloud" ? { ...c, save: "error", message: "Could not reach the server. Your changes are kept on screen — retry to save." } : c));
+      } finally { saving.current = false; }
+    }, 800);
+    return () => clearTimeout(t);
+  }, [state, ready, cloud.mode, cloud.mode === "cloud" ? cloud.load : null, retryTick]);
 
   const [llmStatus, setLlmStatus] = useState<LlmStatus>({ state: "idle" });
   const baselineInsights = useMemo(() => analyzeFeedback(state.records), [state.records]);
@@ -164,7 +244,19 @@ export function VocProvider({ children }: { children: ReactNode }) {
   }, [state.records, state.docs]);
 
   const value: Ctx = {
-    ...state, ready, insights, baselineInsights, analysisSource: useLlm ? "llm" : "baseline", llmStale, llmStatus, runLlm, importCsv,
+    ...state, ready, cloud, pendingImport,
+    retryCloud: () => {
+      if (cloud.mode === "cloud" && cloud.load === "error" && userRef.current) enterCloud(userRef.current);
+      else setRetryTick((n) => n + 1);
+    },
+    acceptImport: () => {
+      const local = localSnapshot.current;
+      if (local) setState((s) => ({ ...local, weights: local.weights, browserImportDone: true, prds: s.prds }));
+      setPendingImport(null);
+    },
+    declineImport: () => { setState((s) => ({ ...s, browserImportDone: true })); setPendingImport(null); },
+    signOut: async () => { await supabase.auth.signOut(); },
+    insights, baselineInsights, analysisSource: useLlm ? "llm" : "baseline", llmStale, llmStatus, runLlm, importCsv,
     loadSample: () => importCsv(SAMPLE_CSV, SAMPLE_FILENAME) && undefined,
     reset: () => setState(empty),
     runAnalysis: () => setState((s) => ({ ...s, runs: [runBaseline(s.records).run, ...s.runs].slice(0, 20) })),
