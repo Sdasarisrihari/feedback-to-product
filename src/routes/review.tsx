@@ -89,42 +89,43 @@ function ReviewPage() {
       )}
     </>
   );
+}
 
-  function ReviewForm({ item, reviewer, existing, onSave, onDelete }: { item: Item; reviewer: string; existing: HumanReview | undefined; onSave: (r: HumanReview) => void; onDelete: (id: string) => void }) {
-    const prd = aiPrds.find((p) => p.id === item.prdId)!;
-    const content = prd.revisions[item.revNo - 1]!.content;
-    const story = item.storyId ? content.stories.find((s) => s.id === item.storyId) : undefined;
-    const [r, setR] = useState<HumanReview>(existing ?? { id: `HR-${Date.now().toString(36)}`, prdId: item.prdId, revNo: item.revNo, target: item.target, ...(item.storyId ? { storyId: item.storyId } : {}), reviewer, scores: {}, unsupportedClaims: null, notes: "", status: "in_progress", updatedAt: new Date().toISOString() });
-    const locked = r.status === "completed";
-    return (
-      <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
-        <Card><CardContent className="max-h-[75vh] overflow-auto p-4 text-sm">
-          {story ? (
-            <div className="space-y-2"><p className="font-medium">As a {story.persona}, I want {story.capability}, so that {story.outcome}.</p>
-              <ul className="list-disc pl-5">{story.acceptanceCriteria.map((a, i) => <li key={i}>{a}</li>)}</ul>
-              <div className="text-xs text-muted-foreground">Verified quotes: {story.verified.length ? story.verified.map((v) => `${v.id}: “${v.excerpt}”`).join(" · ") : "none"}</div></div>
-          ) : <PrdRead c={content} />}
-        </CardContent></Card>
-        <Card><CardContent className="space-y-4 p-4">
-          {!reviewer.trim() && <p className="text-sm text-destructive">Enter your reviewer name first.</p>}
-          {CRITERIA.map((c) => (
-            <fieldset key={c.key} disabled={locked}><legend className="text-sm font-medium">{c.label}</legend><p className="text-xs text-muted-foreground">{c.help}</p>
-              <div className="mt-1 flex gap-1">{SCALE.map((n) => (
-                <button key={n} type="button" aria-pressed={r.scores[c.key] === n} aria-label={`${c.label} ${n}`} onClick={() => setR({ ...r, scores: { ...r.scores, [c.key]: n } })}
-                  className={`h-8 w-8 rounded-md border text-sm ${r.scores[c.key] === n ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}>{n}</button>
-              ))}</div></fieldset>
-          ))}
-          <label className="block text-sm font-medium">Unsupported claims (count)
-            <Input type="number" min={0} step={1} disabled={locked} value={r.unsupportedClaims ?? ""} onChange={(e) => setR({ ...r, unsupportedClaims: e.target.value === "" ? null : Math.max(0, Math.floor(Number(e.target.value))) })} /></label>
-          <label className="block text-sm font-medium">Notes<Textarea disabled={locked} value={r.notes} onChange={(e) => setR({ ...r, notes: e.target.value })} placeholder="Which claims were unsupported? What would you change?" /></label>
-          <div className="flex flex-wrap gap-2">
-            {!locked && <Button size="sm" variant="outline" disabled={!reviewer.trim()} onClick={() => { const x = { ...r, reviewer, updatedAt: new Date().toISOString() }; setR(x); onSave(x); toast.success("Draft saved"); }}>Save draft</Button>}
-            {!locked && <Button size="sm" disabled={!reviewer.trim()} onClick={() => { const res = completeReview({ ...r, reviewer }, new Date().toISOString()); if (!res.ok) { toast.error(res.reason); return; } setR(res.review); onSave(res.review); toast.success("Review completed"); }}>Complete review</Button>}
-            {locked && <Button size="sm" variant="outline" onClick={() => { const x = { ...r, status: "in_progress" as const, updatedAt: new Date().toISOString() }; delete x.completedAt; setR(x); onSave(x); }}>Reopen</Button>}
-            {existing && <Button size="sm" variant="ghost" onClick={() => onDelete(r.id)}>Delete</Button>}
-          </div>
-        </CardContent></Card>
-      </div>
-    );
-  }
+function ReviewForm({ item, reviewer, existing, onSave, onDelete }: { item: Item; reviewer: string; existing: HumanReview | undefined; onSave: (r: HumanReview) => void; onDelete: (id: string) => void }) {
+  const { aiPrds } = useVoc();
+  const prd = aiPrds.find((p) => p.id === item.prdId)!;
+  const content = prd.revisions[item.revNo - 1]!.content;
+  const story = item.storyId ? content.stories.find((s) => s.id === item.storyId) : undefined;
+  const [r, setR] = useState<HumanReview>(existing ?? { id: `HR-${Date.now().toString(36)}`, prdId: item.prdId, revNo: item.revNo, target: item.target, ...(item.storyId ? { storyId: item.storyId } : {}), reviewer, scores: {}, unsupportedClaims: null, notes: "", status: "in_progress", updatedAt: new Date().toISOString() });
+  const locked = r.status === "completed";
+  return (
+    <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
+      <Card><CardContent className="max-h-[75vh] overflow-auto p-4 text-sm">
+        {story ? (
+          <div className="space-y-2"><p className="font-medium">As a {story.persona}, I want {story.capability}, so that {story.outcome}.</p>
+            <ul className="list-disc pl-5">{story.acceptanceCriteria.map((a, i) => <li key={i}>{a}</li>)}</ul>
+            <div className="text-xs text-muted-foreground">Verified quotes: {story.verified.length ? story.verified.map((v) => `${v.id}: “${v.excerpt}”`).join(" · ") : "none"}</div></div>
+        ) : <PrdRead c={content} />}
+      </CardContent></Card>
+      <Card><CardContent className="space-y-4 p-4">
+        {!reviewer.trim() && <p className="text-sm text-destructive">Enter your reviewer name first.</p>}
+        {CRITERIA.map((c) => (
+          <fieldset key={c.key} disabled={locked}><legend className="text-sm font-medium">{c.label}</legend><p className="text-xs text-muted-foreground">{c.help}</p>
+            <div className="mt-1 flex gap-1">{SCALE.map((n) => (
+              <button key={n} type="button" aria-pressed={r.scores[c.key] === n} aria-label={`${c.label} ${n}`} onClick={() => setR({ ...r, scores: { ...r.scores, [c.key]: n } })}
+                className={`h-8 w-8 rounded-md border text-sm ${r.scores[c.key] === n ? "border-primary bg-primary text-primary-foreground" : "hover:bg-muted"}`}>{n}</button>
+            ))}</div></fieldset>
+        ))}
+        <label className="block text-sm font-medium">Unsupported claims (count)
+          <Input type="number" min={0} step={1} disabled={locked} value={r.unsupportedClaims ?? ""} onChange={(e) => setR({ ...r, unsupportedClaims: e.target.value === "" ? null : Math.max(0, Math.floor(Number(e.target.value))) })} /></label>
+        <label className="block text-sm font-medium">Notes<Textarea disabled={locked} value={r.notes} onChange={(e) => setR({ ...r, notes: e.target.value })} placeholder="Which claims were unsupported? What would you change?" /></label>
+        <div className="flex flex-wrap gap-2">
+          {!locked && <Button size="sm" variant="outline" disabled={!reviewer.trim()} onClick={() => { const x = { ...r, reviewer, updatedAt: new Date().toISOString() }; setR(x); onSave(x); toast.success("Draft saved"); }}>Save draft</Button>}
+          {!locked && <Button size="sm" disabled={!reviewer.trim()} onClick={() => { const res = completeReview({ ...r, reviewer }, new Date().toISOString()); if (!res.ok) { toast.error(res.reason); return; } setR(res.review); onSave(res.review); toast.success("Review completed"); }}>Complete review</Button>}
+          {locked && <Button size="sm" variant="outline" onClick={() => { const x = { ...r, status: "in_progress" as const, updatedAt: new Date().toISOString() }; delete x.completedAt; setR(x); onSave(x); }}>Reopen</Button>}
+          {existing && <Button size="sm" variant="ghost" onClick={() => onDelete(r.id)}>Delete</Button>}
+        </div>
+      </CardContent></Card>
+    </div>
+  );
 }

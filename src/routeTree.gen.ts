@@ -16,6 +16,7 @@ import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as PrdRouteImport } from './routes/prd'
 import { Route as PrioritizationRouteImport } from './routes/prioritization'
+import { Route as ReviewRouteImport } from './routes/review'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TasksRouteImport } from './routes/tasks'
 
@@ -54,6 +55,11 @@ const PrioritizationRoute = PrioritizationRouteImport.update({
   path: '/prioritization',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewRoute = ReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/knowledge': typeof KnowledgeRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
+  '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/knowledge': typeof KnowledgeRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
+  '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/knowledge': typeof KnowledgeRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
+  '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/prd'
     | '/prioritization'
+    | '/review'
     | '/settings'
     | '/tasks'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/prd'
     | '/prioritization'
+    | '/review'
     | '/settings'
     | '/tasks'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/knowledge'
     | '/prd'
     | '/prioritization'
+    | '/review'
     | '/settings'
     | '/tasks'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   KnowledgeRoute: typeof KnowledgeRoute
   PrdRoute: typeof PrdRoute
   PrioritizationRoute: typeof PrioritizationRoute
+  ReviewRoute: typeof ReviewRoute
   SettingsRoute: typeof SettingsRoute
   TasksRoute: typeof TasksRoute
 }
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrioritizationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/review': {
+      id: '/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof ReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   KnowledgeRoute: KnowledgeRoute,
   PrdRoute: PrdRoute,
   PrioritizationRoute: PrioritizationRoute,
+  ReviewRoute: ReviewRoute,
   SettingsRoute: SettingsRoute,
   TasksRoute: TasksRoute,
 }
