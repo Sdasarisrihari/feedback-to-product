@@ -23,8 +23,10 @@ export type Database = {
           model: string
           notes: string
           owner_id: string
+          provenance: string
           run_id: string
           signature: string
+          source_rejections: Json
           truncated: boolean
           updated_at: string
         }
@@ -36,8 +38,10 @@ export type Database = {
           model: string
           notes?: string
           owner_id?: string
+          provenance?: string
           run_id: string
           signature: string
+          source_rejections?: Json
           truncated?: boolean
           updated_at?: string
         }
@@ -49,8 +53,10 @@ export type Database = {
           model?: string
           notes?: string
           owner_id?: string
+          provenance?: string
           run_id?: string
           signature?: string
+          source_rejections?: Json
           truncated?: boolean
           updated_at?: string
         }
@@ -255,6 +261,62 @@ export type Database = {
           warnings?: Json
         }
         Relationships: []
+      }
+      human_reviews: {
+        Row: {
+          completed_at: string | null
+          id: string
+          notes: string
+          owner_id: string
+          prd_id: string
+          rev_no: number
+          reviewer: string
+          scores: Json
+          status: string
+          story_id: string | null
+          target: string
+          unsupported_claims: number | null
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id: string
+          notes?: string
+          owner_id?: string
+          prd_id: string
+          rev_no: number
+          reviewer?: string
+          scores?: Json
+          status?: string
+          story_id?: string | null
+          target: string
+          unsupported_claims?: number | null
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          notes?: string
+          owner_id?: string
+          prd_id?: string
+          rev_no?: number
+          reviewer?: string
+          scores?: Json
+          status?: string
+          story_id?: string | null
+          target?: string
+          unsupported_claims?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "human_reviews_owner_id_prd_id_rev_no_fkey"
+            columns: ["owner_id", "prd_id", "rev_no"]
+            isOneToOne: false
+            referencedRelation: "prd_revisions"
+            referencedColumns: ["owner_id", "prd_id", "rev_no"]
+          },
+        ]
       }
       import_runs: {
         Row: {
