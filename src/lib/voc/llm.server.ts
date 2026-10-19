@@ -15,7 +15,7 @@ export function mapGatewayError(err: unknown): Extract<AnalysisResult, { ok: fal
   if (status === 402) return { ok: false, code: "credits", message: "AI credits are exhausted. Add credits in Settings → Plans & credits, then retry." };
   if (status === 401) return { ok: false, code: "not_configured", message: "The AI service key is missing or invalid on the server." };
   if (status === 403) return { ok: false, code: "denied", message: "The AI service denied this request (workspace limit or policy)." };
-  if (e?.name?.includes("NoObjectGenerated") || e?.name?.includes("TypeValidation")) return { ok: false, code: "bad_output", message: "The model returned output that failed schema validation. Nothing was saved." };
+  if (e?.name?.includes("NoObjectGenerated") || e?.name?.includes("NoOutputGenerated") || e?.name?.includes("TypeValidation")) return { ok: false, code: "bad_output", message: "The model returned output that failed schema validation. Nothing was saved." };
   return { ok: false, code: "upstream", message: "The AI service is unavailable right now. The keyword baseline is still available." };
 }
 
@@ -38,7 +38,7 @@ export async function callStructured<T>(schema: { safeParse: (v: unknown) => { s
     return { ok: true, data: parsed.data };
   } catch (err) {
     const e = err as { statusCode?: number; name?: string };
-    console.error("[voc] model call failed", { status: e?.statusCode, name: e?.name });
+    console.error("[voc] model call failed", { status: e?.statusCode, name: e?.name, cause: String((err as { cause?: unknown })?.cause ?? (err as Error)?.message ?? "").slice(0, 300) });
     return mapGatewayError(err);
   }
 }
