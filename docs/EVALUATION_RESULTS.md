@@ -40,3 +40,6 @@ Per-theme (LLM): sync P1.00/R0.86, notifications P1.00/R1.00, reporting P1.00/R1
 ## Human judgments
 
 PRD/story acceptance rate is recorded in PRD Studio (Accept / Needs changes). **No human reviews have been recorded yet**, so no acceptance rate is claimed.
+
+## Access-control check (manual SQL, 2026-10-19)
+Simulated users A and B plus an anonymous visitor: B could not read, update or delete A's rows; A could not insert rows owned by B; anonymous had no table access; PRD revisions could not be updated. Result: **passed** (after revoking default anonymous grants, which the first run caught).
