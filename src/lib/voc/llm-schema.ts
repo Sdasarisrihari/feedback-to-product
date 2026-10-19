@@ -61,7 +61,7 @@ export function groundLlmOutput(out: LlmOutput, records: AnalysisInputRecord[]):
     }
     const cited = new Set(evidence.map((e) => e.id));
     const query = `${t.name} ${t.summary}`;
-    const related = index.search(query, 8, 2).filter((h) => !cited.has(h.id)).slice(0, 5)
+    const related = index.search(query, 8, 1).filter((h) => !cited.has(h.id)).slice(0, 5)
       .map((h) => ({ id: h.id, score: Math.round(h.score * 100) / 100, excerpt: bestExcerpt(byId.get(h.id)!.text, query) }));
     const recs = evidence.map((e) => byId.get(e.id)!);
     const sentiment = { positive: 0, neutral: 0, negative: 0, unrated: 0 };
