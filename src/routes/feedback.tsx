@@ -57,7 +57,7 @@ function Explorer() {
   async function onFile(f: File | undefined) {
     if (!f) return;
     if (f.size > MAX_BYTES) { toast.error("File is larger than 2 MB. Split it and import in parts."); return; }
-    if (!/\.csv$/i.test(f.name)) { toast.error("Only .csv files are supported in this phase."); return; }
+    if (!/\.csv$/i.test(f.name)) { toast.error("Only .csv files are supported for feedback import."); return; }
     const run = importCsv(await f.text(), f.name);
     if (run?.fatalError) toast.error(run.fatalError); else toast.success(`Imported ${f.name}`);
     if (fileRef.current) fileRef.current.value = "";

@@ -6,6 +6,7 @@
  */
 import { z } from "zod/v4";
 import { Bm25Index, bestExcerpt } from "./bm25";
+import { verifyCitations } from "./grounding";
 import type { EvidenceRef, FeedbackRecord, Insight } from "./types";
 
 export const MAX_RECORDS = 300;
@@ -38,27 +39,17 @@ function slug(s: string, i: number) {
   return `llm-${i + 1}-${s.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 30)}`;
 }
 
-/** Find quote verbatim (case-insensitive, whitespace-trimmed) and return the original-case slice. */
-export function locateQuote(text: string, quote: string): string | null {
-  const q = quote.trim().replace(/^["“]|["”]$/g, "").trim();
-  if (q.length < 8) return null;
-  const i = text.toLowerCase().indexOf(q.toLowerCase());
-  return i === -1 ? null : text.slice(i, i + q.length);
-}
+export { locateQuote } from "./grounding";
 
 export function groundLlmOutput(out: LlmOutput, records: AnalysisInputRecord[]): Insight[] {
   const byId = new Map(records.map((r) => [r.id, r]));
   const index = new Bm25Index(records.map((r) => ({ id: r.id, text: r.text })));
   return out.themes.map((t, i) => {
+    const texts = new Map(records.map((r) => [r.id, r.text]));
+    const v = verifyCitations(t.citations, texts);
+    const rejected: NonNullable<Insight["rejectedCitations"]> = v.rejected.map((r) => ({ ...r, reason: r.reason.replace("provided evidence", "analysed data") }));
     const evidence: EvidenceRef[] = [];
-    const rejected: NonNullable<Insight["rejectedCitations"]> = [];
-    for (const c of t.citations) {
-      const r = byId.get(c.id);
-      if (!r) { rejected.push({ id: c.id, quote: c.quote, reason: "Record ID not in the analysed data" }); continue; }
-      const excerpt = locateQuote(r.text, c.quote);
-      if (!excerpt) { rejected.push({ id: c.id, quote: c.quote, reason: "Quote does not appear verbatim in the record" }); continue; }
-      if (!evidence.some((e) => e.id === c.id)) evidence.push({ id: c.id, score: 1, excerpt });
-    }
+    for (const c of v.verified) if (!evidence.some((e) => e.id === c.id)) evidence.push({ id: c.id, score: 1, excerpt: c.excerpt });
     const cited = new Set(evidence.map((e) => e.id));
     const query = `${t.name} ${t.summary}`;
     const related = index.search(query, 8, 1).filter((h) => !cited.has(h.id)).slice(0, 5)

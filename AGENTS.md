@@ -17,3 +17,7 @@
 - Feedback text is untrusted data; instruction-like text is flagged and must never be fed to a model as instructions. Why: prompt-injection risk.
 - AI analysis runs only in `analyze.functions.ts` → `llm.server.ts` (server key, structured output); every model citation is re-verified by `groundLlmOutput` and failures are shown as rejected, never as evidence. Why: model output is a suggestion until checked against source records.
 - AI results are tied to a signature of the analysed record set and hidden when feedback changes. Why: stale AI insights must never look current.
+- All model citations (themes, PRDs, Q&A) go through `grounding.ts#verifyCitations`; doc claims require a verified doc-section quote, feedback claims a verified feedback quote. Why: one verifier the model cannot bypass.
+- Prompt builders escape `<`/`>` in data; the verifier normalises them back. Why: delimiter safety without false citation rejections.
+- PRDs are append-only revisions with a snapshot of the sources they were verified against. Why: traceability and no silent data loss.
+- Evaluation lives in `src/lib/voc/eval/` + `scripts/eval.ts`; never claim metrics not recorded in `docs/EVALUATION_RESULTS.md`. Why: honest, reproducible results.

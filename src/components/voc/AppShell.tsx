@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { BarChart3, ClipboardCheck, FileText, Lightbulb, ListOrdered, Menu, MessageSquareText, Settings, X } from "lucide-react";
+import { BarChart3, BookOpen, ClipboardCheck, FileText, Lightbulb, ListOrdered, Menu, MessageSquareText, Settings, X } from "lucide-react";
 
 const NAV = [
   { to: "/", label: "Overview", icon: BarChart3 },
@@ -9,6 +9,7 @@ const NAV = [
   { to: "/prioritization", label: "Prioritization", icon: ListOrdered },
   { to: "/prd", label: "PRD Studio", icon: FileText },
   { to: "/tasks", label: "Task Review", icon: ClipboardCheck },
+  { to: "/knowledge", label: "Knowledge Base", icon: BookOpen },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
@@ -32,9 +33,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
         </nav>
-        <div className="m-3 rounded-md border border-sidebar-border p-3 text-xs leading-relaxed opacity-80">
-          Phase 3a · synthetic data · server-side AI analysis with verified citations
-        </div>
       </aside>
       <div className="flex-1 lg:pl-64">
         <header className="flex items-center gap-3 border-b bg-card px-4 py-3 lg:hidden">

@@ -66,7 +66,7 @@ function Tasks() {
     <>
       <PageHeader title="Task Review" description="Draft tasks stay local until a human approves them. Rejected tasks never create an external side effect." />
       <div className="mb-5 rounded-md border bg-card p-3 text-sm">
-        <strong>Task destination: not connected.</strong> Approved tasks ({approved}) are stored in this workspace only. GitHub Issues export is planned for Phase 4 and will require a second explicit confirmation.
+        <strong>Task destination: not connected.</strong> Approved tasks ({approved}) are stored in this workspace only. GitHub Issues export is not built yet; when added it will require a second explicit confirmation.
       </div>
       {!tasks.length ? <EmptyState title="No draft tasks" body="Generate a PRD and send its stories here for review." action={<Button asChild><Link to="/prd">Open PRD Studio</Link></Button>} /> : (
         <div className="space-y-4">{tasks.map((t) => <TaskCard key={t.id} t={t} />)}</div>

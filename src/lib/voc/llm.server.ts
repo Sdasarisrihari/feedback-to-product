@@ -1,7 +1,9 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { Output, streamText } from "ai";
 import { groundLlmOutput, llmOutputSchema, type AnalysisInputRecord, type AnalysisResult } from "./llm-schema";
-import { ANALYSIS_INSTRUCTIONS, buildAnalysisPrompt } from "./prompt";
+import { ANALYSIS_INSTRUCTIONS, PRD_INSTRUCTIONS, QA_INSTRUCTIONS, buildAnalysisPrompt, buildPrdPrompt, buildQaPrompt } from "./prompt";
+import { groundPrd, prdOutputSchema, type PrdResult, type PrdSourceInput } from "./prd-schema";
+import { groundAnswer, qaOutputSchema, type QaInput, type QaResult } from "./qa-schema";
 
 export const ANALYSIS_MODEL = "openai/gpt-6-astra";
 const GATEWAY = "https://ai.gateway.lovable.dev/v1";
@@ -17,32 +19,48 @@ export function mapGatewayError(err: unknown): Extract<AnalysisResult, { ok: fal
   return { ok: false, code: "upstream", message: "The AI service is unavailable right now. The keyword baseline is still available." };
 }
 
-export async function runLlmAnalysis(records: AnalysisInputRecord[], apiKey: string, truncated: boolean): Promise<AnalysisResult> {
-  const t0 = Date.now();
-  const provider = createOpenAI({
-    baseURL: GATEWAY,
-    apiKey,
-    headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
-  });
+type Fail = Extract<AnalysisResult, { ok: false }>;
+
+/** One structured, streamed model call. Returns a typed failure instead of throwing. */
+export async function callStructured<T>(schema: { safeParse: (v: unknown) => { success: true; data: T } | { success: false } }, instructions: string, prompt: string, apiKey: string, effort: "low" | "medium" = "low"): Promise<{ ok: true; data: T } | Fail> {
+  const provider = createOpenAI({ baseURL: GATEWAY, apiKey, headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" } });
   try {
     const result = streamText({
       model: provider.responses(ANALYSIS_MODEL),
-      instructions: ANALYSIS_INSTRUCTIONS,
-      prompt: buildAnalysisPrompt(records),
-      output: Output.object({ schema: llmOutputSchema }),
+      instructions,
+      prompt,
+      output: Output.object({ schema: schema as never }),
       maxRetries: 1,
-      providerOptions: {
-        openai: { forceReasoning: true, reasoningEffort: "low", reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] },
-      },
+      providerOptions: { openai: { forceReasoning: true, reasoningEffort: effort, reasoningSummary: "auto", store: false, include: ["reasoning.encrypted_content"] } },
     });
-    const out = await result.output;
-    const parsed = llmOutputSchema.safeParse(out);
+    const parsed = schema.safeParse(await result.output);
     if (!parsed.success) return { ok: false, code: "bad_output", message: "The model returned output that failed schema validation. Nothing was saved." };
-    return { ok: true, model: ANALYSIS_MODEL, durationMs: Date.now() - t0, inputCount: records.length, truncated, insights: groundLlmOutput(parsed.data, records), notes: parsed.data.notes };
+    return { ok: true, data: parsed.data };
   } catch (err) {
-    // Log status/name only — never prompt contents or keys.
     const e = err as { statusCode?: number; name?: string };
-    console.error("[voc] LLM analysis failed", { status: e?.statusCode, name: e?.name });
+    console.error("[voc] model call failed", { status: e?.statusCode, name: e?.name });
     return mapGatewayError(err);
   }
+}
+
+export async function runLlmAnalysis(records: AnalysisInputRecord[], apiKey: string, truncated: boolean): Promise<AnalysisResult> {
+  const t0 = Date.now();
+  const r = await callStructured(llmOutputSchema, ANALYSIS_INSTRUCTIONS, buildAnalysisPrompt(records), apiKey);
+  if (!r.ok) return r;
+  return { ok: true, model: ANALYSIS_MODEL, durationMs: Date.now() - t0, inputCount: records.length, truncated, insights: groundLlmOutput(r.data, records), notes: r.data.notes };
+}
+
+export async function runPrdGeneration(input: PrdSourceInput, apiKey: string): Promise<PrdResult> {
+  const t0 = Date.now();
+  const r = await callStructured(prdOutputSchema, PRD_INSTRUCTIONS, buildPrdPrompt(input), apiKey, "medium");
+  if (!r.ok) return r;
+  const { content, report } = groundPrd(r.data, input);
+  return { ok: true, model: ANALYSIS_MODEL, durationMs: Date.now() - t0, content, report };
+}
+
+export async function runQa(input: QaInput, apiKey: string): Promise<QaResult> {
+  const t0 = Date.now();
+  const r = await callStructured(qaOutputSchema, QA_INSTRUCTIONS, buildQaPrompt(input), apiKey);
+  if (!r.ok) return r;
+  return { ok: true, model: ANALYSIS_MODEL, durationMs: Date.now() - t0, result: groundAnswer(r.data, input) };
 }
