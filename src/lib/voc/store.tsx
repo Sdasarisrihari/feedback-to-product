@@ -121,7 +121,7 @@ export function VocProvider({ children }: { children: ReactNode }) {
     const res = await loadWorkspace();
     if (userRef.current?.id !== user.id) return; // signed out / switched meanwhile
     if (!res.ok) { setCloud({ mode: "cloud", email: user.email, load: "error", save: "saved", message: res.message }); return; }
-    const w = fromRows(res.rows, { weights: DEFAULT_WEIGHTS });
+    const w = fromRows(JSON.parse(res.rowsJson) as Partial<Rows>, { weights: DEFAULT_WEIGHTS });
     const next: Persisted = { ...empty, ...w };
     synced.current = toRows({ ...w });
     setState(next);

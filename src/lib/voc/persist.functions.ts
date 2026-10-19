@@ -30,11 +30,11 @@ async function selectAll(db: Db, t: Table) {
 /** Loads the signed-in user's workspace. RLS limits every query to the caller's rows. */
 export const loadWorkspace = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<{ ok: true; rows: Partial<Rows> } | { ok: false; message: string }> => {
+  .handler(async ({ context }): Promise<{ ok: true; rowsJson: string } | { ok: false; message: string }> => {
     try {
       const rows: Partial<Rows> = {};
       for (const t of TABLES) rows[t] = (await selectAll(context.supabase as unknown as Db, t)).map(({ owner_id: _o, updated_at: _u, ...r }) => r);
-      return { ok: true, rows };
+      return { ok: true, rowsJson: JSON.stringify(rows) };
     } catch (e) {
       console.error("[voc] loadWorkspace failed", (e as Error).message);
       return { ok: false, message: "Could not load your saved workspace. Retry in a moment." };
