@@ -8,6 +8,13 @@
       "when": 1792411590306,
       "tag": "0000_voc_workspace_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792411871740,
+      "tag": "0001_revoke_anon_workspace_tables",
+      "breakpoints": true
     }
   ]
 }
