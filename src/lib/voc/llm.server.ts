@@ -36,8 +36,10 @@ type Fail = Extract<AnalysisResult, { ok: false }>;
 /** One structured, streamed model call. Returns a typed failure instead of throwing. */
 export async function callStructured<T>(schema: { safeParse: (v: unknown) => { success: true; data: T } | { success: false } }, instructions: string, prompt: string, apiKey: string, effort: "low" | "medium" = "low"): Promise<{ ok: true; data: T } | Fail> {
   const provider = createOpenAI({ baseURL: GATEWAY, apiKey, headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" } });
+  let streamError: unknown;
   try {
     const result = streamText({
+      onError: ({ error }) => { streamError = error; }, // the HTTP error (e.g. 402) arrives here, not on the thrown NoOutput error
       model: provider.responses(ANALYSIS_MODEL),
       instructions,
       prompt,
@@ -50,8 +52,9 @@ export async function callStructured<T>(schema: { safeParse: (v: unknown) => { s
     return { ok: true, data: parsed.data };
   } catch (err) {
     const e = err as { statusCode?: number; name?: string };
-    console.error("[voc] model call failed", { status: findStatus(err), name: e?.name });
-    return mapGatewayError(err);
+    const cause = findStatus(err) ? err : streamError ?? err;
+    console.error("[voc] model call failed", { status: findStatus(cause), name: e?.name });
+    return mapGatewayError(cause);
   }
 }
 
