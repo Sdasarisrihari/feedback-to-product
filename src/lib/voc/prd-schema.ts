@@ -58,10 +58,10 @@ export interface PrdSourceInput {
 }
 
 export type PrdResult =
-  | { ok: true; model: string; durationMs: number; content: PrdContent; report: GroundingReport }
+  | { ok: true; model: string; durationMs: number; content: PrdContent; report: GroundingReport } & { provenance?: "server_verified" | "browser_supplied"; sourceRejections?: { id: string; kind: "feedback" | "doc"; reason: "unknown_or_not_owned" | "text_mismatch" }[] }
   | { ok: false; code: string; message: string };
 
-export function groundPrd(out: PrdOutput, input: PrdSourceInput): { content: PrdContent; report: GroundingReport } {
+export function groundPrd(out: PrdOutput, input: PrdSourceInput): { content: PrdContent; report: GroundingReport } & { provenance?: "server_verified" | "browser_supplied"; sourceRejections?: { id: string; kind: "feedback" | "doc"; reason: "unknown_or_not_owned" | "text_mismatch" }[] } {
   const fb = new Map(input.feedback.map((f) => [f.id, f.text]));
   const dc = new Map(input.docs.map((d) => [d.id, d.text]));
   const report: GroundingReport = { citations: 0, verified: 0, rejected: 0, downgrades: [] };
