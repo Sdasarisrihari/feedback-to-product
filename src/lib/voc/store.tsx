@@ -1,12 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { analyzeFeedback } from "./analysis";
+import { analyzeWithLlm } from "./analyze.functions";
+import type { AnalysisResult } from "./llm-schema";
 import { parseFeedbackCsv } from "./csv";
 import { reduceTasks, type PrdDraft, type TaskAction } from "./drafts";
 import { DEFAULT_WEIGHTS } from "./prioritize";
 import { SAMPLE_CSV, SAMPLE_FILENAME } from "./sample-data";
 import type { DraftTask, FeedbackRecord, ImportRun, Insight, Weights } from "./types";
 
-export interface AnalysisRun { id: string; at: string; method: "bm25-baseline"; records: number; themes: number; durationMs: number }
+export interface AnalysisRun { id: string; at: string; method: "bm25-baseline" | "llm"; model?: string | undefined; records: number; themes: number; durationMs: number }
 
 interface Persisted {
   records: FeedbackRecord[];
@@ -16,14 +18,27 @@ interface Persisted {
   effort: Record<string, number>;
   prds: Record<string, PrdDraft>;
   tasks: DraftTask[];
+  llm: (Extract<AnalysisResult, { ok: true }> & { at: string; signature: string }) | null;
+}
+
+export type LlmStatus = { state: "idle" } | { state: "running" } | { state: "error"; code: string; message: string };
+
+/** Changes whenever the analysable record set changes, so stale AI results are never shown as current. */
+export function recordsSignature(records: FeedbackRecord[]) {
+  return records.filter((r) => !r.duplicateOf).map((r) => r.id).join("|");
 }
 
 const KEY = "voc-workspace-v1";
-const empty: Persisted = { records: [], imports: [], runs: [], weights: DEFAULT_WEIGHTS, effort: {}, prds: {}, tasks: [] };
+const empty: Persisted = { records: [], imports: [], runs: [], weights: DEFAULT_WEIGHTS, effort: {}, prds: {}, tasks: [], llm: null };
 
 interface Ctx extends Persisted {
   ready: boolean;
   insights: Insight[];
+  baselineInsights: Insight[];
+  analysisSource: "llm" | "baseline";
+  llmStale: boolean;
+  llmStatus: LlmStatus;
+  runLlm: () => Promise<void>;
   importCsv: (text: string, filename: string) => ImportRun;
   loadSample: () => void;
   reset: () => void;
@@ -61,7 +76,30 @@ export function VocProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => { if (ready) localStorage.setItem(KEY, JSON.stringify(state)); }, [state, ready]);
 
-  const insights = useMemo(() => analyzeFeedback(state.records), [state.records]);
+  const [llmStatus, setLlmStatus] = useState<LlmStatus>({ state: "idle" });
+  const baselineInsights = useMemo(() => analyzeFeedback(state.records), [state.records]);
+  const sig = useMemo(() => recordsSignature(state.records), [state.records]);
+  const llmStale = !!state.llm && state.llm.signature !== sig;
+  const useLlm = !!state.llm && !llmStale;
+  const insights = useLlm ? state.llm!.insights : baselineInsights;
+
+  const runLlm = useCallback(async () => {
+    setLlmStatus({ state: "running" });
+    const unique = state.records.filter((r) => !r.duplicateOf);
+    try {
+      const res = await analyzeWithLlm({ data: { records: unique.map((r) => ({ id: r.id, text: r.text, source: r.source, segment: r.segment, rating: r.rating })) } });
+      if (!res.ok) { setLlmStatus({ state: "error", code: res.code, message: res.message }); return; }
+      const at = new Date().toISOString();
+      setState((s) => ({
+        ...s,
+        llm: { ...res, at, signature: recordsSignature(s.records) },
+        runs: [{ id: `run_${Date.now().toString(36)}`, at, method: "llm" as const, model: res.model, records: res.inputCount, themes: res.insights.length, durationMs: res.durationMs }, ...s.runs].slice(0, 20),
+      }));
+      setLlmStatus({ state: "idle" });
+    } catch {
+      setLlmStatus({ state: "error", code: "network", message: "Could not reach the server. Check your connection and retry." });
+    }
+  }, [state.records]);
 
   const importCsv = useCallback((text: string, filename: string) => {
     let out!: ImportRun;
@@ -74,7 +112,7 @@ export function VocProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value: Ctx = {
-    ...state, ready, insights, importCsv,
+    ...state, ready, insights, baselineInsights, analysisSource: useLlm ? "llm" : "baseline", llmStale, llmStatus, runLlm, importCsv,
     loadSample: () => importCsv(SAMPLE_CSV, SAMPLE_FILENAME) && undefined,
     reset: () => setState(empty),
     runAnalysis: () => setState((s) => ({ ...s, runs: [runBaseline(s.records).run, ...s.runs].slice(0, 20) })),

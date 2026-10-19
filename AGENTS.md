@@ -15,3 +15,5 @@
 - Any output not produced by a connected model must be labeled in the UI (MockNotice) and never presented as AI results. Why: roadmap forbids simulated AI and fabricated evidence.
 - Evidence excerpts must be verbatim substrings of stored feedback with their source IDs; duplicates are flagged, never dropped. Why: traceability is the product's core promise.
 - Feedback text is untrusted data; instruction-like text is flagged and must never be fed to a model as instructions. Why: prompt-injection risk.
+- AI analysis runs only in `analyze.functions.ts` → `llm.server.ts` (server key, structured output); every model citation is re-verified by `groundLlmOutput` and failures are shown as rejected, never as evidence. Why: model output is a suggestion until checked against source records.
+- AI results are tied to a signature of the analysed record set and hidden when feedback changes. Why: stale AI insights must never look current.

@@ -18,7 +18,7 @@ export function scoreOpportunities(insights: Insight[], weights: Weights, effort
       const e = effort[insight.themeId] ?? 3;
       const parts: Omit<ScoreFactor, "contribution" | "weight">[] = [
         { key: "frequency", label: "Frequency", raw: `${insight.frequency} records`, normalized: insight.frequency / maxFreq },
-        { key: "severity", label: "Severity", raw: `${insight.severity}/5 (heuristic)`, normalized: insight.severity / 5 },
+        { key: "severity", label: "Severity", raw: `${insight.severity}/5 (${insight.origin === "llm" ? "AI-suggested" : "heuristic"})`, normalized: insight.severity / 5 },
         { key: "impact", label: "Customer impact", raw: `${Math.round(insight.enterpriseShare * 100)}% enterprise`, normalized: insight.enterpriseShare },
         { key: "confidence", label: "Evidence confidence", raw: insight.confidence, normalized: CONF_VALUE[insight.confidence] },
         { key: "effort", label: "Effort (inverse)", raw: `${e}/5 PM estimate`, normalized: 1 - (e - 1) / 4 },

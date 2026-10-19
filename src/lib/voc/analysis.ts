@@ -58,7 +58,7 @@ export function analyzeFeedback(records: FeedbackRecord[]): Insight[] {
     else if (recs.length < 6 || sources < 2) { confidence = "medium"; confidenceReason += " Limited volume or source diversity."; }
     if (flagged) confidenceReason += ` ${flagged} record(s) have data-quality or safety flags.`;
     return {
-      themeId: t.id, name: t.name, productArea: t.productArea, kind: t.kind,
+      origin: "baseline" as const, themeId: t.id, name: t.name, productArea: t.productArea, kind: t.kind,
       evidence: ev, frequency: ev.length, sentiment, severity, enterpriseShare, confidence, confidenceReason,
       assumptions: [
         "Theme is a PM-defined seed; membership is keyword (BM25) matching, not semantic understanding.",

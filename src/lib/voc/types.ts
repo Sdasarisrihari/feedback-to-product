@@ -52,6 +52,11 @@ export interface Insight {
   confidence: "high" | "medium" | "low";
   confidenceReason: string;
   assumptions: string[];
+  origin?: "baseline" | "llm" | undefined;
+  summary?: string | undefined; // model-generated suggestion
+  rejectedCitations?: { id: string; quote: string; reason: string }[] | undefined;
+  related?: EvidenceRef[] | undefined; // BM25-retrieved, not cited by the model
+  openQuestions?: string[] | undefined;
 }
 
 export interface Weights {
