@@ -17,7 +17,6 @@ export function reconcileSources<T extends SubmittedSource>(
   for (const s of submitted) {
     const text = saved.get(s.id);
     if (text === undefined) { rejected.push({ id: s.id, kind, reason: "unknown_or_not_owned" }); continue; }
-    // Analysis input may be truncated client-side; compare on the submitted length only when it is a prefix cut.
     if (text !== s.text) { rejected.push({ id: s.id, kind, reason: "text_mismatch" }); continue; }
     accepted.push({ ...s, text }); // authoritative text from the database
   }
