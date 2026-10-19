@@ -22,7 +22,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 const INTEGRATIONS = [
-  { name: "Retrieval: BM25 lexical index", status: "Active", setup: "Baseline themes, related-record retrieval for AI themes, and PRD evidence. Embeddings only if evaluation shows value." },
+  { name: "Retrieval: BM25 lexical index", status: "Active", setup: "Feedback and product documentation (Markdown, text, CSV, PDF). Embeddings not added: labeled doc Recall@5 is 100% on the current corpus." },
   { name: "Persistent storage", status: "Browser only", setup: "Data is saved in this browser. A database is added with the backend." },
   { name: "MCP server", status: "Planned", setup: "Tools: search_feedback, get_theme_evidence, create_draft_task (draft-only, least privilege)." },
   { name: "n8n workflow", status: "Planned", setup: "Self-hosted n8n receives a validated insight batch, produces a digest, records run status." },
@@ -41,7 +41,7 @@ function Settings() {
             <div className="flex justify-between"><span>Insights currently shown</span><span className="font-mono">{analysisSource === "llm" ? "AI analysis" : "bm25-baseline"}</span></div>
             <div className="flex justify-between"><span>AI model (server-side)</span><span className="font-mono">{status.data?.model ?? "…"}</span></div>
             <div className="flex justify-between"><span>Server AI key</span>{status.isLoading ? <span>checking…</span> : status.data?.configured ? <Badge className="bg-accent text-accent-foreground">configured</Badge> : <Badge variant="outline" className="text-destructive">not configured</Badge>}</div>
-            <p className="text-muted-foreground">The key never reaches the browser. Model output is schema-validated and every quote is verified against the source record. PRD drafts are still templates.</p>
+            <p className="text-muted-foreground">The key never reaches the browser. Model output is schema-validated and every quote is verified against the source record. PRDs and Knowledge Base answers use the same verification.</p>
           </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-base">Data</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-sm">
