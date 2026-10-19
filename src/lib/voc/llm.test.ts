@@ -75,3 +75,14 @@ describe("model error handling", () => {
     expect(res.ok && res.insights[0]!.evidence[0]!.excerpt).toBe("I lose changes");
   });
 });
+
+import { mapGatewayError as mapErr } from "./llm.server";
+describe("gateway errors wrapped by streaming", () => {
+  it("finds a 402 nested in the cause chain and reports exhausted credits", () => {
+    const wrapped = Object.assign(new Error("No output generated"), { name: "AI_NoOutputGeneratedError", cause: Object.assign(new Error("aborted"), { cause: { statusCode: 402 } }) });
+    expect(mapErr(wrapped).code).toBe("credits");
+  });
+  it("finds a 429 inside a retry error's lastError", () => {
+    expect(mapErr({ name: "AI_RetryError", lastError: { statusCode: 429 } }).code).toBe("rate_limited");
+  });
+});

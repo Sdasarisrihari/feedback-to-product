@@ -8,9 +8,21 @@ import { groundAnswer, qaOutputSchema, type QaInput, type QaResult } from "./qa-
 export const ANALYSIS_MODEL = "openai/gpt-6-astra";
 const GATEWAY = "https://ai.gateway.lovable.dev/v1";
 
+/** Streaming errors wrap the HTTP status in a cause chain (e.g. NoOutputGenerated → APICallError 402). */
+export function findStatus(err: unknown, depth = 0): number | undefined {
+  if (!err || typeof err !== "object" || depth > 5) return undefined;
+  const e = err as { statusCode?: number; status?: number; cause?: unknown; lastError?: unknown; errors?: unknown[] };
+  const own = e.statusCode ?? (typeof e.status === "number" ? e.status : undefined);
+  if (own) return own;
+  for (const next of [e.cause, e.lastError, ...(Array.isArray(e.errors) ? e.errors : [])]) {
+    const s = findStatus(next, depth + 1); if (s) return s;
+  }
+  return undefined;
+}
+
 export function mapGatewayError(err: unknown): Extract<AnalysisResult, { ok: false }> {
   const e = err as { statusCode?: number; status?: number; message?: string; name?: string };
-  const status = e?.statusCode ?? e?.status;
+  const status = findStatus(err);
   if (status === 429) return { ok: false, code: "rate_limited", message: "The AI service is rate limited. Wait a minute and try again." };
   if (status === 402) return { ok: false, code: "credits", message: "AI credits are exhausted. Add credits in Settings → Plans & credits, then retry." };
   if (status === 401) return { ok: false, code: "not_configured", message: "The AI service key is missing or invalid on the server." };
@@ -38,7 +50,7 @@ export async function callStructured<T>(schema: { safeParse: (v: unknown) => { s
     return { ok: true, data: parsed.data };
   } catch (err) {
     const e = err as { statusCode?: number; name?: string };
-    console.error("[voc] model call failed", { status: e?.statusCode, name: e?.name, cause: String((err as { cause?: unknown })?.cause ?? (err as Error)?.message ?? "").slice(0, 300) });
+    console.error("[voc] model call failed", { status: findStatus(err), name: e?.name });
     return mapGatewayError(err);
   }
 }
