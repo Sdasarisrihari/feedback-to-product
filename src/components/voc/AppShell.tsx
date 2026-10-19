@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { AccountBlock, CloudBanners } from "@/components/voc/CloudBar";
 import { useState, type ReactNode } from "react";
-import { BarChart3, BookOpen, ClipboardCheck, FileText, Lightbulb, ListOrdered, Menu, MessageSquareText, Settings, X } from "lucide-react";
+import { BarChart3, BookOpen, ClipboardCheck, FileText, Lightbulb, ListOrdered, Menu, Star, MessageSquareText, Settings, X } from "lucide-react";
 
 const NAV = [
   { to: "/", label: "Overview", icon: BarChart3 },
@@ -10,6 +10,7 @@ const NAV = [
   { to: "/prioritization", label: "Prioritization", icon: ListOrdered },
   { to: "/prd", label: "PRD Studio", icon: FileText },
   { to: "/tasks", label: "Task Review", icon: ClipboardCheck },
+  { to: "/review", label: "Human Review", icon: Star },
   { to: "/knowledge", label: "Knowledge Base", icon: BookOpen },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
