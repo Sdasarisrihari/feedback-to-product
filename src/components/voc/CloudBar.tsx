@@ -15,7 +15,7 @@ export function AccountBlock() {
   return (
     <div className="m-3 space-y-2 rounded-md border border-sidebar-border p-3 text-xs">
       <div className="flex items-center gap-2"><Cloud className="h-3.5 w-3.5" /><span className="truncate">{cloud.email}</span></div>
-      <div className="opacity-80">{cloud.save === "saving" ? "Saving…" : cloud.save === "error" ? "Not saved" : "All changes saved"}</div>
+      <div className="opacity-80">{cloud.load === "loading" ? "Loading…" : cloud.load === "error" ? "Not loaded" : cloud.save === "saving" ? "Saving…" : cloud.save === "error" ? "Not saved" : "All changes saved"}</div>
       <button onClick={signOut} className="underline opacity-80 hover:opacity-100">Sign out</button>
     </div>
   );

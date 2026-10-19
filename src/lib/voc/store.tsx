@@ -157,6 +157,12 @@ export function VocProvider({ children }: { children: ReactNode }) {
     return () => { alive = false; sub.subscription.unsubscribe(); };
   }, [enterCloud, loadLocal, retryTick]);
 
+  const dirty = useRef(false);
+  useEffect(() => {
+    const warn = (e: BeforeUnloadEvent) => { if (dirty.current || saving.current) { e.preventDefault(); e.returnValue = ""; } };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, []);
   const stateRef = useRef(state);
   stateRef.current = state;
   const cloudRef = useRef(cloud);
@@ -170,7 +176,7 @@ export function VocProvider({ children }: { children: ReactNode }) {
     const snap = stateRef.current;
     const next = toRows({ ...snap, browserImportDone: snap.browserImportDone ?? false });
     const diff = diffRows(synced.current, next);
-    if (isEmptyDiff(diff)) return true;
+    if (isEmptyDiff(diff)) { setCloud((x) => (x.mode === "cloud" && x.save === "saving" ? { ...x, save: "saved" } : x)); return true; }
     saving.current = true;
     setCloud((x) => (x.mode === "cloud" ? { ...x, save: "saving" } : x));
     try {
@@ -191,7 +197,12 @@ export function VocProvider({ children }: { children: ReactNode }) {
     if (!ready) return;
     if (cloud.mode === "local") { localStorage.setItem(KEY, JSON.stringify(state)); return; }
     if (cloud.load !== "ready") return;
-    const t = setTimeout(() => { void syncNow(); }, 800);
+    // Show "Saving…" immediately so nobody (or no test) mistakes a pending change for a saved one.
+    const pending = !isEmptyDiff(diffRows(synced.current, toRows({ ...state, browserImportDone: state.browserImportDone ?? false })));
+    if (!pending) return;
+    dirty.current = true;
+    setCloud((x) => (x.mode === "cloud" && x.save === "saved" ? { ...x, save: "saving" } : x));
+    const t = setTimeout(() => { void syncNow().then((ok) => { if (ok) dirty.current = false; }); }, 800);
     return () => clearTimeout(t);
   }, [state, ready, cloud.mode, cloud.mode === "cloud" ? cloud.load : null, retryTick, syncNow]);
 

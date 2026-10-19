@@ -23,10 +23,12 @@ async def signed_in_page(p, errs):
     pg = await (await b.new_context(viewport={"width": 1280, "height": 1800})).new_page()
     pg.on("pageerror", lambda e: errs.append(str(e)[:200]))
     k, v = session()
-    await pg.goto(BASE + "/auth"); await pg.evaluate("([k, v]) => localStorage.setItem(k, v)", [k, v])
+    await pg.goto(BASE + "/settings"); await pg.evaluate("([k, v]) => localStorage.setItem(k, v)", [k, v])
     return b, pg
 
-async def saved(pg, t=90000): await pg.wait_for_selector("text=All changes saved", timeout=t)
+async def saved(pg, t=90000):
+    await pg.wait_for_selector("text=All changes saved", timeout=t)
+    await pg.wait_for_selector("text=Loading your saved workspace", state="detached", timeout=t)
 async def txt(pg): return await pg.evaluate("() => document.body.innerText")
 
 async def main(step):
@@ -39,13 +41,13 @@ async def main(step):
             out("Signed in" in t or "@" in t and "Sign out" in t, "sidebar shows signed-in account + Sign out", "Demo label absent" if "saved in this browser only" not in t else "demo label present")
             out("Copy this browser's data" not in t, "no repeat import offer for an already-imported workspace")
             await pg.reload(); await saved(pg); t = await txt(pg)
-            import re; m = re.search(r"Feedback records\s*\n\s*(\d+)", t); out(bool(m), "feedback restored after reload", f"overview shows {m.group(1) if m else '?'} unique records")
+            import re; m = re.search(r"Feedback records\s*(\d+)", t, re.I); out(bool(m), "feedback restored after reload", f"overview shows {m.group(1) if m else '?'} unique records")
         if step == "docs":
             await pg.goto(BASE + "/knowledge"); await saved(pg)
             btn = pg.get_by_role("button", name="Load sample docs")
             if await btn.count(): await btn.first.click(); await saved(pg)
             await pg.reload(); await saved(pg); await pg.wait_for_timeout(1500)
-            t = await txt(pg); out("Release notes" in t or "section" in t.lower(), "documents listed after reload")
+            t = await txt(pg); import re; m = re.search(r"Documents \((\d+)\)", t); out(bool(m) and int(m.group(1)) > 0, "documents listed after reload", m.group(0) if m else "?")
         if step == "analysis":
             await pg.goto(BASE + "/insights"); await saved(pg)
             await pg.get_by_role("button", name="AI analysis").first.click()
@@ -58,10 +60,12 @@ async def main(step):
             await pg.get_by_role("button", name="Generate PRD").click()
             await pg.wait_for_selector("text=Sources checked on the server", timeout=300000)
             out(True, "PRD shows 'checked on the server'")
+            import re
+            before = int((re.search(r"revision (\d+)", await txt(pg)) or [0, 0])[1])
             await pg.get_by_role("button", name="Edit").click()
             await pg.get_by_role("button", name="Save as new revision").click(); await saved(pg)
             await pg.reload(); await saved(pg); await pg.wait_for_timeout(1500)
-            t = await txt(pg); out("revision 2" in t, "PRD + revision 2 persist after reload")
+            t = await txt(pg); after = int((re.search(r"revision (\d+)", t) or [0, 0])[1]); out(after == before + 1, "edit adds a revision that persists after reload", f"revision {before} → {after}")
             out("Sources checked on the server" in t, "PRD provenance persists after reload")
         if step == "qa":
             await pg.goto(BASE + "/knowledge"); await saved(pg)
@@ -122,4 +126,5 @@ async def main(step):
         out(not errs, f"[{step}] no page errors", "; ".join(errs[:2]))
         await b.close()
 
-asyncio.run(main(sys.argv[1]))
+if __name__ == "__main__":
+    asyncio.run(main(sys.argv[1]))
