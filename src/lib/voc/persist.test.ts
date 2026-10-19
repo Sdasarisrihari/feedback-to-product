@@ -6,7 +6,7 @@ import { SAMPLE_CSV } from "./sample-data";
 import { sampleDocs } from "./sample-docs";
 import type { AiPrd } from "./drafts";
 
-function ws(): WorkspaceData {
+function build(): WorkspaceData {
   const { run, records } = parseFeedbackCsv(SAMPLE_CSV, "s.csv", [], "imp_sample");
   const prd: AiPrd = {
     id: "PRD-1", themeId: "t", themeName: "T", createdAt: "2026-10-19T00:00:00.000Z", model: "m", review: "draft",
@@ -20,6 +20,9 @@ function ws(): WorkspaceData {
     llm: null, browserImportDone: true,
   };
 }
+
+const FIXTURE = build();
+const ws = (): WorkspaceData => structuredClone(FIXTURE);
 
 describe("persistence mapping", () => {
   it("round-trips the workspace through database rows without losing source IDs", () => {
