@@ -5,5 +5,8 @@
 - [x] Docs ingestion (md/txt/csv/pdf), unified BM25 retrieval, grounded Q&A with capability verdicts
 - [x] Labeled eval set v1 (80) + harness + recorded results
 - [x] Persistent storage with Lovable Cloud + email/Google sign-in, one-time browser import (signed-in end-to-end check pending a real account)
-- [ ] Grow eval set to 100–200; human review of PRDs; severity grading
+- [ ] Grow eval set to 100–200; severity grading
+- [x] Server-side source authority, human review workflow, QA docs
+- [ ] Signed-in browser e2e (blocked: needs a confirmed account)
+- [ ] Collect ≥10 human reviews (blocked: needs reviewers)
 - [ ] MCP, n8n, GitHub Issues (after storage)
