@@ -33,7 +33,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           ))}
         </nav>
         <div className="m-3 rounded-md border border-sidebar-border p-3 text-xs leading-relaxed opacity-80">
-          Phase 2 build · synthetic data · LLM not connected
+          Phase 3a · synthetic data · server-side AI analysis with verified citations
         </div>
       </aside>
       <div className="flex-1 lg:pl-64">

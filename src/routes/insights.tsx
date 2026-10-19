@@ -44,7 +44,7 @@ function Insights() {
               <div className="mb-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
                 <div><div className="text-xs text-muted-foreground">Frequency</div><div className="font-mono">{i.frequency} records</div></div>
                 <div><div className="text-xs text-muted-foreground">Sentiment −/○/+</div><div className="font-mono">{i.sentiment.negative}/{i.sentiment.neutral}/{i.sentiment.positive} <span className="text-muted-foreground">({i.sentiment.unrated} unrated)</span></div></div>
-                <div><div className="text-xs text-muted-foreground">Severity (heuristic)</div><div className="font-mono">{i.severity}/5</div></div>
+                <div><div className="text-xs text-muted-foreground">{i.origin === "llm" ? "Severity (AI-suggested)" : "Severity (heuristic)"}</div><div className="font-mono">{i.severity}/5</div></div>
                 <div><div className="text-xs text-muted-foreground">Enterprise share</div><div className="font-mono">{Math.round(i.enterpriseShare * 100)}%</div></div>
               </div>
               <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{i.origin === "llm" ? "Verified evidence (cited by model, checked verbatim)" : "Supporting evidence (BM25 rank)"}</h4>
