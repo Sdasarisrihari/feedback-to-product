@@ -35,7 +35,7 @@ export const SAMPLE_LABELS: Record<string, GoldLabel> = {
 /** Known duplicates in the sample (record ID → original). */
 export const SAMPLE_DUPLICATES: Record<string, string> = { "FB-1045": "FB-1001", "FB-1010~L47": "FB-1010" };
 
-type Ev = [id: string, segment: string, rating: number | null, theme: GoldTheme, severity: number, text: string];
+type Ev = [id: string, segment: string, rating: number | null, theme: GoldTheme, severity: number, text: string, injection?: boolean];
 export const EVAL_ONLY: Ev[] = [
   ["EV-001", "enterprise", 1, "sync", 5, "After working on the train, none of my card updates made it to the server. Everything reverted."],
   ["EV-002", "smb", 2, "sync", 3, "Two teammates edited the same checklist and one person's edits silently vanished."],
