@@ -113,7 +113,7 @@ async def main(step):
             await pg.goto(BASE + "/feedback"); await saved(pg)
             await pg.get_by_role("button", name="Re-import sample").click(); await pg.wait_for_timeout(1500); await saved(pg)
             await pg.screenshot(path=f"{SHOTS}/dupe.png")
-            out(True, "re-import ran and saved (see DB counts)")
+            out(await pg.get_by_text("Already imported").count() > 0, "re-import of same file adds nothing and says so")
         if step == "expired":
             k, _ = session()
             await pg.goto(BASE + "/insights"); await saved(pg)
