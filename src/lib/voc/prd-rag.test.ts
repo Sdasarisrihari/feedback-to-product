@@ -140,6 +140,13 @@ describe("document ingestion & retrieval", () => {
     expect(chunkCsv("feature,status\nPDF export,planned")[0]!.text).toBe("feature: PDF export\nstatus: planned");
     expect(chunkMarkdown("")).toEqual([]);
   });
+  it("long documents are chunked without losing any text (no silent truncation)", () => {
+    const paras = Array.from({ length: 60 }, (_, i) => `Paragraph ${i + 1} ${"lorem ipsum dolor sit amet ".repeat(8)}`.trim());
+    const doc = buildDoc({ filename: "big.txt", text: paras.join("\n\n") }, { title: "Big", version: "1", kind: "other" }, new Set());
+    expect(doc.sections.length).toBeGreaterThan(1);
+    const rejoined = doc.sections.map((s) => s.text).join("\n\n");
+    for (let i = 1; i <= 60; i++) expect(rejoined).toContain(`Paragraph ${i}`);
+  });
   it("flags prompt injection inside documents", () => {
     const docs = sampleDocs();
     expect(docs[0]!.sections.some((s) => s.suspectedInjection)).toBe(true);

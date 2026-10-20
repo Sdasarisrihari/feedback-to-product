@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { search } from "../retrieval";
 import { sampleDocs } from "../sample-docs";
-import { EVAL_ONLY, RETRIEVAL_QUERIES, SAMPLE_LABELS } from "./dataset";
+import type { ProductDoc } from "../docs";
+import { CONFLICT_DOC_SECTIONS, EVAL_ONLY, RETRIEVAL_QUERIES, SAMPLE_LABELS } from "./dataset";
 import { runDeterministicEval, evalRecords } from "./harness";
 import { classification, recallAtK } from "./metrics";
 
@@ -36,4 +38,16 @@ describe("deterministic regression floor", () => {
   });
   it("flags all labeled injection records", () => { expect(r.injection.recall).toBe(1); });
   it("doc retrieval recall@5 stays at or above the recorded baseline", () => { expect(r.retrieval.recallAt5).toBeGreaterThanOrEqual(0.875); });
+});
+
+describe("conflicting documentation", () => {
+  it("retrieval surfaces both conflicting versions with their source IDs", () => {
+    const docs: ProductDoc[] = CONFLICT_DOC_SECTIONS.map((s, i) => ({
+      id: s.id.split("#")[0]!, title: `Eval conflict doc ${i + 1}`, version: i ? "4.0" : "3.0", kind: "help_doc",
+      filename: `conflict-${i}.md`, importedAt: "2026-01-01", warnings: [],
+      sections: [{ id: s.id, docId: s.id.split("#")[0]!, heading: "Exports", page: null, text: s.text, suspectedInjection: false }],
+    }));
+    const hits = search([], docs, "are custom fields included in exports", "docs", 5).map((h) => h.id);
+    for (const s of CONFLICT_DOC_SECTIONS) expect(hits).toContain(s.id);
+  });
 });
