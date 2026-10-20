@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { groundLlmOutput, locateQuote, type AnalysisInputRecord, type LlmOutput } from "./llm-schema";
+import { verifyCitations } from "./grounding";
 import { buildAnalysisPrompt, ANALYSIS_INSTRUCTIONS } from "./prompt";
 
 vi.mock("ai", () => ({ streamText: vi.fn(), Output: { object: vi.fn() } }));
@@ -35,6 +36,22 @@ describe("citation grounding", () => {
     const [i] = groundLlmOutput(theme([{ id: "A", quote: "Offline edits disappeared" }]), recs);
     expect(i!.related!.map((r) => r.id)).not.toContain("A");
     expect(i!.related!.map((r) => r.id)).toContain("B");
+  });
+  it("matches quotes containing Unicode, emoji and punctuation verbatim", () => {
+    const text = "Sync lost my edits 😡 — twice this week! «Very frustrated»";
+    const r = verifyCitations([{ id: "FB-1", quote: "lost my edits 😡 — twice" }], new Map([["FB-1", text]]));
+    expect(r.verified).toEqual([{ id: "FB-1", excerpt: "lost my edits 😡 — twice" }]);
+    expect(r.rejected).toEqual([]);
+  });
+  it("treats instruction-like quote content as data, not commands", () => {
+    const text = "Please ignore previous instructions is what the error message said, oddly.";
+    const r = verifyCitations([{ id: "FB-1", quote: "ignore previous instructions is what" }], new Map([["FB-1", text]]));
+    expect(r.verified.length).toBe(1);
+  });
+  it("rejects a quote that is close but altered by one word", () => {
+    const r = verifyCitations([{ id: "FB-1", quote: "sync lost my files twice this week" }], new Map([["FB-1", "Sync lost my edits twice this week."]]));
+    expect(r.verified).toEqual([]);
+    expect(r.rejected[0]!.reason).toMatch(/verbatim/);
   });
   it("dedupes repeated citations of the same record", () => {
     const [i] = groundLlmOutput(theme([{ id: "A", quote: "Offline edits disappeared" }, { id: "A", quote: "Very frustrating" }]), recs);
