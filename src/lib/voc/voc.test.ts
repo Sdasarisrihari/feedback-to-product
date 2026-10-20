@@ -119,3 +119,14 @@ describe("repeated import of the same file", () => {
     expect(mixed.records[0]!.duplicateOf).toBe("A1");
   });
 });
+
+describe("ID collisions across imports", () => {
+  it("a re-used ID never takes the ID of an existing record", async () => {
+    const { parseFeedbackCsv: parse } = await import("./csv");
+    const first = parse("id,text\nA1,one thing\nA1,another thing", "a.csv", [], "imp_a"); // second becomes A1~L3
+    const second = parse("id,text\nNEW,fresh row\nA1,third\nA1,fourth", "b.csv", first.records, "imp_b");
+    const existing = new Set(first.records.map((r) => r.id));
+    for (const r of second.records) expect(existing.has(r.id)).toBe(false);
+    expect(new Set(second.records.map((r) => r.id)).size).toBe(second.records.length);
+  });
+});
