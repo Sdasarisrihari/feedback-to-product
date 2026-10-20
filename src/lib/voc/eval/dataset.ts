@@ -1,7 +1,11 @@
 /**
- * LABELED SYNTHETIC EVALUATION SET (v1). Labels follow docs/EVALUATION.md rubric.
+ * LABELED SYNTHETIC EVALUATION SET (v2). Labels follow docs/EVALUATION.md rubric.
  * theme: one of THEMES or "other" (positive / unrelated). severity: 1 cosmetic … 5 data loss / blocker / compliance.
  * Records = the demo sample (labels by ID) + eval-only records (EV-*), so the demo data stays small.
+ * Split: the demo sample (FB-*) is the development set — seed themes and prompt wording were tuned against it.
+ * EV-* records are the held-out evaluation set; do not tune thresholds or prompts against them.
+ * v2 adds edge cases: ambiguous themes, mixed sentiment, rare themes, missing fields, Unicode text,
+ * and further prompt-injection variants (explicit `injection` flag in the 8th tuple position).
  */
 export const THEMES = ["sync", "notifications", "reporting", "permissions", "mobile-perf", "integrations", "billing", "other"] as const;
 export type GoldTheme = (typeof THEMES)[number];
