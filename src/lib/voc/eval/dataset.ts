@@ -115,4 +115,8 @@ export const CAPABILITY_CASES: { capability: string; expected: "documented" | "n
   { capability: "guest users or custom roles", expected: "not_documented" },
   { capability: "a daily notification digest email", expected: "unknown" },
   { capability: "offline mode on mobile", expected: "documented" },
+  { capability: "two-factor authentication", expected: "unknown" },
+  { capability: "SCIM provisioning", expected: "not_documented" },
+  { capability: "a Slack integration", expected: "documented" },
+  { capability: "including custom fields in exports (conflicting doc versions)", expected: "unknown" }, // CONFLICT_DOC_SECTIONS disagree → must not be asserted
 ];
