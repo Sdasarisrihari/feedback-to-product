@@ -7,6 +7,6 @@
 - [x] Persistent storage with Lovable Cloud + email/Google sign-in, one-time browser import (signed-in end-to-end check pending a real account)
 - [ ] Grow eval set to 100–200; severity grading
 - [x] Server-side source authority, human review workflow, QA docs
-- [ ] Signed-in browser e2e (blocked: needs a confirmed account)
+- [x] Signed-in browser e2e (import offer + Q&A label blocked: see QA_REPORT)
 - [ ] Collect ≥10 human reviews (blocked: needs reviewers)
 - [ ] MCP, n8n, GitHub Issues (after storage)
