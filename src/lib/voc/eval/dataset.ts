@@ -101,6 +101,8 @@ export const RETRIEVAL_QUERIES: { query: string; relevant: string[] }[] = [
   { query: "slack notifications sent twice fixed", relevant: ["DOC-trellis-release-notes-v4-2#s1"] },
   { query: "mobile performance large boards", relevant: ["DOC-trellis-release-notes-v4-2#s2"] },
   { query: "removed users billed seats", relevant: ["DOC-trellis-release-notes-v4-2#s3"] },
+  { query: "contact support response time", relevant: ["DOC-trellis-help-center-v2026-08#s6"] },
+  { query: "what changed in the june release", relevant: ["DOC-trellis-release-notes-v4-2#s3"] },
 ];
 
 /** Documented-capability cases against the sample docs. */
