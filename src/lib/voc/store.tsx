@@ -114,9 +114,9 @@ export function VocProvider({ children }: { children: ReactNode }) {
         // Additive migration only: older workspaces get sample docs; nothing existing is removed.
         return { ...empty, ...parsed, docs: parsed.docs ?? sampleDocs(), aiPrds: parsed.aiPrds ?? [] };
       }
-    } catch { /* corrupted storage: fall back to sample */ }
-    const { run, records } = parseFeedbackCsv(SAMPLE_CSV, SAMPLE_FILENAME, [], "imp_sample");
-    return { ...empty, records, imports: [run], runs: [runBaseline(records).run], docs: sampleDocs() };
+    } catch { /* corrupted storage: start empty */ }
+    // New visitors start with an empty workspace; sample data is loaded only on explicit request.
+    return empty;
   }, []);
 
   const enterCloud = useCallback(async (user: { id: string; email: string }) => {
