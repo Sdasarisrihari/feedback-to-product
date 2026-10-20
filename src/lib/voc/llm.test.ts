@@ -49,7 +49,7 @@ describe("citation grounding", () => {
     expect(r.verified.length).toBe(1);
   });
   it("rejects a quote that is close but altered by one word", () => {
-    const r = verifyCitations([{ id: "FB-1", quote: "sync lost my files twice this week" }], new Map([["FB-1", "Sync lost my edits twice this week."])]));
+    const r = verifyCitations([{ id: "FB-1", quote: "sync lost my files twice this week" }], new Map([["FB-1", "Sync lost my edits twice this week."]]));
     expect(r.verified).toEqual([]);
     expect(r.rejected[0]!.reason).toMatch(/verbatim/);
   });
