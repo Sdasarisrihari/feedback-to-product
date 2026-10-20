@@ -13,7 +13,7 @@ export function evalRecords(): { records: FeedbackRecord[]; gold: Map<string, Go
   const csv = "id,source,segment,created_at,rating,text\n" + EVAL_ONLY.map(([id, seg, r, , , t]) => `${id},survey,${seg},2026-09-01,${r ?? ""},"${t.replace(/"/g, '""')}"`).join("\n");
   const { records: extra } = parseFeedbackCsv(csv, "eval.csv", sample, "imp_eval");
   const gold = new Map<string, GoldLabel>(Object.entries(SAMPLE_LABELS));
-  EVAL_ONLY.forEach(([id, , , theme, severity, text]) => gold.set(id, { theme, severity, injection: /ignore previous instructions/i.test(text) }));
+  EVAL_ONLY.forEach(([id, , , theme, severity, , injection]) => gold.set(id, { theme, severity, injection: injection ?? false }));
   return { records: [...sample, ...extra], gold };
 }
 
