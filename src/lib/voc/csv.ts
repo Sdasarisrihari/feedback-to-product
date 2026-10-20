@@ -100,7 +100,9 @@ export function parseFeedbackCsv(
     const dupOf: string | undefined = seenText.get(norm);
     if (!id) { id = `${importId}-L${row.line}`; warnings.push("Missing id — generated from import + line"); }
     if (seenIds.has(id)) {
-      const newId = `${id}~L${row.line}`;
+      let newId = `${id}~L${row.line}`;
+      // Never reuse an ID already in the workspace — a collision would overwrite another record when saved.
+      for (let n = 2; seenIds.has(newId); n++) newId = `${id}~L${row.line}-${n}`;
       if (!dupOf) warnings.push(`ID ${id} reused with different text — stored as ${newId}`);
       id = newId;
     }
