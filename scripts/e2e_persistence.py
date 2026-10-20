@@ -111,7 +111,7 @@ async def main(step):
             await pg.keyboard.press("ArrowLeft"); await pg.wait_for_timeout(300); await saved(pg)
         if step == "dupe":
             await pg.goto(BASE + "/feedback"); await saved(pg)
-            await pg.get_by_role("button", name="Re-import sample").click(); await pg.wait_for_timeout(1500); await saved(pg)
+            await pg.get_by_role("button", name="Re-import sample").click(); await pg.wait_for_timeout(1500); await pg.screenshot(path=f"{SHOTS}/dupe_click.png"); await saved(pg)
             await pg.screenshot(path=f"{SHOTS}/dupe.png")
             out(await pg.get_by_text("Already imported").count() > 0, "re-import of same file adds nothing and says so")
         if step == "expired":
