@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { groundLlmOutput, locateQuote, type AnalysisInputRecord, type LlmOutput } from "./llm-schema";
+import { verifyCitations } from "./grounding";
 import { buildAnalysisPrompt, ANALYSIS_INSTRUCTIONS } from "./prompt";
 
 vi.mock("ai", () => ({ streamText: vi.fn(), Output: { object: vi.fn() } }));
