@@ -26,6 +26,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,15 +34,16 @@ function AuthPage() {
   const [msg, setMsg] = useState<{ kind: "error" | "info"; text: string } | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => { if (data.user) navigate({ to: "/", replace: true }); });
-    const { data } = supabase.auth.onAuthStateChange((e) => { if (e === "SIGNED_IN") navigate({ to: "/", replace: true }); });
+    const dest = () => navigate({ href: next, replace: true } as never);
+    supabase.auth.getUser().then(({ data }) => { if (data.user) dest(); });
+    const { data } = supabase.auth.onAuthStateChange((e) => { if (e === "SIGNED_IN") dest(); });
     return () => data.subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, next]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault(); setBusy(true); setMsg(null);
     if (mode === "signup") {
-      const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
+      const { data, error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: new URL(next, window.location.origin).href } });
       if (error) setMsg({ kind: "error", text: error.message });
       else if (!data.session) setMsg({ kind: "info", text: "Check your email to confirm your account, then sign in." });
     } else {
@@ -53,7 +55,7 @@ function AuthPage() {
 
   async function google() {
     setMsg(null);
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: new URL(next, window.location.origin).href });
     if (r.error) setMsg({ kind: "error", text: "Google sign-in failed. Please try again." });
   }
 

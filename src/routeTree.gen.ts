@@ -14,11 +14,13 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PrdRouteImport } from './routes/prd'
 import { Route as PrioritizationRouteImport } from './routes/prioritization'
 import { Route as ReviewRouteImport } from './routes/review'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
 const IndexRoute = IndexRouteImport.update({
@@ -46,6 +48,11 @@ const KnowledgeRoute = KnowledgeRouteImport.update({
   path: '/knowledge',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrdRoute = PrdRouteImport.update({
   id: '/prd',
   path: '/prd',
@@ -71,6 +78,12 @@ const TasksRoute = TasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
@@ -83,11 +96,13 @@ export interface FileRoutesByFullPath {
   '/feedback': typeof FeedbackRoute
   '/insights': typeof InsightsRoute
   '/knowledge': typeof KnowledgeRoute
+  '/mcp': typeof McpRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRoutesByTo {
@@ -96,11 +111,13 @@ export interface FileRoutesByTo {
   '/feedback': typeof FeedbackRoute
   '/insights': typeof InsightsRoute
   '/knowledge': typeof KnowledgeRoute
+  '/mcp': typeof McpRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRoutesById {
@@ -110,11 +127,13 @@ export interface FileRoutesById {
   '/feedback': typeof FeedbackRoute
   '/insights': typeof InsightsRoute
   '/knowledge': typeof KnowledgeRoute
+  '/mcp': typeof McpRoute
   '/prd': typeof PrdRoute
   '/prioritization': typeof PrioritizationRoute
   '/review': typeof ReviewRoute
   '/settings': typeof SettingsRoute
   '/tasks': typeof TasksRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRouteTypes {
@@ -125,11 +144,13 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/insights'
     | '/knowledge'
+    | '/mcp'
     | '/prd'
     | '/prioritization'
     | '/review'
     | '/settings'
     | '/tasks'
+    | '/.well-known/oauth-protected-resource'
     | '/.lovable/oauth/consent'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -138,11 +159,13 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/insights'
     | '/knowledge'
+    | '/mcp'
     | '/prd'
     | '/prioritization'
     | '/review'
     | '/settings'
     | '/tasks'
+    | '/.well-known/oauth-protected-resource'
     | '/.lovable/oauth/consent'
   id:
     | '__root__'
@@ -151,11 +174,13 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/insights'
     | '/knowledge'
+    | '/mcp'
     | '/prd'
     | '/prioritization'
     | '/review'
     | '/settings'
     | '/tasks'
+    | '/.well-known/oauth-protected-resource'
     | '/.lovable/oauth/consent'
   fileRoutesById: FileRoutesById
 }
@@ -165,11 +190,13 @@ export interface RootRouteChildren {
   FeedbackRoute: typeof FeedbackRoute
   InsightsRoute: typeof InsightsRoute
   KnowledgeRoute: typeof KnowledgeRoute
+  McpRoute: typeof McpRoute
   PrdRoute: typeof PrdRoute
   PrioritizationRoute: typeof PrioritizationRoute
   ReviewRoute: typeof ReviewRoute
   SettingsRoute: typeof SettingsRoute
   TasksRoute: typeof TasksRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
 }
 
@@ -210,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KnowledgeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/prd': {
       id: '/prd'
       path: '/prd'
@@ -245,6 +279,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
       path: '/.lovable/oauth/consent'
@@ -261,11 +302,14 @@ const rootRouteChildren: RootRouteChildren = {
   FeedbackRoute: FeedbackRoute,
   InsightsRoute: InsightsRoute,
   KnowledgeRoute: KnowledgeRoute,
+  McpRoute: McpRoute,
   PrdRoute: PrdRoute,
   PrioritizationRoute: PrioritizationRoute,
   ReviewRoute: ReviewRoute,
   SettingsRoute: SettingsRoute,
   TasksRoute: TasksRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
 }
 export const routeTree = rootRouteImport
