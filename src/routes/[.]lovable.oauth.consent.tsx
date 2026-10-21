@@ -8,7 +8,7 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
   // SSR has no localStorage session and would redirect signed-in users.
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
-    authorization_id: typeof s.authorization_id === "string" ? s.authorization_id : "",
+    authorization_id: typeof s["authorization_id"] === "string" ? s["authorization_id"] : "",
   }),
   beforeLoad: async ({ search, location }) => {
     if (!search.authorization_id) throw new Error("Missing authorization_id");
@@ -20,8 +20,8 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
     const authorizationId = new URLSearchParams(location.search).get("authorization_id")!;
     const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId);
     if (error) throw error;
-    const immediate = data?.redirect_url ?? data?.redirect_to;
-    if (immediate && !data?.client) throw redirect({ href: immediate });
+    // Already-authorized requests come back as a bare redirect.
+    if (data && "redirect_url" in data && !("client" in data)) throw redirect({ href: data.redirect_url });
     return data;
   },
   component: Consent,
@@ -37,7 +37,7 @@ function Consent() {
   const { authorization_id } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const clientName = details?.client?.name ?? "an application";
+  const clientName = (details && "client" in details ? (details.client as { name?: string } | undefined)?.name : null) ?? "an application";
 
   async function decide(approve: boolean) {
     setBusy(true);
@@ -45,7 +45,7 @@ function Consent() {
       ? await supabase.auth.oauth.approveAuthorization(authorization_id)
       : await supabase.auth.oauth.denyAuthorization(authorization_id);
     if (error) { setBusy(false); setError(error.message); return; }
-    const target = data?.redirect_url ?? data?.redirect_to;
+    const target = data?.redirect_url;
     if (!target) { setBusy(false); setError("No redirect returned by the authorization server."); return; }
     window.location.href = target;
   }

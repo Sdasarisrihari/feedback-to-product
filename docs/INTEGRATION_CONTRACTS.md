@@ -1,6 +1,19 @@
-# Proposed MCP and n8n integration contracts
+# MCP and n8n integration contracts
 
-Status: **design only — nothing here is implemented**. No MCP server, n8n workflow, or GitHub integration exists yet. This document defines the contracts so a later milestone can implement them without re-deriving the security model.
+Status: **one tool implemented, the rest proposed.** The MCP server is mounted at `/mcp` (TanStack plugin, `@lovable.dev/mcp-js`) with Supabase OAuth (consent at `/.lovable/oauth/consent`). No n8n workflow or GitHub integration exists yet.
+
+## Implemented
+
+### `get_feedback_evidence` (read-only, live)
+- **Input**: `{ query?: string (≤500 chars), themeId?: string, limit?: int 1–50 (default 20) }` — strict schema, undeclared arguments rejected.
+- **Output**: `structuredContent { provenance: "saved_records", totalMatched, records: [{ id, excerpt, source, segment, date, rating, duplicateOf, suspectedInjection }] }` plus a text summary. Excerpts are verbatim substrings of saved records.
+- **Auth**: OAuth bearer token verified by the SDK (`requireOAuthClientClaim` — copied session JWTs are rejected); all queries run as the caller with row-level security, so only the caller's own workspace rows are visible. Unauthenticated calls receive 401 with OAuth metadata.
+- **Errors**: `ToolError` for unknown theme IDs and read failures; empty workspaces/queries return an empty list with an explanatory note, not an error.
+- **Safety**: records flagged `suspectedInjection` are returned labeled as data; the tool never writes anything.
+- **Code**: `src/lib/mcp/` (`index.ts`, `tools/get-feedback-evidence.ts`, `evidence.ts`, `supabase.ts`). Tests: `src/lib/mcp/mcp.test.ts`.
+- **Local testing**: run the dev server, then `POST http://localhost:8080/mcp` with a JSON-RPC `initialize` body — expect 401 with a `WWW-Authenticate` header pointing at `/.well-known/oauth-protected-resource`. Full tool calls require an OAuth-connected MCP client (approve access on the consent page).
+
+## Proposed (not implemented)
 
 ## Shared principles
 
@@ -11,13 +24,6 @@ Status: **design only — nothing here is implemented**. No MCP server, n8n work
 - Errors are typed (`unauthorized`, `source_rejected`, `not_found`, `rate_limited`, `model_unavailable`, `credits_exhausted`) — never raw stack traces.
 
 ## Proposed MCP tools
-
-### 1. `get_feedback_evidence`
-Retrieve verified feedback evidence for a theme or query.
-- **Input**: `{ query?: string, themeId?: string, limit?: number (≤50) }`
-- **Output**: `{ records: [{ id, excerpt, source, segment, rating, duplicateOf }] }` — excerpts are verbatim substrings of saved records.
-- **Auth**: signed-in owner; server loads saved rows, never client-supplied text.
-- **Errors**: `unauthorized`, `not_found` (unknown themeId).
 
 ### 2. `search_product_docs`
 Search product documentation and release notes.

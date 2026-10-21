@@ -45,3 +45,15 @@ Side effects in the owner's workspace from this run: 2 extra human-edited PRD re
 | — | Automated suite after changes | **78/78 passed** (7 files; baseline was 73/73) | `bunx vitest run` |
 
 Not done in this pass (by design or blocked): optimistic concurrency for same-row edits across tabs (documented as last-write-wins limitation), MCP/n8n implementation (contracts only, `docs/INTEGRATION_CONTRACTS.md`), human reviews (0 completed — must come from people), LLM metrics on v2 (credits).
+
+## MCP milestone — 2026-10-21
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| M1 | v2 LLM evaluation (`bun scripts/eval.ts --llm`) | BLOCKED | Every model call returned HTTP 402 (AI credits exhausted); key present, config correct. v1 metrics kept labeled as v1. |
+| M2 | MCP server mounted at `/mcp` with OAuth | PASS (boundary) | Manifest extracted with 1 tool; unauthenticated `initialize` → 401 with `WWW-Authenticate` → `/.well-known/oauth-protected-resource` (verified live); metadata names the correct authorization server. Full OAuth handshake with an external MCP client NOT executed. |
+| M3 | `get_feedback_evidence` tool logic | PASS | 10 new unit tests: verbatim excerpts, theme filtering, unknown theme rejected, empty results, limit cap, injection flagged as data, duplicates kept. |
+| M4 | OAuth return-path validation | PASS | tests: external/protocol-relative/backslash inputs rejected, local paths preserved |
+| M5 | Human Review rubric + instructions | DONE | reviewer instructions and 1–5 rubric added to the page; completion rules unchanged (all criteria + unsupported count required) |
+| M6 | WebMCP browser tool (`list_visible_feedback`) | DONE | read-only, registered on Feedback Explorer, `untrustedContentHint` set; runtime registration not verifiable in a non-WebMCP browser |
+| — | Automated suite after changes | **88/88 passed** (8 files; baseline was 78/78) | `bunx vitest run` |
