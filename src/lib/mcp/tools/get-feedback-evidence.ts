@@ -30,7 +30,7 @@ export default defineTool({
 
     let themes: ThemeEvidence[] = [];
     if (input.themeId) {
-      const { data: analyses, error: aErr = null } = await db.from("ai_analyses").select("insights").limit(1);
+      const { data: analyses, error: aErr } = await db.from("ai_analyses").select("insights").limit(1);
       if (aErr) throw new ToolError("Could not read analysis results. Try again later.");
       const insights = (analyses?.[0]?.insights ?? []) as { themeId?: string; evidence?: { id?: string }[] }[];
       themes = insights
