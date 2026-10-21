@@ -54,6 +54,20 @@ function ReviewPage() {
         actions={<Button variant="outline" size="sm" onClick={exportCsv} disabled={!reviews.length}>Export CSV</Button>} />
       {cloud.mode === "local" && <p className="mb-4 text-sm text-muted-foreground">Demo mode: reviews are saved in this browser only. <Link to="/auth" search={{ next: "/" }} className="text-primary underline">Sign in</Link> to keep them in your workspace.</p>}
 
+      <Card className="mb-5"><CardHeader className="pb-2"><CardTitle className="text-base">Reviewer instructions and rubric</CardTitle></CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>Pick a PRD or user story, read it together with its cited evidence, then score each criterion from 1 (poor) to 5 (excellent). Your scores are stored exactly as you enter them and are tied to the exact revision you reviewed — later edits create a new revision to review.</p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li><strong>Evidence support</strong> — every material claim traces to a cited customer quote or document section. 5 = fully backed; 1 = claims with no evidence.</li>
+            <li><strong>Requirement correctness</strong> — the requirements actually address the evidenced problem. 5 = correct and complete; 1 = wrong problem or missing the point.</li>
+            <li><strong>Acceptance-criteria quality</strong> — criteria are specific and testable. 5 = each criterion is objectively verifiable; 1 = vague or unmeasurable.</li>
+            <li><strong>Usefulness</strong> — you would use this as a starting draft. 5 = ready with minor edits; 1 = start over.</li>
+            <li><strong>Unsupported claims</strong> — count every statement presented as fact that no cited evidence supports (0 if none).</li>
+          </ul>
+          <p>A review counts only when every criterion is scored and the unsupported-claim count is entered. Drafts can be saved and finished later. Human scores are reported separately from automated model metrics.</p>
+        </CardContent>
+      </Card>
+
       <Card className="mb-5"><CardHeader className="pb-2"><CardTitle className="text-base">Human evaluation results</CardTitle>
         <p className="text-xs text-muted-foreground">{summary.completed} completed review(s) of {summary.itemsReviewed} item(s) by {summary.reviewers} reviewer(s); {summary.inProgress} in progress. Target: at least {MIN_ITEMS_FOR_REPORT} reviewed items before reporting.</p></CardHeader>
         <CardContent>
