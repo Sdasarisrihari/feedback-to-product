@@ -26,3 +26,22 @@ Account: the project owner's own confirmed account (session injected by Lovable;
 | — | Automated suite | **73/73 passed** (7 files) | `bunx vitest run` |
 
 Side effects in the owner's workspace from this run: 2 extra human-edited PRD revisions (append-only, kept), one "Already imported" import entry, sample documents loaded, one AI analysis run.
+
+## Hardening pass — 2026-10-20 (automated only; no human reviews, no second account)
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| E1 | Evaluation dataset expanded (v2): ambiguous, mixed-sentiment, rare-theme, missing-field, Unicode and injection edge cases | DONE | `eval/dataset.ts` — 92 labeled records (was 80), 10 retrieval queries, 12 capability cases, 1 conflicting-doc fixture |
+| E2 | Dev/eval split documented (FB-* dev, EV-* held-out) | DONE | `docs/EVALUATION.md` |
+| E3 | Deterministic eval re-run on v2 | PASS | baseline macro-F1 0.865 (n=92), duplicates 100/100, injection recall 100% (4 labeled), doc Recall@5 90% |
+| E4 | LLM eval on v2 | BLOCKED | AI credits exhausted; v1 LLM numbers kept in `EVALUATION_RESULTS.md`, labeled as v1 |
+| C1 | Quote verification: Unicode/emoji, punctuation, one-word-altered, instruction-like content | PASS | 3 new tests in `llm.test.ts` |
+| C2 | Server-side source authority (unknown/unauthorized/stale/tampered refused) | PASS (unchanged) | `integrity.test.ts`, 12 tests |
+| P1 | Long documents chunked without silent truncation | PASS | new test: 60-paragraph doc, all paragraphs present across sections |
+| P2 | Conflicting document versions both surfaced with source IDs | PASS | new test in `eval.test.ts` |
+| S1 | No private keys in frontend code; service key only in server-only module | PASS | source scan; `.env` holds only publishable client keys |
+| S2 | Server logs contain no feedback/document content (error codes only) | PASS | source scan of all `console.*` in `src/` |
+| S3 | Server input validation (row/size limits on sync) | PASS (unchanged) | zod limits in `persist.functions.ts` |
+| — | Automated suite after changes | **78/78 passed** (7 files; baseline was 73/73) | `bunx vitest run` |
+
+Not done in this pass (by design or blocked): optimistic concurrency for same-row edits across tabs (documented as last-write-wins limitation), MCP/n8n implementation (contracts only, `docs/INTEGRATION_CONTRACTS.md`), human reviews (0 completed — must come from people), LLM metrics on v2 (credits).
