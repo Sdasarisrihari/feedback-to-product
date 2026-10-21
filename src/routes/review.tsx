@@ -52,7 +52,7 @@ function ReviewPage() {
     <>
       <PageHeader title="Human Review" description="Reviewers score AI-generated PRDs and user stories. Results below are computed only from completed reviews and are kept separate from automated model metrics."
         actions={<Button variant="outline" size="sm" onClick={exportCsv} disabled={!reviews.length}>Export CSV</Button>} />
-      {cloud.mode === "local" && <p className="mb-4 text-sm text-muted-foreground">Demo mode: reviews are saved in this browser only. <Link to="/auth" className="text-primary underline">Sign in</Link> to keep them in your workspace.</p>}
+      {cloud.mode === "local" && <p className="mb-4 text-sm text-muted-foreground">Demo mode: reviews are saved in this browser only. <Link to="/auth" search={{ next: "/" }} className="text-primary underline">Sign in</Link> to keep them in your workspace.</p>}
 
       <Card className="mb-5"><CardHeader className="pb-2"><CardTitle className="text-base">Human evaluation results</CardTitle>
         <p className="text-xs text-muted-foreground">{summary.completed} completed review(s) of {summary.itemsReviewed} item(s) by {summary.reviewers} reviewer(s); {summary.inProgress} in progress. Target: at least {MIN_ITEMS_FOR_REPORT} reviewed items before reporting.</p></CardHeader>
