@@ -15,6 +15,20 @@ Per-theme (baseline): sync P0.93/R0.81, notifications P1.00/R0.91, reporting P1.
 
 LLM metrics not run in this pass (use `--llm`).
 
+## Automated — LLM on v2: BLOCKED
+
+Attempted 2026-10-21 with `bun scripts/eval.ts --llm` (model `openai/gpt-6-astra`, reasoning effort low): every call returned HTTP 402 — AI credits exhausted. No v2 LLM metrics exist; the v1 numbers below are kept for reference only and must not be read as v2 results.
+
+## Automated — LLM (recorded 2026-10-19 on dataset v1; NOT re-run on v2)
+
+| Metric | v1 result |
+|---|---|
+| LLM theme macro-F1 (majority-mapped) | 0.978 (n=80) |
+| Citation validity (verified / proposed) | 100% (69/69) |
+| Doc retrieval Recall@5 | 100% (8 queries) |
+| Documented-capability classification | 8/8 |
+| Themes obeying injected instructions | 0 |
+
 ## Human judgments
 
 PRD/story acceptance rate is recorded in PRD Studio (Accept / Needs changes). **No human reviews have been recorded yet**, so no acceptance rate is claimed.
