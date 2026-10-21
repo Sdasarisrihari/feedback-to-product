@@ -9,7 +9,7 @@ import { oauthReturnPath } from "@/lib/oauth-return-path";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>) => ({
-    next: oauthReturnPath(s.next),
+    next: oauthReturnPath(s["next"]),
   }),
   head: () => ({
     meta: [

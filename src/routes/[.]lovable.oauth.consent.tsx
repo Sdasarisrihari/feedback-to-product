@@ -8,7 +8,7 @@ export const Route = createFileRoute("/.lovable/oauth/consent")({
   // SSR has no localStorage session and would redirect signed-in users.
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
-    authorization_id: typeof s.authorization_id === "string" ? s.authorization_id : "",
+    authorization_id: typeof s["authorization_id"] === "string" ? s["authorization_id"] : "",
   }),
   beforeLoad: async ({ search, location }) => {
     if (!search.authorization_id) throw new Error("Missing authorization_id");
@@ -37,7 +37,7 @@ function Consent() {
   const { authorization_id } = Route.useSearch();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const clientName = (details && "client" in details ? details.client?.name : null) ?? "an application";
+  const clientName = (details && "client" in details ? (details.client as { name?: string } | undefined)?.name : null) ?? "an application";
 
   async function decide(approve: boolean) {
     setBusy(true);

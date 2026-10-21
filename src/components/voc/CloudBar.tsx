@@ -9,7 +9,7 @@ export function AccountBlock() {
   if (cloud.mode === "local") return (
     <div className="m-3 space-y-2 rounded-md border border-sidebar-border p-3 text-xs">
       <div className="flex items-center gap-2 opacity-80"><HardDrive className="h-3.5 w-3.5" />Demo · saved in this browser only</div>
-      <Link to="/auth" className="block rounded-md bg-sidebar-primary px-3 py-1.5 text-center font-medium text-sidebar-primary-foreground">Sign in to save</Link>
+      <Link to="/auth" search={{ next: "/" }} className="block rounded-md bg-sidebar-primary px-3 py-1.5 text-center font-medium text-sidebar-primary-foreground">Sign in to save</Link>
     </div>
   );
   return (
