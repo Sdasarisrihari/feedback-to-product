@@ -32,11 +32,11 @@ bun scripts/eval.ts    # deterministic evaluation (add --llm for model metrics, 
 - `docs/EVALUATION.md` / `docs/EVALUATION_RESULTS.md` — evaluation method and measured results
 - `docs/QA_REPORT.md` — end-to-end verification log
 - `docs/KNOWN_LIMITATIONS.md` — what is not done or not verified
-- `docs/INTEGRATION_CONTRACTS.md` — MCP/n8n contracts; one read-only MCP tool (`get_feedback_evidence`) is live at `/mcp` with OAuth, the rest are proposed
+- `docs/INTEGRATION_CONTRACTS.md` — MCP/n8n contracts; two read-only MCP tools (`get_feedback_evidence`, `search_product_docs`) are live at `/mcp` with OAuth, the rest are proposed
 
 ## Agent integrations (MCP)
 
-The app exposes an OAuth-protected MCP server at `/mcp` with one read-only tool, `get_feedback_evidence`, which returns verified feedback records (verbatim excerpts with source IDs) from the caller's own workspace. Connecting assistants sign in via the consent page and can only ever see their own data. A browser-local read tool (`list_visible_feedback`) is also registered on the Feedback Explorer page for agent browsers.
+The app exposes an OAuth-protected MCP server at `/mcp` with two read-only tools: `get_feedback_evidence` (verified feedback records, verbatim excerpts with source IDs) and `search_product_docs` (BM25 search over saved product documentation with title/version/section provenance). Both return only the caller's own workspace data. Connecting assistants sign in via the consent page and can only ever see their own data. A browser-local read tool (`list_visible_feedback`) is also registered on the Feedback Explorer page for agent browsers.
 - `docs/DEMO_SCRIPT.md` — portfolio walkthrough
 
 ## Built with

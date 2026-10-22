@@ -57,3 +57,17 @@ Not done in this pass (by design or blocked): optimistic concurrency for same-ro
 | M5 | Human Review rubric + instructions | DONE | reviewer instructions and 1–5 rubric added to the page; completion rules unchanged (all criteria + unsupported count required) |
 | M6 | WebMCP browser tool (`list_visible_feedback`) | DONE | read-only, registered on Feedback Explorer, `untrustedContentHint` set; runtime registration not verifiable in a non-WebMCP browser |
 | — | Automated suite after changes | **88/88 passed** (8 files; baseline was 78/78) | `bunx vitest run` |
+
+## MCP second tool + deployment verification — 2026-10-22
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| N1 | Baseline before changes | PASS | 88/88 tests, `tsgo --noEmit` clean |
+| N2 | `search_product_docs` tool logic | PASS | 5 new unit tests: verbatim excerpts with doc title/version/heading/page provenance, orphan sections (no saved document) excluded, blank query / no match / empty workspace → empty results, limit capped at 20 (default 10), injection-flagged sections returned labeled as data with text unaltered |
+| N3 | Manifest extraction | PASS | 2 tools advertised: `get_feedback_evidence`, `search_product_docs` |
+| N4 | Unauthenticated request rejected | PASS (local + published) | `POST /mcp` initialize without token → 401, `WWW-Authenticate: Bearer realm="mcp", resource_metadata=…/.well-known/oauth-protected-resource` |
+| N5 | Malformed and forged bearer tokens rejected | PASS (local + published) | `Bearer not-a-real-token` → 401; forged JWT-shaped token → 401 |
+| N6 | OAuth metadata correct | PASS (local + published) | `/.well-known/oauth-protected-resource` names the project's auth server as the authorization server |
+| N7 | Full OAuth handshake with an external MCP client | NOT RUN | Requires an OAuth-connected MCP client completing the consent flow; boundary checks (N4–N6) verified instead |
+| N8 | Cross-workspace access | PASS (by design + earlier SQL checks) | Tool handlers query as the caller under RLS — the same owner-scoped policies verified in earlier passes; no code path reads another workspace's rows |
+| — | Automated suite after changes | **93/93 passed** (8 files; baseline was 88/88) | `bunx vitest run`; type check clean |

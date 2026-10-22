@@ -6,5 +6,5 @@
 - Last write wins per row across tabs/devices; no conflict UI. Row-level diff sync means concurrent edits to *different* rows do not overwrite each other, but two tabs editing the *same* record/PRD silently overwrite. Sign-out ends all sessions of the account.
 - Sources > 4,000 characters are cut for PRDs and therefore refused as mismatched when signed in.
 - Evaluation dataset is synthetic, small, and written by the builder (label bias); it is not independent or representative of real customers. The conflicting-documentation case is a fixture, not observed real docs.
-- Scanned PDFs unsupported (clear warning shown). MCP: one read-only tool (`get_feedback_evidence`) is implemented at `/mcp` with OAuth; the full OAuth handshake was verified only up to the consent/401 boundary, not with an external MCP client. No n8n or task-tracker integration — see `docs/INTEGRATION_CONTRACTS.md`.
+- Scanned PDFs unsupported (clear warning shown). MCP: two read-only tools (`get_feedback_evidence`, `search_product_docs`) are implemented at `/mcp` with OAuth; the full OAuth handshake was verified only up to the consent/401 boundary, not with an external MCP client. No n8n or task-tracker integration — see `docs/INTEGRATION_CONTRACTS.md`.
 - Signed-out demo data lives in browser storage only; clearing site data erases it.
