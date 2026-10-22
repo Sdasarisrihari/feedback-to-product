@@ -119,7 +119,8 @@ describe("searchDocSections", () => {
   });
 
   it("caps the limit at 20 and defaults to 10", () => {
-    const many = Array.from({ length: 40 }, (_, i) => section(`S-${i}`, "DOC-1", `export report variant ${i}`));
+    // Varied filler keeps BM25 scores above the retrieval threshold while every section matches.
+    const many = Array.from({ length: 40 }, (_, i) => section(`S-${i}`, "DOC-1", `export report variant ${i} ${"filler".repeat(i)}`));
     expect(searchDocSections(DOCS, many, { query: "export report", limit: 99 }).sections.length).toBe(20);
     expect(searchDocSections(DOCS, many, { query: "export report" }).sections.length).toBe(10);
   });
