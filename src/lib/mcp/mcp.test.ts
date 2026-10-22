@@ -119,8 +119,11 @@ describe("searchDocSections", () => {
   });
 
   it("caps the limit at 20 and defaults to 10", () => {
-    // Varied filler keeps BM25 scores above the retrieval threshold while every section matches.
-    const many = Array.from({ length: 40 }, (_, i) => section(`S-${i}`, "DOC-1", `export report variant ${i} ${"filler".repeat(i)}`));
+    // 30 matching sections with unique tokens (keeps BM25 scores above the threshold) + 10 unrelated.
+    const many = [
+      ...Array.from({ length: 30 }, (_, i) => section(`S-${i}`, "DOC-1", `export report variant${i} details`)),
+      ...Array.from({ length: 10 }, (_, i) => section(`U-${i}`, "DOC-1", `unrelated topic ${i}`)),
+    ];
     expect(searchDocSections(DOCS, many, { query: "export report", limit: 99 }).sections.length).toBe(20);
     expect(searchDocSections(DOCS, many, { query: "export report" }).sections.length).toBe(10);
   });
