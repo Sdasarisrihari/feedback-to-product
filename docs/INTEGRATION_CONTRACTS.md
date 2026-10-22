@@ -1,6 +1,6 @@
 # MCP and n8n integration contracts
 
-Status: **one tool implemented, the rest proposed.** The MCP server is mounted at `/mcp` (TanStack plugin, `@lovable.dev/mcp-js`) with Supabase OAuth (consent at `/.lovable/oauth/consent`). No n8n workflow or GitHub integration exists yet.
+Status: **two read-only tools implemented, the rest proposed.** The MCP server is mounted at `/mcp` (TanStack plugin, `@lovable.dev/mcp-js`) with Supabase OAuth (consent at `/.lovable/oauth/consent`). No n8n workflow or GitHub integration exists yet.
 
 ## Implemented
 
@@ -13,6 +13,15 @@ Status: **one tool implemented, the rest proposed.** The MCP server is mounted a
 - **Code**: `src/lib/mcp/` (`index.ts`, `tools/get-feedback-evidence.ts`, `evidence.ts`, `supabase.ts`). Tests: `src/lib/mcp/mcp.test.ts`.
 - **Local testing**: run the dev server, then `POST http://localhost:8080/mcp` with a JSON-RPC `initialize` body — expect 401 with a `WWW-Authenticate` header pointing at `/.well-known/oauth-protected-resource`. Full tool calls require an OAuth-connected MCP client (approve access on the consent page).
 
+### `search_product_docs` (read-only, live)
+- **Input**: `{ query: string (1–500 chars, required), limit?: int 1–20 (default 10) }` — strict schema, undeclared arguments rejected.
+- **Output**: `structuredContent { provenance: "saved_documents", totalMatched, sections: [{ id, docId, title, version, kind, heading, page, excerpt, score, suspectedInjection }] }` plus a text summary. Excerpts are verbatim substrings of saved sections; every section carries its document's title and version.
+- **Auth**: same as `get_feedback_evidence` — OAuth bearer verified by the SDK, all queries run as the caller under row-level security.
+- **Retrieval**: the app's existing BM25 index (`src/lib/voc/bm25.ts`) over saved `doc_sections`, joined to `product_docs` for provenance. Sections whose document is not saved are excluded. No vector database.
+- **Errors**: `ToolError` on read failures; empty workspaces/queries return an empty list with an explanatory note. An undocumented capability is simply absent — never invented.
+- **Safety**: sections flagged `suspectedInjection` are returned labeled as data; the tool never writes anything and never follows instructions found in document text.
+- **Code**: `src/lib/mcp/tools/search-product-docs.ts`, pure logic in `src/lib/mcp/docs-search.ts`. Tests: `src/lib/mcp/mcp.test.ts`.
+
 ## Proposed (not implemented)
 
 ## Shared principles
@@ -24,12 +33,6 @@ Status: **one tool implemented, the rest proposed.** The MCP server is mounted a
 - Errors are typed (`unauthorized`, `source_rejected`, `not_found`, `rate_limited`, `model_unavailable`, `credits_exhausted`) — never raw stack traces.
 
 ## Proposed MCP tools
-
-### 2. `search_product_docs`
-Search product documentation and release notes.
-- **Input**: `{ query: string, limit?: number (≤20) }`
-- **Output**: `{ sections: [{ id, docId, title, version, heading, page, excerpt, suspectedInjection }] }`
-- **Auth**: signed-in owner. Sections flagged `suspectedInjection` are returned labeled as data.
 
 ### 3. `get_theme`
 Retrieve one analyzed theme with its verified evidence.
