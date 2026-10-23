@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { collectEvidence, verbatimExcerpt, type EvidenceRow, type ThemeEvidence } from "./evidence";
 import { searchDocSections, type DocRow, type SectionRow } from "./docs-search";
+import { buildThemeResult, currentSignature, type AnalysisRow } from "./theme";
 import { oauthReturnPath } from "../oauth-return-path";
 
 const row = (id: string, body: string, over: Partial<EvidenceRow> = {}): EvidenceRow => ({
