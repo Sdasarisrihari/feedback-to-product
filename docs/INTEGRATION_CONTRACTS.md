@@ -1,6 +1,6 @@
 # MCP and n8n integration contracts
 
-Status: **two read-only tools implemented, the rest proposed.** The MCP server is mounted at `/mcp` (TanStack plugin, `@lovable.dev/mcp-js`) with Supabase OAuth (consent at `/.lovable/oauth/consent`). No n8n workflow or GitHub integration exists yet.
+Status: **three read-only tools implemented, the rest proposed.** The MCP server is mounted at `/mcp` (TanStack plugin, `@lovable.dev/mcp-js`) with Supabase OAuth (consent at `/.lovable/oauth/consent`). No n8n workflow or GitHub integration exists yet.
 
 ## Implemented
 
@@ -21,6 +21,15 @@ Status: **two read-only tools implemented, the rest proposed.** The MCP server i
 - **Errors**: `ToolError` on read failures; empty workspaces/queries return an empty list with an explanatory note. An undocumented capability is simply absent — never invented.
 - **Safety**: sections flagged `suspectedInjection` are returned labeled as data; the tool never writes anything and never follows instructions found in document text.
 - **Code**: `src/lib/mcp/tools/search-product-docs.ts`, pure logic in `src/lib/mcp/docs-search.ts`. Tests: `src/lib/mcp/mcp.test.ts`.
+
+### `get_theme` (read-only, live)
+- **Input**: `{ themeId: string (1–200 chars, required) }` — strict schema, undeclared arguments rejected.
+- **Output**: `structuredContent { provenance: "saved_analysis", stale, theme: { themeId, name, productArea, kind, severity, confidence, confidenceReason, frequency, sentiment, enterpriseShare }, summary: { text, origin: "ai_generated" } | null, assumptions, openQuestions, evidence: [{ id, excerpt, source, segment, date, rating, duplicateOf, suspectedInjection }], rejectedEvidence, rejectedCitations, related: [{ id, excerpt, origin: "bm25_related_not_cited" }], analysis: { runId, model, analysedAt, signature } }` plus a text summary.
+- **Re-verification**: every stored evidence excerpt is checked against the caller's saved records before it is returned — an excerpt that is not a verbatim substring of the saved record body, or a record ID not in the caller's workspace, is moved to `rejectedEvidence` with a reason, never presented as evidence. `stale: true` is set when the feedback set changed since the analysis ran (signature mismatch).
+- **Labels**: `summary`, `assumptions` and `openQuestions` are labeled `origin: "ai_generated"` — suggestions, not verified evidence. `related` records are BM25-retrieved, not model-cited, and labeled as such.
+- **Auth**: same as the other tools — OAuth bearer verified by the SDK, all queries run as the caller under row-level security.
+- **Errors**: `ToolError` (`not_found`) for unknown theme IDs or a missing analysis; read failures return a generic retry message. Unavailable fields are `null`, never invented.
+- **Code**: `src/lib/mcp/tools/get-theme.ts`, pure logic in `src/lib/mcp/theme.ts`. Tests: `src/lib/mcp/mcp.test.ts`.
 
 ## Proposed (not implemented)
 
