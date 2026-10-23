@@ -50,7 +50,7 @@ Generate a PRD draft from an analyzed theme.
 - **Auth**: signed-in owner; sources reconciled against saved rows before the model call (existing `source-auth` flow).
 - **Errors**: `source_rejected`, `model_unavailable`, `credits_exhausted`, `insufficient_evidence`.
 
-### 5. `prepare_task_draft`
+### 4. `prepare_task_draft`
 Prepare a development task for human approval. Never creates an external task.
 - **Input**: `{ prdId: string, storyId?: string }`
 - **Output**: `{ taskId, title, body, evidenceIds, status: "draft" }`

@@ -71,3 +71,16 @@ Not done in this pass (by design or blocked): optimistic concurrency for same-ro
 | N7 | Full OAuth handshake with an external MCP client | NOT RUN | Requires an OAuth-connected MCP client completing the consent flow; boundary checks (N4–N6) verified instead |
 | N8 | Cross-workspace access | PASS (by design + earlier SQL checks) | Tool handlers query as the caller under RLS — the same owner-scoped policies verified in earlier passes; no code path reads another workspace's rows |
 | — | Automated suite after changes | **93/93 passed** (8 files; baseline was 88/88) | `bunx vitest run`; type check clean |
+
+## MCP third tool (get_theme) — 2026-10-23
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| O1 | Baseline before changes | PASS | 93/93 tests, `tsgo --noEmit` clean |
+| O2 | `get_theme` tool logic | PASS | 8 new unit tests: valid theme with re-verified verbatim evidence and labeled AI text; unknown theme and missing analysis → not_found; altered excerpt rejected (not a verbatim substring); evidence referencing records outside the workspace rejected; stale flag set when the feedback set changed; injection-flagged evidence returned labeled as data with text unaltered; sparse theme (no evidence/optional fields) returns nulls, never invented values; signature helper matches the store's recordsSignature |
+| O3 | Manifest extraction | PASS | 3 tools advertised: `get_feedback_evidence`, `search_product_docs`, `get_theme` |
+| O4 | Unauthenticated and forged-token requests rejected | PASS (local) | `POST /mcp` without token → 401 with `WWW-Authenticate`; `Bearer forged-token` → 401 `invalid_token` |
+| O5 | Cross-workspace isolation | PASS by design | Handler queries `ai_analyses` and `feedback_records` as the caller under RLS — the same owner-scoped policies verified in earlier passes; evidence IDs not in the caller's rows fail re-verification (O2) |
+| O6 | Full OAuth handshake with an external MCP client | BLOCKED | No OAuth-connected MCP client in this environment; manual steps in INTEGRATION_CONTRACTS.md |
+| O7 | Published endpoint serves this revision | BLOCKED | Publish is user-initiated; the live endpoint serves the previous revision until republished |
+| O8 | Full suite after changes | PASS | 101/101 tests (8 files), `tsgo --noEmit` clean, build OK |
