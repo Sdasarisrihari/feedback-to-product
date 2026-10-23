@@ -84,3 +84,18 @@ Not done in this pass (by design or blocked): optimistic concurrency for same-ro
 | O6 | Full OAuth handshake with an external MCP client | BLOCKED | No OAuth-connected MCP client in this environment; manual steps in INTEGRATION_CONTRACTS.md |
 | O7 | Published endpoint serves this revision | BLOCKED | Publish is user-initiated; the live endpoint serves the previous revision until republished |
 | O8 | Full suite after changes | PASS | 101/101 tests (8 files), `tsgo --noEmit` clean, build OK |
+
+## Publish verification + MCP end-to-end readiness — 2026-10-23
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| P1 | Full automated suite | PASS | 101/101 tests (8 files), `tsgo --noEmit` clean |
+| P2 | Local `/mcp` rejects unauthenticated requests | PASS | `POST /mcp` initialize without token → 401 with `WWW-Authenticate: Bearer realm="mcp", resource_metadata=…` |
+| P3 | Local `/mcp` rejects forged credentials | PASS | `Bearer forged-token` → 401 `invalid_token` |
+| P4 | Local OAuth metadata correct | PASS | `/.well-known/oauth-protected-resource` names the direct auth issuer (`https://<project-ref>.supabase.co/auth/v1`), resource `Feedback To Product` |
+| P5 | Published `/mcp` rejects unauthenticated + forged requests | PASS | Same probes against `https://feedback-to-product.lovable.app/mcp` → 401 / 401 |
+| P6 | Published OAuth metadata correct | PASS | Published `/.well-known/oauth-protected-resource` names the same direct auth issuer |
+| P7 | Published endpoint serves the latest revision (3 tools) | BLOCKED | `tools/list` requires a completed OAuth flow; no OAuth-connected MCP client exists in this environment. The published app serves the last published snapshot, which predates `get_theme` — republish, then verify with an external client |
+| P8 | Full OAuth handshake (discovery → consent → token → tools/list → tool calls) | BLOCKED | Requires an external OAuth-connected MCP client; manual steps in INTEGRATION_CONTRACTS.md. Session JWTs are rejected by design (`requireOAuthClientClaim`), so the flow cannot be simulated with a copied session |
+| P9 | Per-tool behavior (unknown IDs, tampered evidence, malformed args, empty results, injection labels) | PASS (unit level) | Covered by the 15 MCP unit tests in `src/lib/mcp/mcp.test.ts`; live per-tool calls remain part of the blocked P8 handshake |
+| P10 | Cross-workspace isolation | PASS by design | All three handlers query as the caller under owner-scoped RLS (verified in earlier passes); `get_theme` additionally re-verifies every evidence ID against the caller's own rows |
