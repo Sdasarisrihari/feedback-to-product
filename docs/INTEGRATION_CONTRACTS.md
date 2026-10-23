@@ -74,3 +74,23 @@ After a human approves a task or report → send the configured notification (em
 - Transport: MCP over HTTP server route under `/api/public/mcp` with bearer auth, or a separate worker.
 - Rate limits and per-workflow quotas.
 - Which external task tracker first (GitHub Issues, Jira, Linear) — each needs its own approval mapping.
+
+## Publish and external-client verification checklist
+
+The MCP server code is complete for the three read-only tools, but the **published** endpoint serves the last published snapshot. Exact manual steps:
+
+1. **Republish**: click **Publish → Publish changes** in the Lovable editor. This ships the current source (including `get_theme`) to `https://feedback-to-product.lovable.app`.
+2. **Confirm the auth boundary** (no client needed):
+   - `curl -X POST https://feedback-to-product.lovable.app/mcp -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'` → expect **401** with a `WWW-Authenticate` header.
+   - `curl https://feedback-to-product.lovable.app/.well-known/oauth-protected-resource` → expect `authorization_servers` naming the project's auth server.
+3. **Connect an external MCP client** (e.g. an MCP-compatible assistant or inspector) to `https://feedback-to-product.lovable.app/mcp`:
+   - The client discovers OAuth metadata, registers (dynamic registration is enabled), and opens the consent page `/.lovable/oauth/consent`.
+   - Sign in (or sign up) — the consent URL is preserved through both flows — then **Approve**.
+   - The client exchanges the code for a token and calls `tools/list` → expect exactly `get_feedback_evidence`, `search_product_docs`, `get_theme`.
+4. **Exercise each tool** as the connected user:
+   - `get_feedback_evidence` with a query → verbatim excerpts with source IDs; with an unknown `themeId` → `not_found` error; injection-flagged records labeled `suspectedInjection`.
+   - `search_product_docs` with a query → sections with doc title/version/heading/page; undocumented capability → empty results, never invented.
+   - `get_theme` with a real theme ID → verified evidence + AI-labeled summary; with an unknown ID → `not_found`; after editing feedback → `stale: true`.
+5. **Negative checks**: expired/revoked token → 401; a second account's theme/record IDs → `not_found` or rejected evidence (row-level security scopes every query to the caller).
+
+Status of this checklist: steps 1–2 partially verified (2026-10-23 — auth rejection and metadata PASS on the published URL, but the published snapshot predates `get_theme`); steps 3–5 BLOCKED until an external OAuth client is connected after republishing.
