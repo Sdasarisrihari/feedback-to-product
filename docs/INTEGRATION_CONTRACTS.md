@@ -43,14 +43,7 @@ Status: **three read-only tools implemented, the rest proposed.** The MCP server
 
 ## Proposed MCP tools
 
-### 3. `get_theme`
-Retrieve one analyzed theme with its verified evidence.
-- **Input**: `{ themeId: string }`
-- **Output**: `{ theme, summary, severity, evidence: [{id, excerpt}], rejectedCitations: [...], provenance, signature }` — plus `stale: true` if the feedback set changed since analysis.
-- **Auth**: signed-in owner.
-- **Errors**: `not_found`, `stale_results` (caller must re-run analysis).
-
-### 4. `generate_prd_draft`
+### 3. `generate_prd_draft`
 Generate a PRD draft from an analyzed theme.
 - **Input**: `{ themeId: string }`
 - **Output**: `{ prdId, revision: 1, content, verifiedEvidence, rejectedCitations, evidenceGaps, provenance }`
