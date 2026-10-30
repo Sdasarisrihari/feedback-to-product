@@ -10,3 +10,4 @@
 - [x] Signed-in browser e2e (import offer + Q&A label blocked: see QA_REPORT)
 - [ ] Collect ≥10 human reviews (blocked: needs reviewers)
 - [ ] MCP, n8n, GitHub Issues (after storage)
+- [ ] Verify existing read-only MCP authorization, isolation and failure handling; document live-test blockers (no new tools).
