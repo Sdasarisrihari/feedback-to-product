@@ -93,4 +93,12 @@ The MCP server code is complete for the three read-only tools, but the **publish
    - `get_theme` with a real theme ID → verified evidence + AI-labeled summary; with an unknown ID → `not_found`; after editing feedback → `stale: true`.
 5. **Negative checks**: expired/revoked token → 401; a second account's theme/record IDs → `not_found` or rejected evidence (row-level security scopes every query to the caller).
 
-Status of this checklist: steps 1–2 partially verified (2026-10-23 — auth rejection and metadata PASS on the published URL, but the published snapshot predates `get_theme`); steps 3–5 BLOCKED until an external OAuth client is connected after republishing.
+Status updated 2026-10-30: owner-run Inspector handshake and tools/list succeeded; owner reports successful calls to all three tools. Assistant separately verified deployed 401 boundaries and discovery. Actual second-owner access, genuine expired/revoked production tokens and production failure recovery remain untested. See the dated QA table; earlier blocked deployment statements are historical, not the current user-reported state.
+
+### Reliability hardening and remaining manual checks
+- New source revision bounds every database fetch to **15 seconds** and propagates MCP disconnect/cancellation. No auth or tool changes beyond read reliability; unchanged three-tool manifest extracted successfully. This revision is **not confirmed deployed**.
+- **Republish** in Lovable: **Publish → Publish changes**, wait for success, then reconnect Inspector to `https://feedback-to-product.lovable.app/mcp` and list/call the same three tools.
+- Empty queries: call feedback and docs with a unique no-match string; expect zero matches and empty arrays. Unknown theme should remain an error, not another user's data.
+- Expiry: in Inspector's OAuth debugger, disable automatic refresh if supported, let the existing token expire, then invoke a tool; expect 401 and reauthorization. Do not paste or share tokens/callbacks. A client that automatically refreshes cannot prove server rejection from a successful call.
+- Actual two-owner isolation requires two authorized existing workspaces with distinct synthetic fixtures. Call B's theme ID from A; expect unknown theme, and search B's unique feedback/doc text from A; expect no results. Currently only one populated owner exists, so this check is BLOCKED; no account was created.
+- Service failure and cancellation have controlled automated coverage, not production outage coverage. Do not damage live data or change auth settings to simulate them.

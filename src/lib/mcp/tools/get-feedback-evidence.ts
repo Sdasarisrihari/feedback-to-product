@@ -34,8 +34,9 @@ export default defineTool({
       if (aErr) throw new ToolError("Could not read analysis results. Try again later.");
       const insights = (analyses?.[0]?.insights ?? []) as { themeId?: string; evidence?: { id?: string }[] }[];
       themes = insights
-        .filter((i) => typeof i.themeId === "string")
-        .map((i) => ({ themeId: i.themeId!, evidenceIds: (i.evidence ?? []).map((e) => e.id ?? "").filter(Boolean) }));
+        .flatMap((i) => typeof i.themeId === "string"
+          ? [{ themeId: i.themeId, evidenceIds: (i.evidence ?? []).map((e) => e.id ?? "").filter(Boolean) }]
+          : []);
     }
 
     const result = collectEvidence((rows ?? []) as EvidenceRow[], themes, input);

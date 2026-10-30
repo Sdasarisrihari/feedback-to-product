@@ -111,3 +111,26 @@ Run by the project owner with MCP Inspector v1.0.3 (Streamable HTTP, via proxy) 
 | X3 | Published endpoint serves the latest revision (supersedes P7) | PASS | `tools/list` returned all three tools: `get_feedback_evidence`, `search_product_docs`, `get_theme` |
 | X4 | Live tool calls (valid, unknown ID, empty, malformed input) | NOT RUN | Steps listed in INTEGRATION_CONTRACTS.md; still to do in Inspector |
 | X5 | Cross-account isolation via a second account | NOT RUN | Needs a second account; enforced by owner-scoped RLS (P10) |
+
+## Security and reliability verification — 2026-10-30
+
+Baseline **101/101**; final **114/114**, 9 files. Automatic type/build check: `build OK` at 10:54:15Z (after test typing corrections). No new tools, services, auth settings, accounts, migrations or billing changes.
+
+| Check | Actual result / scope |
+|---|---|
+| Published and local missing / malformed / forged-expired bearer | PASS: six POST probes returned 401 with challenges. The expired-shaped token was forged, so this is **not** proof of production expiry handling. |
+| Published and local resource discovery | PASS: both metadata requests returned 200 with authorization servers. |
+| Correctly signed expired token | PASS, isolated SDK protocol harness with ephemeral signing key and test issuer; not a production OAuth token. Valid signed control returned tools/list; expired, wrong-audience and missing-client-claim tokens returned 401. |
+| Schemas | PASS, protocol harness advertises all three tools with closed input schemas; limit 21 rejected before database access. |
+| Empty feedback/documents; unknown theme | PASS, actual tool handlers with controlled empty database responses. |
+| Database error / partial failure | PASS, actual handlers with controlled failures return generic retry messages; document success plus section failure returns no partial evidence. |
+| Request deadline / disconnect | PASS, controlled tests: each database fetch bounded to 15 seconds and caller cancellation propagated; already-cancelled work not started. New shared wrapper tested even against upstream ignoring abort. |
+| Deployed access rules | PASS, read-only catalog query: RLS enabled, owner-only authenticated policies, no anonymous SELECT on all four MCP tables. |
+| Signed-in workspace reads | PASS, injected owner session in app: feedback 49, docs 2, sections 9, analyses 1; every row belongs to caller, foreign-owner filters return zero rows; anonymous reads all 401. No writes performed. |
+| Actual second-owner data isolation | BLOCKED: only one distinct data owner exists in all four tables. Foreign filters cannot demonstrate denial of existing foreign rows; no second account created. Earlier SQL simulation remains historical evidence only. |
+| User-run three tool calls | User reports all three work; uploaded feedback result has saved_records provenance, 7 matches, 5 excerpts. Invalid doc limit and unknown theme errors observed by user. Not an assistant-run authenticated production test. |
+| Real production expired/revoked OAuth token; production outages | NOT RUN: connected Inspector credentials remain in user's client. No session-token substitution or live outage induced. |
+| Model access | AVAILABLE in one minimal real call; v2 runner subsequently completed 13 real calls with no reported failures. See EVALUATION_RESULTS. No billing change. |
+| Human reviews | Database completed-review count = 0; **0/10** genuine completed reviews. |
+
+Reproduce automated checks: `bunx vitest run src/lib/mcp/security.test.ts` or `bunx vitest run`. These are not a comprehensive security audit. Production timeout changes require republishing and client verification.
