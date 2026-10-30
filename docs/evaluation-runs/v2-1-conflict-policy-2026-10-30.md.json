@@ -1,0 +1,1670 @@
+{
+  "capabilityFixtureVersion": "v2.1",
+  "capabilityResults": [
+    {
+      "capability": "exporting project data to CSV",
+      "expected": "documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports exporting project data to CSV?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s3",
+            "title": "Trellis Help Center v2026.08 › Exporting data",
+            "text": "Project data can be exported to CSV from Project > Export. Exports include standard fields only; custom fields are not included. Exports are limited to 5,000 tasks per file."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s2",
+            "title": "Trellis Help Center v2026.08 › Notifications",
+            "text": "Users can turn email notifications on or off globally in Profile > Notifications. Slack notifications can be enabled per workspace. Per-project notification settings are not currently supported."
+          },
+          {
+            "id": "DOC-trellis-release-notes-v4-2#s1",
+            "title": "Trellis Release Notes v4.2 › 4.2 — August 2026",
+            "text": "- Board templates: start projects from 12 new templates.\n- Keyboard shortcuts for moving cards between columns.\n- Fixed: Slack notifications were sent twice for some mentions."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 4634,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports exporting project data to CSV?",
+          "answer": "Yes. The documentation confirms that Trellis supports exporting project data to CSV via Project › Export. Exports include standard fields only, exclude custom fields, and are limited to 5,000 tasks per file.",
+          "claims": [
+            {
+              "text": "Trellis supports exporting project data to CSV via Project › Export.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Project data can be exported to CSV from Project > Export."
+                  }
+                ],
+                "rejected": []
+              }
+            },
+            {
+              "text": "CSV exports include standard fields only, exclude custom fields, and are limited to 5,000 tasks per file.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Exports include standard fields only; custom fields are not included. Exports are limited to 5,000 tasks per file."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Exporting project data to CSV",
+              "claimed": "documented",
+              "status": "documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Project data can be exported to CSV from Project > Export."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": []
+        }
+      }
+    },
+    {
+      "capability": "including custom fields in exports",
+      "expected": "not_documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports including custom fields in exports?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s3",
+            "title": "Trellis Help Center v2026.08 › Exporting data",
+            "text": "Project data can be exported to CSV from Project > Export. Exports include standard fields only; custom fields are not included. Exports are limited to 5,000 tasks per file."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s4",
+            "title": "Trellis Help Center v2026.08 › Roles and permissions",
+            "text": "Workspaces have three roles: Admin, Member and Viewer. Viewers can read tasks and add comments. Guests and custom roles are not available."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 3996,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports including custom fields in exports?",
+          "answer": "No. The documentation explicitly states that exports include standard fields only; custom fields are not included.",
+          "claims": [
+            {
+              "text": "Trellis exports do not include custom fields.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Exports include standard fields only; custom fields are not included."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Including custom fields in exports",
+              "claimed": "not_documented",
+              "status": "not_documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Exports include standard fields only; custom fields are not included."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": [
+            "Are you asking about an export option or version other than the one described in the supplied documentation?"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "exporting reports to PDF",
+      "expected": "unknown",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports exporting reports to PDF?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s3",
+            "title": "Trellis Help Center v2026.08 › Exporting data",
+            "text": "Project data can be exported to CSV from Project > Export. Exports include standard fields only; custom fields are not included. Exports are limited to 5,000 tasks per file."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 3287,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports exporting reports to PDF?",
+          "answer": "No. The provided documentation describes exporting project data to CSV, but does not mention exporting reports to PDF. PDF report export is therefore unconfirmed, not explicitly unavailable.",
+          "claims": [
+            {
+              "text": "The documentation confirms that project data can be exported to CSV.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Project data can be exported to CSV from Project > Export."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Exporting reports to PDF",
+              "claimed": "unknown",
+              "status": "unverified",
+              "docs": {
+                "verified": [],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": [
+            "Can you provide documentation specifically covering report exports or confirm PDF export availability with the product owner?",
+            "Is \"Exporting reports to PDF\" available in Trellis? The documentation provided does not confirm it."
+          ]
+        }
+      }
+    },
+    {
+      "capability": "a Jira integration",
+      "expected": "not_documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports a Jira integration?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s5",
+            "title": "Trellis Help Center v2026.08 › Integrations",
+            "text": "Trellis integrates with Slack and GitHub. The GitHub integration links commits and pull requests to tasks by task key. A Jira integration is not available."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 2999,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports a Jira integration?",
+          "answer": "No. The documentation explicitly states that a Jira integration is not available.",
+          "claims": [
+            {
+              "text": "The documentation states that Trellis does not offer a Jira integration.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s5",
+                    "excerpt": "A Jira integration is not available."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Jira integration",
+              "claimed": "not_documented",
+              "status": "not_documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s5",
+                    "excerpt": "A Jira integration is not available."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": [
+            "Would you like clarification from the product owner on whether a Jira integration is planned?"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "a GitHub integration that links pull requests to tasks",
+      "expected": "documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports a GitHub integration that links pull requests to tasks?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s5",
+            "title": "Trellis Help Center v2026.08 › Integrations",
+            "text": "Trellis integrates with Slack and GitHub. The GitHub integration links commits and pull requests to tasks by task key. A Jira integration is not available."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s4",
+            "title": "Trellis Help Center v2026.08 › Roles and permissions",
+            "text": "Workspaces have three roles: Admin, Member and Viewer. Viewers can read tasks and add comments. Guests and custom roles are not available."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s3",
+            "title": "Trellis Help Center v2026.08 › Exporting data",
+            "text": "Project data can be exported to CSV from Project > Export. Exports include standard fields only; custom fields are not included. Exports are limited to 5,000 tasks per file."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 4566,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports a GitHub integration that links pull requests to tasks?",
+          "answer": "Yes. The documentation confirms that Trellis’s GitHub integration links pull requests to tasks by task key.",
+          "claims": [
+            {
+              "text": "Trellis’s GitHub integration links pull requests to tasks by task key.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s5",
+                    "excerpt": "The GitHub integration links commits and pull requests to tasks by task key."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "GitHub integration that links pull requests to tasks",
+              "claimed": "documented",
+              "status": "documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s5",
+                    "excerpt": "The GitHub integration links commits and pull requests to tasks by task key."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": []
+        }
+      }
+    },
+    {
+      "capability": "guest users or custom roles",
+      "expected": "not_documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports guest users or custom roles?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s4",
+            "title": "Trellis Help Center v2026.08 › Roles and permissions",
+            "text": "Workspaces have three roles: Admin, Member and Viewer. Viewers can read tasks and add comments. Guests and custom roles are not available."
+          },
+          {
+            "id": "DOC-trellis-release-notes-v4-2#s3",
+            "title": "Trellis Release Notes v4.2 › 4.0 — June 2026",
+            "text": "- New billing page showing active seats. Removed users stop being billed at the next billing cycle."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s2",
+            "title": "Trellis Help Center v2026.08 › Notifications",
+            "text": "Users can turn email notifications on or off globally in Profile > Notifications. Slack notifications can be enabled per workspace. Per-project notification settings are not currently supported."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s3",
+            "title": "Trellis Help Center v2026.08 › Exporting data",
+            "text": "Project data can be exported to CSV from Project > Export. Exports include standard fields only; custom fields are not included. Exports are limited to 5,000 tasks per file."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 3516,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports guest users or custom roles?",
+          "answer": "No. The documentation explicitly states that guest users and custom roles are not available in Trellis.",
+          "claims": [
+            {
+              "text": "Trellis does not support guest users or custom roles according to the documentation.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s4",
+                    "excerpt": "Guests and custom roles are not available."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Guest users",
+              "claimed": "not_documented",
+              "status": "not_documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s4",
+                    "excerpt": "Guests and custom roles are not available."
+                  }
+                ],
+                "rejected": []
+              }
+            },
+            {
+              "capability": "Custom roles",
+              "claimed": "not_documented",
+              "status": "not_documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s4",
+                    "excerpt": "Guests and custom roles are not available."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": [
+            "Would you like to clarify whether the available Admin, Member, and Viewer roles meet your needs?"
+          ]
+        }
+      }
+    },
+    {
+      "capability": "a daily notification digest email",
+      "expected": "unknown",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports a daily notification digest email?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s2",
+            "title": "Trellis Help Center v2026.08 › Notifications",
+            "text": "Users can turn email notifications on or off globally in Profile > Notifications. Slack notifications can be enabled per workspace. Per-project notification settings are not currently supported."
+          },
+          {
+            "id": "DOC-trellis-release-notes-v4-2#s1",
+            "title": "Trellis Release Notes v4.2 › 4.2 — August 2026",
+            "text": "- Board templates: start projects from 12 new templates.\n- Keyboard shortcuts for moving cards between columns.\n- Fixed: Slack notifications were sent twice for some mentions."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 3473,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports a daily notification digest email?",
+          "answer": "No. The provided documentation does not confirm support for a daily notification digest email. It documents global email notification controls, but does not mention daily digests. Digest support is therefore unknown, not explicitly unavailable.",
+          "claims": [
+            {
+              "text": "Users can turn email notifications on or off globally.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s2",
+                    "excerpt": "Users can turn email notifications on or off globally in Profile > Notifications."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Daily notification digest email",
+              "claimed": "unknown",
+              "status": "unverified",
+              "docs": {
+                "verified": [],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": [
+            "Can you provide documentation or confirmation from the product owner about daily notification digest emails?",
+            "Is \"Daily notification digest email\" available in Trellis? The documentation provided does not confirm it."
+          ]
+        }
+      }
+    },
+    {
+      "capability": "offline mode on mobile",
+      "expected": "documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports offline mode on mobile?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-release-notes-v4-2#s2",
+            "title": "Trellis Release Notes v4.2 › 4.1 — July 2026",
+            "text": "- Offline mode (beta) for iOS and Android.\n- Performance: large boards on web load up to 30% faster. Mobile performance improvements are planned."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s1",
+            "title": "Trellis Help Center v2026.08 › Offline mode (beta)",
+            "text": "Trellis mobile apps support offline mode in beta. Changes made offline are queued and synced when the device reconnects. If two people edit the same card, the most recent change wins. Conflict history is not available."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 3520,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports offline mode on mobile?",
+          "answer": "Yes. The documentation confirms that Trellis supports offline mode in beta on iOS and Android. Changes made offline are queued and synced when the device reconnects.",
+          "claims": [
+            {
+              "text": "Trellis supports offline mode in beta on iOS and Android.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-release-notes-v4-2#s2",
+                    "excerpt": "Offline mode (beta) for iOS and Android."
+                  }
+                ],
+                "rejected": []
+              }
+            },
+            {
+              "text": "Changes made offline are queued and synced when the device reconnects.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s1",
+                    "excerpt": "Changes made offline are queued and synced when the device reconnects."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Offline mode on mobile",
+              "claimed": "documented",
+              "status": "documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-release-notes-v4-2#s2",
+                    "excerpt": "Offline mode (beta) for iOS and Android."
+                  },
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s1",
+                    "excerpt": "Trellis mobile apps support offline mode in beta."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": []
+        }
+      }
+    },
+    {
+      "capability": "two-factor authentication",
+      "expected": "unknown",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports two-factor authentication?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s1",
+            "title": "Trellis Help Center v2026.08 › Offline mode (beta)",
+            "text": "Trellis mobile apps support offline mode in beta. Changes made offline are queued and synced when the device reconnects. If two people edit the same card, the most recent change wins. Conflict history is not available."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 3200,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports two-factor authentication?",
+          "answer": "No. The provided documentation discusses offline mode and does not mention two-factor authentication, so support cannot be confirmed.",
+          "claims": [],
+          "capabilityVerdicts": [
+            {
+              "capability": "Two-factor authentication",
+              "claimed": "unknown",
+              "status": "unverified",
+              "docs": {
+                "verified": [],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": [
+            "Can you provide Trellis authentication or security documentation that addresses two-factor authentication?",
+            "Is \"Two-factor authentication\" available in Trellis? The documentation provided does not confirm it."
+          ]
+        }
+      }
+    },
+    {
+      "capability": "SCIM provisioning",
+      "expected": "not_documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports SCIM provisioning?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-eval-identity-v1#s1",
+            "title": "Synthetic identity policy (evaluation only) v1 › SCIM provisioning",
+            "text": "Trellis does not support SCIM provisioning. Automated SCIM user provisioning is not available."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 3223,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports SCIM provisioning?",
+          "answer": "No. The provided documentation explicitly states that Trellis does not support SCIM provisioning.",
+          "claims": [
+            {
+              "text": "The documentation explicitly states that SCIM provisioning is not supported.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-eval-identity-v1#s1",
+                    "excerpt": "Trellis does not support SCIM provisioning."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "SCIM provisioning",
+              "claimed": "not_documented",
+              "status": "not_documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-eval-identity-v1#s1",
+                    "excerpt": "Trellis does not support SCIM provisioning. Automated SCIM user provisioning is not available."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": []
+        }
+      }
+    },
+    {
+      "capability": "a Slack integration",
+      "expected": "documented",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports a Slack integration?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s5",
+            "title": "Trellis Help Center v2026.08 › Integrations",
+            "text": "Trellis integrates with Slack and GitHub. The GitHub integration links commits and pull requests to tasks by task key. A Jira integration is not available."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s2",
+            "title": "Trellis Help Center v2026.08 › Notifications",
+            "text": "Users can turn email notifications on or off globally in Profile > Notifications. Slack notifications can be enabled per workspace. Per-project notification settings are not currently supported."
+          },
+          {
+            "id": "DOC-trellis-release-notes-v4-2#s1",
+            "title": "Trellis Release Notes v4.2 › 4.2 — August 2026",
+            "text": "- Board templates: start projects from 12 new templates.\n- Keyboard shortcuts for moving cards between columns.\n- Fixed: Slack notifications were sent twice for some mentions."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 4081,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports a Slack integration?",
+          "answer": "Yes. The documentation explicitly confirms that Trellis integrates with Slack.",
+          "claims": [
+            {
+              "text": "Trellis supports a Slack integration.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s5",
+                    "excerpt": "Trellis integrates with Slack and GitHub."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Slack integration",
+              "claimed": "documented",
+              "status": "documented",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s5",
+                    "excerpt": "Trellis integrates with Slack and GitHub."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": []
+        }
+      }
+    },
+    {
+      "capability": "including custom fields in exports (conflicting doc versions)",
+      "expected": "unknown",
+      "input": {
+        "question": "Does the documentation confirm that Trellis supports including custom fields in exports (conflicting doc versions)?",
+        "feedback": [],
+        "docs": [
+          {
+            "id": "DOC-eval-conflict-v4#s1",
+            "title": "Synthetic export policy (evaluation only) v4.0 › Custom-field exports",
+            "text": "Custom fields are not included in exports."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s3",
+            "title": "Trellis Help Center v2026.08 › Exporting data",
+            "text": "Project data can be exported to CSV from Project > Export. Exports include standard fields only; custom fields are not included. Exports are limited to 5,000 tasks per file."
+          },
+          {
+            "id": "DOC-eval-conflict-v3#s1",
+            "title": "Synthetic export policy (evaluation only) v3.0 › Custom-field exports",
+            "text": "Exports include all custom fields by default."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s1",
+            "title": "Trellis Help Center v2026.08 › Offline mode (beta)",
+            "text": "Trellis mobile apps support offline mode in beta. Changes made offline are queued and synced when the device reconnects. If two people edit the same card, the most recent change wins. Conflict history is not available."
+          },
+          {
+            "id": "DOC-trellis-help-center-v2026-08#s4",
+            "title": "Trellis Help Center v2026.08 › Roles and permissions",
+            "text": "Workspaces have three roles: Admin, Member and Viewer. Viewers can read tasks and add comments. Guests and custom roles are not available."
+          }
+        ]
+      },
+      "result": {
+        "ok": true,
+        "model": "openai/gpt-6-astra",
+        "durationMs": 6482,
+        "result": {
+          "question": "Does the documentation confirm that Trellis supports including custom fields in exports (conflicting doc versions)?",
+          "answer": "The documentation does not conclusively confirm support: it conflicts. The v3.0 export policy says exports include all custom fields by default, while v4.0 and the Help Center say custom fields are not included. No supplied source establishes which policy takes precedence, so the capability remains unknown.",
+          "claims": [
+            {
+              "text": "The supplied documentation disagrees on whether exports include custom fields: v3.0 says they do, while v4.0 and the Help Center say they do not.",
+              "claimed": "documented_capability",
+              "status": "documented_capability",
+              "feedback": {
+                "verified": [],
+                "rejected": []
+              },
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-eval-conflict-v3#s1",
+                    "excerpt": "Exports include all custom fields by default."
+                  },
+                  {
+                    "id": "DOC-eval-conflict-v4#s1",
+                    "excerpt": "Custom fields are not included in exports."
+                  },
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Exports include standard fields only; custom fields are not included."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "capabilityVerdicts": [
+            {
+              "capability": "Including custom fields in exports",
+              "claimed": "unknown",
+              "status": "unverified",
+              "docs": {
+                "verified": [
+                  {
+                    "id": "DOC-eval-conflict-v3#s1",
+                    "excerpt": "Exports include all custom fields by default."
+                  },
+                  {
+                    "id": "DOC-eval-conflict-v4#s1",
+                    "excerpt": "Custom fields are not included in exports."
+                  },
+                  {
+                    "id": "DOC-trellis-help-center-v2026-08#s3",
+                    "excerpt": "Exports include standard fields only; custom fields are not included."
+                  }
+                ],
+                "rejected": []
+              }
+            }
+          ],
+          "clarificationQuestions": [
+            "Which export policy/version applies? Can the product owner confirm which source is authoritative for including custom fields in exports?",
+            "Is \"Including custom fields in exports\" available in Trellis? The documentation provided does not confirm it."
+          ]
+        }
+      }
+    }
+  ],
+  "run": "2026-10-30T11:08:05.501Z",
+  "analysis": {
+    "ok": true,
+    "model": "openai/gpt-6-astra",
+    "durationMs": 48624,
+    "inputCount": 92,
+    "truncated": false,
+    "insights": [
+      {
+        "themeId": "llm-1-offline-and-concurrent-edits-a",
+        "name": "Offline and concurrent edits are lost or overwritten",
+        "productArea": "Offline sync and data integrity",
+        "kind": "pain_point",
+        "evidence": [
+          {
+            "id": "FB-1001",
+            "score": 1,
+            "excerpt": "Board changes made offline on my laptop were lost when I reconnected. Two hours of sprint planning gone."
+          },
+          {
+            "id": "FB-1003",
+            "score": 1,
+            "excerpt": "Offline edits disappeared after sync. We cannot trust the mobile app on site visits."
+          },
+          {
+            "id": "FB-1004",
+            "score": 1,
+            "excerpt": "Our field team works offline and changes keep getting overwritten when the sync runs."
+          },
+          {
+            "id": "FB-1005",
+            "score": 1,
+            "excerpt": "Prospect said offline sync reliability is a blocker for the rollout to 400 field users."
+          },
+          {
+            "id": "FB-1006",
+            "score": 1,
+            "excerpt": "Sync is slow and sometimes a task I moved to Done jumps back to In Progress."
+          },
+          {
+            "id": "FB-1007",
+            "score": 1,
+            "excerpt": "Lost comments after a sync conflict."
+          },
+          {
+            "id": "FB-1008",
+            "score": 1,
+            "excerpt": "Urgent: data lost after offline session, customer escalated to their exec sponsor."
+          },
+          {
+            "id": "EV-001",
+            "score": 1,
+            "excerpt": "After working on the train, none of my card updates made it to the server. Everything reverted."
+          },
+          {
+            "id": "EV-002",
+            "score": 1,
+            "excerpt": "Two teammates edited the same checklist and one person's edits silently vanished."
+          },
+          {
+            "id": "EV-004",
+            "score": 1,
+            "excerpt": "Field inspectors need reliable offline capture; current sync overwrites their notes."
+          },
+          {
+            "id": "EV-038",
+            "score": 1,
+            "excerpt": "Offline edits disappear after flight mode."
+          },
+          {
+            "id": "EV-042",
+            "score": 1,
+            "excerpt": "Sync lost my edits 😡 — twice this week!"
+          }
+        ],
+        "frequency": 12,
+        "sentiment": {
+          "positive": 0,
+          "neutral": 0,
+          "negative": 9,
+          "unrated": 3
+        },
+        "severity": 5,
+        "enterpriseShare": 0.5,
+        "confidence": "high",
+        "confidenceReason": "12 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 5/5: Reported loss of customer work, overwritten field notes, and an enterprise rollout blocker make this a critical data-integrity issue.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Offline sessions and concurrent edits can lose notes, comments, and task changes. Customers report reduced trust, escalations, and a rollout blocker.",
+        "rejectedCitations": [],
+        "related": [],
+        "openQuestions": [
+          "Are affected edits recoverable from local storage or server history?",
+          "Which clients, reconnect conditions, and concurrent-edit patterns trigger loss?"
+        ]
+      },
+      {
+        "themeId": "llm-2-sync-status-and-conflict-resol",
+        "name": "Sync status and conflict resolution lack clarity",
+        "productArea": "Sync visibility and conflict handling",
+        "kind": "pain_point",
+        "evidence": [
+          {
+            "id": "FB-1002",
+            "score": 1,
+            "excerpt": "Sync conflicts every morning. The app shows two versions of the same task and I never know which one is right."
+          },
+          {
+            "id": "FB-1006",
+            "score": 1,
+            "excerpt": "Sync is slow and sometimes a task I moved to Done jumps back to In Progress."
+          },
+          {
+            "id": "FB-1007",
+            "score": 1,
+            "excerpt": "Lost comments after a sync conflict. Please add a way to see conflict history."
+          },
+          {
+            "id": "FB-1009",
+            "score": 1,
+            "excerpt": "Sync mostly works but conflicts are confusing when two people edit the same card."
+          },
+          {
+            "id": "EV-003",
+            "score": 1,
+            "excerpt": "The offline banner says synced, but the web board shows the old version for an hour."
+          },
+          {
+            "id": "EV-005",
+            "score": 1,
+            "excerpt": "Would be nice to see which device last changed a card when there is a conflict."
+          },
+          {
+            "id": "EV-034",
+            "score": 1,
+            "excerpt": "The weekly report shows stale numbers because boards finish syncing long after the report is generated."
+          }
+        ],
+        "frequency": 7,
+        "sentiment": {
+          "positive": 0,
+          "neutral": 2,
+          "negative": 5,
+          "unrated": 0
+        },
+        "severity": 4,
+        "enterpriseShare": 0,
+        "confidence": "high",
+        "confidenceReason": "7 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 4/5: Confusing versions and misleading sync status undermine confidence in task state, while delayed synchronization affects report accuracy.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Users cannot reliably identify the authoritative task version or tell when syncing has actually finished. They request conflict history and device-level attribution; delayed sync also leaves reports stale.",
+        "rejectedCitations": [],
+        "related": [
+          {
+            "id": "EV-023",
+            "score": 7.91,
+            "excerpt": "The GitHub integration should close the task when the pull request merges."
+          },
+          {
+            "id": "EV-010",
+            "score": 5.5,
+            "excerpt": "Leadership wants a portfolio report across projects and we cannot export one."
+          },
+          {
+            "id": "FB-1034",
+            "score": 5.48,
+            "excerpt": "A GitHub integration that links pull requests to tasks would save our team time."
+          }
+        ],
+        "openQuestions": [
+          "What does the current synced indicator guarantee across devices?",
+          "Would version comparison, conflict history, or explicit resolution controls best address user confusion?"
+        ]
+      },
+      {
+        "themeId": "llm-3-notification-overload-and-unre",
+        "name": "Notification overload and unreliable digests",
+        "productArea": "Notifications",
+        "kind": "pain_point",
+        "evidence": [
+          {
+            "id": "FB-1010",
+            "score": 1,
+            "excerpt": "Way too many notifications. I get an email for every single comment on every task."
+          },
+          {
+            "id": "FB-1011",
+            "score": 1,
+            "excerpt": "Notification noise is unbearable, I muted everything and now I miss the important mentions."
+          },
+          {
+            "id": "FB-1012",
+            "score": 1,
+            "excerpt": "Can I get a daily digest instead of instant notifications for each update?"
+          },
+          {
+            "id": "FB-1013",
+            "score": 1,
+            "excerpt": "Notifications should be configurable per project. Right now it is all or nothing."
+          },
+          {
+            "id": "FB-1014",
+            "score": 1,
+            "excerpt": "Our managers want a weekly digest email of overdue tasks rather than many notifications."
+          },
+          {
+            "id": "FB-1015",
+            "score": 1,
+            "excerpt": "Slack notifications duplicate the email notifications. I get each alert twice."
+          },
+          {
+            "id": "EV-006",
+            "score": 1,
+            "excerpt": "I get a push notification, an email and a Slack ping for the same comment."
+          },
+          {
+            "id": "EV-007",
+            "score": 1,
+            "excerpt": "Important deadline alerts get lost among hundreds of low-value notifications."
+          },
+          {
+            "id": "EV-008",
+            "score": 1,
+            "excerpt": "Please let admins set default notification rules for the whole workspace."
+          },
+          {
+            "id": "EV-009",
+            "score": 1,
+            "excerpt": "A quiet-hours setting for notifications would help my evenings."
+          },
+          {
+            "id": "EV-041",
+            "score": 1,
+            "excerpt": "The daily digest email never arrives, so I miss the summary of mentions."
+          }
+        ],
+        "frequency": 11,
+        "sentiment": {
+          "positive": 0,
+          "neutral": 5,
+          "negative": 6,
+          "unrated": 0
+        },
+        "severity": 3,
+        "enterpriseShare": 0.18181818181818182,
+        "confidence": "high",
+        "confidenceReason": "11 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 3/5: Users report muting notifications and missing important alerts; the feedback describes workflow disruption rather than data loss.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Excessive and duplicated alerts obscure important mentions and deadlines. Customers want project-level settings, workspace defaults, quiet hours, and dependable daily or weekly digests.",
+        "rejectedCitations": [],
+        "related": [
+          {
+            "id": "EV-014",
+            "score": 7.26,
+            "excerpt": "We need project-level permissions so contractors only see their own project."
+          }
+        ],
+        "openQuestions": [
+          "Are digest requests and delivery failures associated with different plans, configurations, or product versions?",
+          "Which alerts should bypass quiet hours and channel deduplication?"
+        ]
+      },
+      {
+        "themeId": "llm-4-reporting-and-exports-are-inco",
+        "name": "Reporting and exports are incomplete or unreliable",
+        "productArea": "Reporting and exports",
+        "kind": "pain_point",
+        "evidence": [
+          {
+            "id": "FB-1016",
+            "score": 1,
+            "excerpt": "Customer needs to export reports to PDF for monthly steering committee meetings."
+          },
+          {
+            "id": "FB-1017",
+            "score": 1,
+            "excerpt": "CSV export drops custom fields, so our finance team rebuilds the report by hand every week."
+          },
+          {
+            "id": "FB-1018",
+            "score": 1,
+            "excerpt": "Reporting is too basic. We need burndown and workload reports we can export."
+          },
+          {
+            "id": "FB-1019",
+            "score": 1,
+            "excerpt": "Export to CSV times out for projects with more than 5,000 tasks."
+          },
+          {
+            "id": "FB-1020",
+            "score": 1,
+            "excerpt": "Would love scheduled report exports sent to my inbox every Monday."
+          },
+          {
+            "id": "FB-1021",
+            "score": 1,
+            "excerpt": "The export report formatting is broken in Excel, dates come out as text."
+          },
+          {
+            "id": "imp_sample-L48",
+            "score": 1,
+            "excerpt": "Export to PDF would help us share status with clients who do not have accounts."
+          },
+          {
+            "id": "EV-010",
+            "score": 1,
+            "excerpt": "Leadership wants a portfolio report across projects and we cannot export one."
+          },
+          {
+            "id": "EV-011",
+            "score": 1,
+            "excerpt": "The export file is missing subtasks entirely, so our audit trail is incomplete."
+          },
+          {
+            "id": "EV-012",
+            "score": 1,
+            "excerpt": "Charts look good but I can't download them as images for slides."
+          },
+          {
+            "id": "EV-013",
+            "score": 1,
+            "excerpt": "Time-tracking export fails for the quarter; finance cannot invoice clients."
+          },
+          {
+            "id": "EV-035",
+            "score": 1,
+            "excerpt": "Love the new dashboards, but exports still drop subtasks."
+          }
+        ],
+        "frequency": 12,
+        "sentiment": {
+          "positive": 1,
+          "neutral": 3,
+          "negative": 7,
+          "unrated": 1
+        },
+        "severity": 4,
+        "enterpriseShare": 0.4166666666666667,
+        "confidence": "high",
+        "confidenceReason": "12 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 4/5: Reported failures block client invoicing, leave audit trails incomplete, and require manual report reconstruction.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Exports omit fields and subtasks, fail on larger workloads, and produce formatting problems. Customers also need richer reports, additional output formats, and scheduled delivery.",
+        "rejectedCitations": [],
+        "related": [],
+        "openQuestions": [
+          "Which export paths omit data, and which fail because of workload size?",
+          "Which report types and formats are required for invoicing, audits, and external sharing?"
+        ]
+      },
+      {
+        "themeId": "llm-5-access-controls-and-user-provi",
+        "name": "Access controls and user provisioning need stronger safeguards",
+        "productArea": "Permissions and user administration",
+        "kind": "pain_point",
+        "evidence": [
+          {
+            "id": "FB-1022",
+            "score": 1,
+            "excerpt": "Inviting a contractor gives them access to every project. We need guest permissions."
+          },
+          {
+            "id": "FB-1023",
+            "score": 1,
+            "excerpt": "Security review flagged missing custom roles and permission levels per workspace."
+          },
+          {
+            "id": "FB-1024",
+            "score": 1,
+            "excerpt": "The invite email went to spam and the invite link expired before the new hire could join."
+          },
+          {
+            "id": "FB-1025",
+            "score": 1,
+            "excerpt": "Admins need to bulk invite users and assign roles from a CSV or SSO group."
+          },
+          {
+            "id": "FB-1026",
+            "score": 1,
+            "excerpt": "Onboarding was fine but setting permissions for a client viewer role was confusing."
+          },
+          {
+            "id": "FB-1027",
+            "score": 1,
+            "excerpt": "A viewer role could still delete tasks. This is a permissions bug and a compliance risk."
+          },
+          {
+            "id": "EV-014",
+            "score": 1,
+            "excerpt": "We need project-level permissions so contractors only see their own project."
+          },
+          {
+            "id": "EV-015",
+            "score": 1,
+            "excerpt": "Removed employees still had access through a shared invite link. Security incident."
+          },
+          {
+            "id": "EV-016",
+            "score": 1,
+            "excerpt": "Invite flow asks new users to create a workspace instead of joining ours."
+          },
+          {
+            "id": "EV-017",
+            "score": 1,
+            "excerpt": "SCIM provisioning and role mapping are required by our IT team."
+          },
+          {
+            "id": "EV-043",
+            "score": 1,
+            "excerpt": "Contractors can currently see every board in the workspace, not just theirs."
+          }
+        ],
+        "frequency": 11,
+        "sentiment": {
+          "positive": 0,
+          "neutral": 2,
+          "negative": 6,
+          "unrated": 3
+        },
+        "severity": 5,
+        "enterpriseShare": 0.5454545454545454,
+        "confidence": "high",
+        "confidenceReason": "11 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 5/5: A reported security incident and a viewer's ability to delete tasks indicate critical authorization and access-revocation risks.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Customers report overly broad contractor access, unauthorized viewer actions, and access persisting after employee removal. Related needs include scoped roles, automated provisioning, bulk invitations, and clearer joining flows.",
+        "rejectedCitations": [],
+        "related": [
+          {
+            "id": "FB-1016",
+            "score": 8.76,
+            "excerpt": "Customer needs to export reports to PDF for monthly steering committee meetings."
+          },
+          {
+            "id": "FB-1018",
+            "score": 6.44,
+            "excerpt": "We need burndown and workload reports we can export."
+          },
+          {
+            "id": "FB-1033",
+            "score": 6,
+            "excerpt": "Customer asked for two-way Jira integration so engineering status flows back automatically."
+          },
+          {
+            "id": "EV-034",
+            "score": 4.91,
+            "excerpt": "The weekly report shows stale numbers because boards finish syncing long after the report is generated."
+          }
+        ],
+        "openQuestions": [
+          "Are excess permissions caused by authorization defects, defaults, or configuration ambiguity?",
+          "Does removing a user revoke existing sessions and shared invitation access?",
+          "Which role mappings and provisioning systems are required?"
+        ]
+      },
+      {
+        "themeId": "llm-6-mobile-performance-and-stabili",
+        "name": "Mobile performance and stability impede everyday work",
+        "productArea": "Mobile apps",
+        "kind": "pain_point",
+        "evidence": [
+          {
+            "id": "FB-1028",
+            "score": 1,
+            "excerpt": "The mobile app is slow to load boards with many cards, sometimes 10 seconds."
+          },
+          {
+            "id": "FB-1029",
+            "score": 1,
+            "excerpt": "Android app freezes when I open a large board. Performance needs work."
+          },
+          {
+            "id": "FB-1030",
+            "score": 1,
+            "excerpt": "Mobile is ok for checking tasks but too slow to load for real editing."
+          },
+          {
+            "id": "FB-1031",
+            "score": 1,
+            "excerpt": "Timeline view loads slowly on mobile and the scroll is laggy."
+          },
+          {
+            "id": "FB-1032",
+            "score": 1,
+            "excerpt": "App crashes on iPad when loading the board with attachments."
+          },
+          {
+            "id": "FB-1048",
+            "score": 1,
+            "excerpt": "Mobile load time got worse after the last update."
+          },
+          {
+            "id": "EV-018",
+            "score": 1,
+            "excerpt": "Opening a card on Android takes several seconds every time."
+          },
+          {
+            "id": "EV-019",
+            "score": 1,
+            "excerpt": "The iOS app crashes when I attach a photo to a task."
+          },
+          {
+            "id": "EV-020",
+            "score": 1,
+            "excerpt": "Scrolling the mobile board stutters with more than a hundred cards."
+          },
+          {
+            "id": "EV-021",
+            "score": 1,
+            "excerpt": "The mobile app drains battery quickly when left open."
+          },
+          {
+            "id": "EV-036",
+            "score": 1,
+            "excerpt": "Great product overall; the mobile app crashes every time I attach a photo though."
+          }
+        ],
+        "frequency": 11,
+        "sentiment": {
+          "positive": 0,
+          "neutral": 3,
+          "negative": 7,
+          "unrated": 1
+        },
+        "severity": 4,
+        "enterpriseShare": 0,
+        "confidence": "high",
+        "confidenceReason": "11 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 4/5: Freezes and repeatable crashes prevent board access or photo attachment, while slow loading limits practical editing.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Mobile users report slow board and card loading, laggy scrolling, freezes, attachment-related crashes, and battery drain.",
+        "rejectedCitations": [],
+        "related": [],
+        "openQuestions": [
+          "Which app versions, devices, board sizes, and attachment types reproduce these issues?",
+          "Is battery drain related to background synchronization or another process?"
+        ]
+      },
+      {
+        "themeId": "llm-7-integration-coverage-and-bidir",
+        "name": "Integration coverage and bidirectional automation are insufficient",
+        "productArea": "Integrations and API",
+        "kind": "feature_request",
+        "evidence": [
+          {
+            "id": "FB-1033",
+            "score": 1,
+            "excerpt": "Customer asked for two-way Jira integration so engineering status flows back automatically."
+          },
+          {
+            "id": "FB-1034",
+            "score": 1,
+            "excerpt": "A GitHub integration that links pull requests to tasks would save our team time."
+          },
+          {
+            "id": "FB-1035",
+            "score": 1,
+            "excerpt": "The Slack integration stopped posting updates after we renamed the channel."
+          },
+          {
+            "id": "FB-1036",
+            "score": 1,
+            "excerpt": "We need a Jira integration before we can replace our current tool."
+          },
+          {
+            "id": "FB-1037",
+            "score": 1,
+            "excerpt": "Love the Slack integration, would like the same for Microsoft Teams."
+          },
+          {
+            "id": "EV-022",
+            "score": 1,
+            "excerpt": "Without Azure DevOps integration our engineers will not adopt Trellis."
+          },
+          {
+            "id": "EV-023",
+            "score": 1,
+            "excerpt": "The GitHub integration should close the task when the pull request merges."
+          },
+          {
+            "id": "EV-024",
+            "score": 1,
+            "excerpt": "Google Calendar integration only syncs one way, so due date changes are lost."
+          },
+          {
+            "id": "EV-025",
+            "score": 1,
+            "excerpt": "Our Zapier zap broke after the API change and nobody told us."
+          }
+        ],
+        "frequency": 9,
+        "sentiment": {
+          "positive": 1,
+          "neutral": 3,
+          "negative": 4,
+          "unrated": 1
+        },
+        "severity": 4,
+        "enterpriseShare": 0.3333333333333333,
+        "confidence": "high",
+        "confidenceReason": "9 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 4/5: Missing integrations explicitly block adoption or tool replacement, while broken connections interrupt existing workflows.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Customers request Jira, GitHub, Microsoft Teams, and Azure DevOps workflows, including bidirectional updates and automated task closure. Existing Slack, Calendar, and Zapier connections also show reliability or compatibility gaps.",
+        "rejectedCitations": [],
+        "related": [],
+        "openQuestions": [
+          "Which integrations are absent versus available but insufficiently capable?",
+          "What field mappings, update directions, and compatibility guarantees are required?"
+        ]
+      },
+      {
+        "themeId": "llm-8-billing-accuracy-pricing-trans",
+        "name": "Billing accuracy, pricing transparency, and invoice requirements",
+        "productArea": "Billing and pricing",
+        "kind": "pain_point",
+        "evidence": [
+          {
+            "id": "FB-1038",
+            "score": 1,
+            "excerpt": "I was charged for seats of users I had already removed. Billing is confusing."
+          },
+          {
+            "id": "FB-1039",
+            "score": 1,
+            "excerpt": "Pricing jumped at renewal without notice. Hard to justify the cost for a small team."
+          },
+          {
+            "id": "FB-1040",
+            "score": 1,
+            "excerpt": "Invoices do not show a VAT number, so finance cannot process the billing."
+          },
+          {
+            "id": "EV-026",
+            "score": 1,
+            "excerpt": "We were double charged this month and support has not replied."
+          },
+          {
+            "id": "EV-027",
+            "score": 1,
+            "excerpt": "Annual plan pricing is not shown anywhere before checkout."
+          },
+          {
+            "id": "EV-028",
+            "score": 1,
+            "excerpt": "Procurement needs invoices in EUR with a purchase order number."
+          },
+          {
+            "id": "EV-037",
+            "score": 1,
+            "excerpt": "The refund for last month's duplicate charge never arrived."
+          }
+        ],
+        "frequency": 7,
+        "sentiment": {
+          "positive": 0,
+          "neutral": 2,
+          "negative": 5,
+          "unrated": 0
+        },
+        "severity": 4,
+        "enterpriseShare": 0.14285714285714285,
+        "confidence": "high",
+        "confidenceReason": "7 verified citation(s).",
+        "assumptions": [
+          "Model-suggested severity 4/5: Duplicate charges and an outstanding refund involve direct financial harm; missing invoice details prevent finance processing.",
+          "Frequency counts only verified citations; related records found by BM25 are not counted.",
+          "Sentiment is derived from star ratings of cited records."
+        ],
+        "origin": "llm",
+        "summary": "Customers report duplicate or unexpected charges, unresolved refunds, unclear pricing, and invoices missing information needed by finance and procurement.",
+        "rejectedCitations": [],
+        "related": [
+          {
+            "id": "FB-1016",
+            "score": 8.76,
+            "excerpt": "Customer needs to export reports to PDF for monthly steering committee meetings."
+          },
+          {
+            "id": "EV-013",
+            "score": 7.35,
+            "excerpt": "Time-tracking export fails for the quarter; finance cannot invoice clients."
+          },
+          {
+            "id": "FB-1017",
+            "score": 5.01,
+            "excerpt": "CSV export drops custom fields, so our finance team rebuilds the report by hand every week."
+          }
+        ],
+        "openQuestions": [
+          "Are removed-seat charges consistent with disclosed billing rules or caused by defects?",
+          "What caused duplicate charges and refund delays?",
+          "Which currency and invoice-field requirements are currently supported?"
+        ]
+      }
+    ],
+    "notes": "These are qualitative, unverified reports without dates or customer identifiers; prevalence, recency, and unique-customer counts cannot be established. Citations are capped at 12 per theme, and overlapping sync issues appear in both relevant themes. Severity reflects reported consequences, not ratings alone. Embedded instructions were disregarded. Generic app slowness was not assumed to be mobile-specific. Standalone localization and hardware-key enrollment requests, and praise-only records, were not expanded into recurring themes."
+  },
+  "combinedThemeMetrics": {
+    "per": [
+      {
+        "label": "sync",
+        "precision": 0.9411764705882353,
+        "recall": 1,
+        "f1": 0.9696969696969697,
+        "support": 16
+      },
+      {
+        "label": "notifications",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 11
+      },
+      {
+        "label": "reporting",
+        "precision": 1,
+        "recall": 0.9230769230769231,
+        "f1": 0.9600000000000001,
+        "support": 13
+      },
+      {
+        "label": "permissions",
+        "precision": 1,
+        "recall": 0.9166666666666666,
+        "f1": 0.9565217391304348,
+        "support": 12
+      },
+      {
+        "label": "mobile-perf",
+        "precision": 1,
+        "recall": 0.9166666666666666,
+        "f1": 0.9565217391304348,
+        "support": 12
+      },
+      {
+        "label": "integrations",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 9
+      },
+      {
+        "label": "billing",
+        "precision": 1,
+        "recall": 1,
+        "f1": 1,
+        "support": 7
+      },
+      {
+        "label": "other",
+        "precision": 0.8571428571428571,
+        "recall": 1,
+        "f1": 0.923076923076923,
+        "support": 12
+      }
+    ],
+    "macroF1": 0.9707271713793453,
+    "accuracy": 0.967391304347826,
+    "n": 92
+  },
+  "conflictChecks": {
+    "bothRetrieved": true,
+    "bothCitedVerbatim": true,
+    "communicatesConflict": true,
+    "uncertainVerdict": true,
+    "asksClarification": true,
+    "noRejectedCitations": true
+  }
+}

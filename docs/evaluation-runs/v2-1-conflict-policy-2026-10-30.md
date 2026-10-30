@@ -1,0 +1,64 @@
+# Evaluation results
+
+Run: 2026-10-30T11:08:05.501Z. Dataset: **92 labeled unique synthetic feedback records** (94 rows incl. duplicates), 10 labeled doc-retrieval queries, 12 capability cases. Synthetic data only — results do not generalise to real customers.
+
+Capability fixtures: **v2.1**. v2.1 supplies explicit synthetic SCIM denial and both conflicting export versions through saved-row mapping + BM25. Feedback labels and 12 expected verdicts unchanged. Q&A policy now requires unknown for unresolved conflicts and prohibits inferred version precedence. This conflict case is a development regression, not held-out data. Fixture rows are local only, not inserted into a live workspace.
+
+## Automated — deterministic (no model)
+
+| Metric | Result |
+|---|---|
+| Baseline (BM25 seed themes) theme macro-F1 | 0.865 (accuracy 85.9%, n=92) |
+| Duplicate detection precision / recall | 100.0% / 100.0% (2 known) |
+| Injection flagging recall | 100.0% (4 labeled, 0 false positives) |
+| Doc retrieval Recall@1 / Recall@5 (BM25) | 90.0% / 90.0% |
+
+Per-theme (baseline): sync P0.93/R0.81, notifications P1.00/R0.91, reporting P1.00/R0.92, permissions P0.83/R0.83, mobile-perf P0.92/R1.00, integrations P0.78/R0.78, billing P1.00/R0.86, other P0.56/R0.75
+
+## Automated — LLM (openai/gpt-6-astra)
+
+| Metric | Result |
+|---|---|
+| LLM theme macro-F1 (majority-mapped) | 0.971 (accuracy 96.7%, n=92) |
+| Citation validity (verified / proposed) | 100.0% (80/80) |
+| Macro precision / recall | 0.975 / 0.970; same majority mapping, n=92 |
+| Themes produced | 8; latency 48.6s |
+| Themes obeying injected instructions | 0 |
+
+Per-theme (LLM): sync P0.94/R1.00, notifications P1.00/R1.00, reporting P1.00/R0.92, permissions P1.00/R0.92, mobile-perf P1.00/R0.92, integrations P1.00/R1.00, billing P1.00/R1.00, other P0.86/R1.00
+
+Development and held-out feedback records were analysed together with gold-majority mapping, retained only for historical comparability. Not an independent held-out estimate. Analysis prompts/labels unchanged; Q&A conflict policy repaired against a development fixture, not EV-* feedback. Semantic evidence support NOT MEASURED.
+
+### Documented-capability classification: 12/12 (100.0%)
+
+| Capability | Expected | Predicted |
+|---|---|---|
+| exporting project data to CSV | documented | documented |
+| including custom fields in exports | not_documented | not_documented |
+| exporting reports to PDF | unknown | unknown |
+| a Jira integration | not_documented | not_documented |
+| a GitHub integration that links pull requests to tasks | documented | documented |
+| guest users or custom roles | not_documented | not_documented |
+| a daily notification digest email | unknown | unknown |
+| offline mode on mobile | documented | documented |
+| two-factor authentication | unknown | unknown |
+| SCIM provisioning | not_documented | not_documented |
+| a Slack integration | documented | documented |
+| including custom fields in exports (conflicting doc versions) | unknown | unknown |
+
+Attempted 12/12; unattempted cases are BLOCKED, never estimated.
+
+### Conflicting-document case (separate; n=1 question, 2 synthetic documents)
+
+- bothRetrieved: **PASS**
+- bothCitedVerbatim: **PASS**
+- communicatesConflict: **PASS**
+- uncertainVerdict: **PASS**
+- asksClarification: **PASS**
+- noRejectedCitations: **PASS**
+
+These checks use exact saved-section citation validation and explicit lexical/structural proxies. They do not prove no invented resolution; read the retained answer in the companion JSON to inspect that result. No human validation claimed.
+
+## Human judgments
+
+PRD/story acceptance rate is recorded in PRD Studio (Accept / Needs changes). **No human reviews have been recorded yet**, so no acceptance rate is claimed.

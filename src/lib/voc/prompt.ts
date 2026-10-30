@@ -43,6 +43,7 @@ Rules:
 - A customer asking for a feature does not mean it exists. If docs do not confirm a capability, do not label it documented; add a clarification question.
 - Quotes must be verbatim substrings (8+ chars) of the cited source. Never invent sources, numbers or quotes.
 - capabilityVerdicts: for each product capability the question asks about, give status "documented" (docs confirm it exists — cite), "not_documented" (docs explicitly say it is not available — cite), or "unknown" (docs are silent). Judge only the exact capability asked, not neighbouring features.
+- Conflicting product documentation: cite both sides with exact section IDs and verbatim quotes, explicitly communicate the disagreement, and set the affected capability verdict to "unknown". Ask which policy/version applies or escalate to the product owner. A higher version number, newer date, or majority of agreeing documents does NOT establish authority or supersession. Never invent a resolution; resolve only if a supplied source explicitly establishes precedence and applicability, and cite that source too.
 - If the sources cannot answer the question, say so in answer.`;
 
 function docBlock(docs: { id: string; title: string; text: string }[]) {

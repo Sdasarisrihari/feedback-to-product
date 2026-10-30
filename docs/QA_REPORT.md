@@ -134,3 +134,25 @@ Baseline **101/101**; final **114/114**, 9 files. Automatic type/build check: `b
 | Human reviews | Database completed-review count = 0; **0/10** genuine completed reviews. |
 
 Reproduce automated checks: `bunx vitest run src/lib/mcp/security.test.ts` or `bunx vitest run`. These are not a comprehensive security audit. Production timeout changes require republishing and client verification.
+
+## Conflicting documents and capability gaps — 2026-10-30
+
+| Check | Actual result / evidence |
+|---|---|
+| Existing automated baseline | PASS: **114/114**, 9 files, before edits. |
+| Historical capability failures inspected | SCIM unknown vs expected not_documented lacked denial evidence; conflicting exports not_documented vs expected unknown lacked the conflict fixture in the model input. Historical 0.947/92, 74/74 and 10/12 retained unchanged. |
+| Fixture repair, labels preserved | PASS: same 12 gold verdicts; evaluation-only SCIM denial and opposing export versions round-trip through persistence mappings and unchanged BM25. No live database writes. |
+| First live rerun | 13 calls completed; 0.956/92, 75/75 theme citations, 11/12 capability cases. Both conflict versions retrieved/cited, but model inferred unsupported precedence: uncertainty FAIL. Retained as a failed intermediate run. |
+| Evidence-backed Q&A repair | Only Q&A policy changed: unresolved conflict → unknown + clarification; versions/dates/majority cannot establish precedence without supplied evidence. Analysis prompt unchanged; no held-out feedback tuning. |
+| Final live rerun | 13 calls completed; macro-F1 **0.971/92**, macro P/R **0.975/0.970**, **80/80** theme citations; **12/12** capability score with changed evidence. **28/28** Q&A document-citation occurrences accepted. |
+| Conflict final answer | Six separate proxies PASS: retrieves both, cites both verbatim, communicates conflict, unknown verdict, clarification, no rejected citations. One question / two opposing docs; assistant inspected retained answer and observed no invented resolution, not human validation. |
+| Regression tests | Eight added tests: labels retained, SCIM passage supplied, both conflicting passages in Q&A input, saved-row provenance round-trip, conflict score positives, fabricated ID/quote negatives, silently chosen verdict negative, normal export corpus uncontaminated. **122/122**, 10 files, final full suite. |
+| Initial new test failure | ISO fixture timestamp formatting only (`Z` vs `.000Z`); fixture normalized, assertion retained and passed. No persistence defect or data deletion. |
+| Type/build checks | Automatic application check log reports **build OK at 11:10:34Z**, after final source edits. Manual builds/typechecks not run (platform-managed); no separately observable standalone typecheck result, so not claimed. |
+| Scope and human reviews | No new MCP tools, n8n/GitHub, auth/migration/billing changes or external writes. Genuine reviews remain **0/10**. |
+
+Run commands: `bunx vitest run`; `bun scripts/eval.ts --llm --output docs/evaluation-runs/<new-name>.md`. Runner now requires an unused output path and retains a companion synthetic JSON artifact; terminal credit/config/access failures halt further calls and remaining cases are marked BLOCKED. Full denominators, intermediate failure, raw final answer and comparison limitations are in `EVALUATION_RESULTS.md` and `evaluation-runs/`.
+
+Final confirmation at 11:10 UTC: **122/122 tests** passed again; deterministic runner repeated 0.865/92 and 90% Recall@5/10; attempting to reuse the final run filename was refused before any model call (observed overwrite-guard PASS).
+
+Remaining risks: one development conflict example, model conflict handling remains instruction-based (citation matching cannot detect semantic contradictions), gold-majority mapping and combined dev/held-out scoring, no semantic support score, no genuine human evaluation, no production deployment check in this milestone. Recommended next milestone: fixed development-only label mapping and separately executed held-out evaluation with new untuned conflict/precedence fixtures; keep write-capable integrations out.
