@@ -15,7 +15,7 @@ export function conflictDocs(): ProductDoc[] {
     const id = s.id.split("#")[0] ?? s.id;
     return {
       id, title: "Synthetic export policy (evaluation only)", version: i ? "4.0" : "3.0",
-      kind: "help_doc", filename: `synthetic-export-${i}.md`, importedAt: "2026-10-30T00:00:00Z", warnings: [],
+      kind: "help_doc", filename: `synthetic-export-${i}.md`, importedAt: "2026-10-30T00:00:00.000Z", warnings: [],
       sections: [{ id: s.id, docId: id, heading: "Custom-field exports", page: null, text: s.text, suspectedInjection: false }],
     };
   });
@@ -33,7 +33,7 @@ export function capabilityInput(capability: string): QaInput {
     const id = SCIM_SECTION_ID.split("#")[0] ?? SCIM_SECTION_ID;
     docs = [...docs, {
       id, title: "Synthetic identity policy (evaluation only)", version: "1", kind: "spec", filename: "synthetic-identity.md",
-      importedAt: "2026-10-30T00:00:00Z", warnings: [],
+      importedAt: "2026-10-30T00:00:00.000Z", warnings: [],
       sections: [{ id: SCIM_SECTION_ID, docId: id, heading: "SCIM provisioning", page: null, text: "Trellis does not support SCIM provisioning. Automated SCIM user provisioning is not available.", suspectedInjection: false }],
     }];
   }
