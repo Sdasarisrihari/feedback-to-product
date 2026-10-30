@@ -97,26 +97,26 @@ describe("bounded database requests", () => {
 describe("real tool handlers with controlled database failures (not live RLS)", () => {
   const context = new ToolContext({ type: "oauth", principal: { sub: "owner-A", claims: {}, issuer, resource: "test", acceptedAudiences: ["authenticated"], scopes: [], clientId: "test" }, bearer: { token: "synthetic-test-token" } });
   it("rejects unauthenticated handler access", async () => {
-    await expect(evidence.handler({}, new ToolContext(undefined))).rejects.toThrow("verified OAuth token");
+    await expect(evidence.handler({ query: undefined, themeId: undefined, limit: undefined }, new ToolContext(undefined))).rejects.toThrow("verified OAuth token");
   });
   it("returns empty feedback and document results without fabricated evidence", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => Response.json([])));
-    const feedback = await evidence.handler({}, context);
-    const documents = await docs.handler({ query: "export" }, context);
+    const feedback = await evidence.handler({ query: undefined, themeId: undefined, limit: undefined }, context);
+    const documents = await docs.handler({ query: "export", limit: undefined }, context);
     expect(feedback.structuredContent).toMatchObject({ totalMatched: 0, records: [] });
     expect(documents.structuredContent).toMatchObject({ totalMatched: 0, sections: [] });
     await expect(theme.handler({ themeId: "foreign-theme" }, context)).rejects.toThrow();
   });
   it("each handler returns only a safe retry error on database failure", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => Response.json({ message: "PRIVATE-UPSTREAM-DETAIL", code: "XX000" }, { status: 500 })));
-    await expect(evidence.handler({}, context)).rejects.toThrow("Could not read feedback records. Try again later.");
-    await expect(docs.handler({ query: "export" }, context)).rejects.toThrow("Could not read saved documents. Try again later.");
+    await expect(evidence.handler({ query: undefined, themeId: undefined, limit: undefined }, context)).rejects.toThrow("Could not read feedback records. Try again later.");
+    await expect(docs.handler({ query: "export", limit: undefined }, context)).rejects.toThrow("Could not read saved documents. Try again later.");
     await expect(theme.handler({ themeId: "T1" }, context)).rejects.toThrow("Could not read saved analysis. Try again later.");
   });
   it("does not return partial document results when the section read fails", async () => {
     vi.stubGlobal("fetch", vi.fn(async (input) => String(input).includes("product_docs")
       ? Response.json([{ id: "D1", title: "Saved doc", version: "1", kind: "help_center" }])
       : Response.json({ message: "failed" }, { status: 500 })));
-    await expect(docs.handler({ query: "export" }, context)).rejects.toThrow("Could not read saved documents");
+    await expect(docs.handler({ query: "export", limit: undefined }, context)).rejects.toThrow("Could not read saved documents");
   });
 });

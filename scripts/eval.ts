@@ -4,6 +4,7 @@
  * Writes docs/EVALUATION.md with the measured results.
  */
 import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { CAPABILITY_CASES, THEMES } from "../src/lib/voc/eval/dataset";
 import { evalRecords, runDeterministicEval } from "../src/lib/voc/eval/harness";
 import { classification, pct } from "../src/lib/voc/eval/metrics";
@@ -68,5 +69,8 @@ if (process.argv.includes("--llm")) {
 } else lines.push(`LLM metrics not run in this pass (use \`--llm\`).`, ``);
 
 lines.push(`## Human judgments`, ``, `PRD/story acceptance rate is recorded in PRD Studio (Accept / Needs changes). **No human reviews have been recorded yet**, so no acceptance rate is claimed.`, ``);
-writeFileSync(new URL("../docs/EVALUATION_RESULTS.md", import.meta.url), lines.join("\n"));
+const outputIndex = process.argv.indexOf("--output");
+const outputPath = outputIndex >= 0 ? process.argv[outputIndex + 1] : undefined;
+if (outputIndex >= 0 && !outputPath) throw new Error("--output requires a file path");
+writeFileSync(outputPath ? resolve(outputPath) : new URL("../docs/EVALUATION_RESULTS.md", import.meta.url), lines.join("\n"));
 console.log(lines.join("\n"));
