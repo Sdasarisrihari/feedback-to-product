@@ -3,7 +3,7 @@
  * Deterministic metrics always run; --llm makes real model calls (costs credits) and needs LOVABLE_API_KEY.
  * Requires --output to preserve historical results. Also saves synthetic raw results as .json.
  */
-import { writeFileSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { CAPABILITY_CASES, THEMES } from "../src/lib/voc/eval/dataset";
 import { evalRecords, runDeterministicEval } from "../src/lib/voc/eval/harness";
@@ -15,6 +15,7 @@ import { capabilityInput, CAPABILITY_FIXTURE_VERSION, scoreConflict } from "../s
 const outputIndex = process.argv.indexOf("--output");
 const outputPath = outputIndex >= 0 ? process.argv[outputIndex + 1] : undefined;
 if (!outputPath) throw new Error("--output requires a new file path; historical results must not be overwritten");
+if (existsSync(resolve(outputPath)) || existsSync(resolve(`${outputPath}.json`))) throw new Error("Evaluation output already exists; choose a new path to preserve the recorded run");
 const legacy = process.argv.includes("--legacy-capabilities");
 const artifacts: Record<string, unknown> = { capabilityFixtureVersion: legacy ? "v2-legacy" : CAPABILITY_FIXTURE_VERSION, capabilityResults: [] };
 

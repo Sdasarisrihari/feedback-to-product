@@ -52,3 +52,27 @@ Dev and held-out examples remain version-controlled separately but this runner s
 ## Human judgments
 
 PRD/story acceptance rate is recorded in PRD Studio (Accept / Needs changes). **No human reviews have been recorded yet**, so no acceptance rate is claimed.
+
+## Evaluation hardening — 2026-10-30, v2.1 capability fixtures
+
+Historical baseline above remains unchanged: **92 records, 0.947 macro-F1, 74/74 valid citations, 10/12 capabilities**. Original detailed output preserved in [historical run](evaluation-runs/v2-historical-2026-10-30.md).
+
+The two historical disagreements were fixture defects: SCIM expected explicit unavailability without a supporting passage; the conflicting export case expected unknown without sending its conflict documents. v2.1 retains **all 12 expected labels** and adds an explicit, clearly synthetic SCIM denial to that case and the existing opposing export pair to the conflict case. Each case round-trips documents through `toRows` / `fromRows`, then uses unchanged BM25. This is a local saved-row simulation, **not a live database save, ownership check or signed-in UI run**; no account data was modified. Other 10 cases retain their sample-document corpus. The ordinary custom-fields case does not get conflicting documents.
+
+| Run | Feedback theme macro-F1 / macro P / macro R | Theme citations | Capability classification | Conflict checks |
+|---|---|---|---|---|
+| Historical v2, 10:54 UTC | 0.947; P/R per class above | 74/74 | 10/12 | Conflict docs omitted; not valid conflict evaluation |
+| v2.1 fixture repair, 11:05 UTC | 0.956 / 0.963 / 0.959; n=92 | 75/75 | 11/12 | 5/6 proxies pass; uncertainty fails |
+| v2.1 + Q&A policy repair, 11:08 UTC | **0.971 / 0.975 / 0.970; n=92** | **80/80** | **12/12** | **6/6 proxies pass; one question, two opposing docs** |
+
+All 26 model calls across the two new runs completed (2 analyses + 24 Q&A calls); model `openai/gpt-6-astra`, existing structured streaming, low reasoning effort, no billing changes. Analysis prompts and feedback dataset unchanged. Theme-score variation cannot be attributed to the Q&A repair: these are stochastic reruns without an analysis change. Capability scores are **not like-for-like** with historical v2 because supplied evidence changed; final capability changes also include a disclosed Q&A policy correction.
+
+First repaired run retrieved and verbatim-cited both versions but inferred that v4.0 superseded v3.0 without a precedence source. This is a verified Q&A defect, not a citation mismatch. The production Q&A instructions now require unknown plus clarification for unresolved conflicts and prohibit inferred precedence from dates, versions or majority. No EV-* feedback was used to tune analysis. This conflict fixture is now a **development regression**, not independent held-out evaluation.
+
+Final conflict answer: “No supplied source establishes which policy takes precedence, so the capability remains unknown.” It cites `DOC-eval-conflict-v3#s1` (“Exports include all custom fields by default.”) and `DOC-eval-conflict-v4#s1` (“Custom fields are not included in exports.”), also citing the Help Center. It asks which policy applies and requests product-owner confirmation. Inspection of the retained answer found no asserted resolution; this is an assistant observation of one answer, **not human validation or a semantic safety guarantee**.
+
+Final separate conflict checks: both retrieved PASS (2/2); both cited verbatim PASS (2/2); communicates disagreement PASS; unknown/unverified verdict PASS; clarification PASS; no rejected doc citations PASS. The six checks are transparent lexical/structural proxies; they cannot establish semantic support. Final capability answers contain **28/28 accepted document-citation occurrences**, counted across claims and verdicts (repeats count), distinct from the **80/80 theme citations**.
+
+Deterministic results unchanged: macro-F1 **0.865/92**, BM25 Recall@5 **90%/10 queries**, duplicate P/R **100%/2 known duplicates**, injection recall **100%/4 examples**. Model injection heuristic: zero theme names/summaries matching two patterns; no comprehensive injection-resistance metric. Semantic evidence-support rate **NOT MEASURED**. Feedback dev/held-out records remain 47/45, scored together with gold-majority mapping for historical comparability; no independent held-out accuracy claimed. Human reviews remain **0/10**.
+
+Full outputs and synthetic raw inputs/results: [fixture-only run](evaluation-runs/v2-1-2026-10-30.md), [final run](evaluation-runs/v2-1-conflict-policy-2026-10-30.md), companion `.md.json` files. Automated suite: **114/114 baseline → 122/122 final**, 10 files. Initial new provenance test failed solely on ISO timestamp formatting; fixture timestamps normalized, same assertion rerun successfully. No tests weakened.

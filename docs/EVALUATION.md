@@ -1,6 +1,6 @@
 # Evaluation method
 
-Measured results: see `EVALUATION_RESULTS.md` (regenerate with `bun scripts/eval.ts --llm`; deterministic-only without the flag).
+Measured results: see `EVALUATION_RESULTS.md`. Run `bun scripts/eval.ts --llm --output docs/evaluation-runs/<unused-name>.md`; deterministic-only without `--llm`. Existing output paths are refused to preserve history. Companion `.md.json` retains synthetic model inputs/results. `--legacy-capabilities` explicitly uses the old, incomplete sample-doc corpus; it cannot undo later Q&A policy changes.
 
 ## Dataset (v2, synthetic)
 - 92 labeled unique feedback records: 47 demo sample records (labels by ID) + 45 eval-only records (`src/lib/voc/eval/dataset.ts`), plus 2 known duplicates.
@@ -27,3 +27,10 @@ Measured results: see `EVALUATION_RESULTS.md` (regenerate with `bun scripts/eval
 
 ## Known limitations
 Small synthetic set written by the builder (label bias); majority mapping flatters the LLM; single run per metric (no variance); small n for capability (12) and retrieval (10); conflicting-doc case is a fixture.
+
+## v2.1 capability evidence repair
+- All feedback rows, gold themes and 12 expected capability labels retained. For SCIM only, add a clearly synthetic explicit unavailability passage; for the conflict case only, supply both original opposing export sections. Evidence supplied has changed, so the historical 10/12 score is not directly comparable.
+- Evaluation docs round-trip through the real persistence row mapper before unchanged BM25 retrieval. IDs/title/version/heading/page/text are preserved. No live workspace is seeded; saved-row simulation is not authentication/RLS verification.
+- The conflict pair is a development regression: after a measured unsupported newer-version resolution, Q&A instructions were corrected to require explicit precedence evidence or unknown + clarification. Do not call this held-out improvement.
+- Conflict results are separate from 12-case capability accuracy: both retrieved, both cited verbatim, conflict language, unknown verdict, clarification, no rejected citations. These proxies do not measure semantic faithfulness or prove absence of invented resolutions; inspect raw answers and disclose observations.
+- Theme macro precision/recall and per-class P/R are recorded alongside majority-mapped macro-F1; combined dev/held-out scoring remains historical-only, not independent performance. Semantic evidence support remains NOT MEASURED; genuine human reviews 0/10.
