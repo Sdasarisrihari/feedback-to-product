@@ -28,7 +28,7 @@ async function token(options: { expired?: boolean; client?: boolean; audience?: 
 async function protocolCall(bearer?: string, params = { method: "tools/list", params: {} }) {
   vi.stubGlobal("fetch", vi.fn(async () => Response.json({ keys: [jwk] })));
   const handler = createMcpProtocolHandler(defineMcp({
-    name: "security-test", title: "Security test", tools: [evidence, docs, theme],
+    name: "security-test", title: "Security test", version: "0.1.0", instructions: "Isolated security tests", tools: [evidence, docs, theme],
     auth: auth.oauth.issuer({ issuer, jwksUri: issuer + "/jwks", acceptedAudiences: "authenticated" }),
   }));
   return handler(new Request("https://app-test.invalid/mcp", {
@@ -116,7 +116,7 @@ describe("real tool handlers with controlled database failures (not live RLS)", 
   it("does not return partial document results when the section read fails", async () => {
     vi.stubGlobal("fetch", vi.fn(async (input) => String(input).includes("product_docs")
       ? Response.json([{ id: "D1", title: "Saved doc", version: "1", kind: "help_center" }])
-      : Response.json({ message: "failed" }, { status: 503 })));
+      : Response.json({ message: "failed" }, { status: 500 })));
     await expect(docs.handler({ query: "export" }, context)).rejects.toThrow("Could not read saved documents");
   });
 });

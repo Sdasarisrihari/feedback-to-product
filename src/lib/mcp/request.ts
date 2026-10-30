@@ -10,6 +10,10 @@ export function boundedFetch(signal: AbortSignal, fetcher: typeof fetch = fetch)
       source.addEventListener("abort", abort, { once: true });
       if (source.aborted) abort();
     }
+    if (controller.signal.aborted) {
+      for (const source of sources) source.removeEventListener("abort", abort);
+      throw new DOMException("Request cancelled", "AbortError");
+    }
     const timer = setTimeout(abort, MCP_READ_TIMEOUT_MS);
     let rejectAbort: (() => void) | undefined;
     const aborted = new Promise<never>((_, reject) => {
@@ -18,7 +22,6 @@ export function boundedFetch(signal: AbortSignal, fetcher: typeof fetch = fetch)
       if (controller.signal.aborted) rejectAbort();
     });
     try {
-      if (controller.signal.aborted) throw new DOMException("Request cancelled", "AbortError");
       return await Promise.race([fetcher(input, { ...init, signal: controller.signal }), aborted]);
     } finally {
       clearTimeout(timer);
