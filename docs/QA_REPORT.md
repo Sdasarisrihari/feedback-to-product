@@ -99,3 +99,15 @@ Not done in this pass (by design or blocked): optimistic concurrency for same-ro
 | P8 | Full OAuth handshake (discovery → consent → token → tools/list → tool calls) | BLOCKED | Requires an external OAuth-connected MCP client; manual steps in INTEGRATION_CONTRACTS.md. Session JWTs are rejected by design (`requireOAuthClientClaim`), so the flow cannot be simulated with a copied session |
 | P9 | Per-tool behavior (unknown IDs, tampered evidence, malformed args, empty results, injection labels) | PASS (unit level) | Covered by the 15 MCP unit tests in `src/lib/mcp/mcp.test.ts`; live per-tool calls remain part of the blocked P8 handshake |
 | P10 | Cross-workspace isolation | PASS by design | All three handlers query as the caller under owner-scoped RLS (verified in earlier passes); `get_theme` additionally re-verifies every evidence ID against the caller's own rows |
+
+## External MCP client handshake — 2026-10-30 (manual, user-run)
+
+Run by the project owner with MCP Inspector v1.0.3 (Streamable HTTP, via proxy) against `https://feedback-to-product.lovable.app/mcp`. Evidence: owner's screenshot; no tokens or codes were shared.
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| X1 | First attempt: "Existing OAuth client information is required when exchanging an authorization code" | Client-side state issue | Inspector lost its saved registration between authorize and callback; resolved by clearing OAuth state and retrying. No server change. |
+| X2 | OAuth discovery → registration → consent → token → `initialize` | PASS | Inspector shows "Connected", server `feedback-to-product` v0.1.0 |
+| X3 | Published endpoint serves the latest revision (supersedes P7) | PASS | `tools/list` returned all three tools: `get_feedback_evidence`, `search_product_docs`, `get_theme` |
+| X4 | Live tool calls (valid, unknown ID, empty, malformed input) | NOT RUN | Steps listed in INTEGRATION_CONTRACTS.md; still to do in Inspector |
+| X5 | Cross-account isolation via a second account | NOT RUN | Needs a second account; enforced by owner-scoped RLS (P10) |
