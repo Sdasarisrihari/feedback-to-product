@@ -76,3 +76,36 @@ Final separate conflict checks: both retrieved PASS (2/2); both cited verbatim P
 Deterministic results unchanged: macro-F1 **0.865/92**, BM25 Recall@5 **90%/10 queries**, duplicate P/R **100%/2 known duplicates**, injection recall **100%/4 examples**. Model injection heuristic: zero theme names/summaries matching two patterns; no comprehensive injection-resistance metric. Semantic evidence-support rate **NOT MEASURED**. Feedback dev/held-out records remain 47/45, scored together with gold-majority mapping for historical comparability; no independent held-out accuracy claimed. Human reviews remain **0/10**.
 
 Full outputs and synthetic raw inputs/results: [fixture-only run](evaluation-runs/v2-1-2026-10-30.md), [final run](evaluation-runs/v2-1-conflict-policy-2026-10-30.md), companion `.md.json` files. Automated suite: **114/114 baseline → 122/122 final**, 10 files. Initial new provenance test failed solely on ISO timestamp formatting; fixture timestamps normalized, same assertion rerun successfully. No tests weakened.
+
+## Untuned synthetic challenge v1 — 2026-10-30
+
+Full frozen run and raw synthetic results: [challenge run](evaluation-runs/challenge-v1-2026-10-30.md) and companion `.md.json`. Run began **11:16:16Z**, existing model `openai/gpt-6-astra`, low effort; **24 completed model calls** (2 analyses, 16 Q&A calls, 6 semantic batches), no model errors or blocked calls. Two repeats predeclared; input/label/scoring/prompt/runner hashes unchanged. No production instruction change in this milestone, no billing change, no live workspace writes. Original **0.947/92, 74/74, 10/12** and development **0.971/92, 80/80, 12/12, 6/6** above remain unchanged.
+
+**Independence gap:** no independently authored or collected held-out set exists. This is 24 new untuned, builder-authored synthetic records and 8 new questions, disjoint from the original corpus by ID/normalized full text, not independent of the builder's knowledge of development themes/policies. Nominal EV-* examples were previously exposed and combined in gold-majority scoring. New mapping is fixed development-catalogue BM25, not challenge-majority labels. These challenge scores are **not comparable** with historical combined-set majority-mapped scores, nor proof of generalization.
+
+| Metric | Repeat 1 | Repeat 2 | Denominator / interpretation |
+|---|---|---|---|
+| Theme macro-F1 / precision / recall | **1.000 / 1.000 / 1.000** | **1.000 / 1.000 / 1.000** | 24 records each; 3 per gold class; fixed lexical theme mapping |
+| Exact theme citation validity | **21/21** | **21/21** | Three other records uncited; uncited → other |
+| Capability frozen score | **6/8** | **6/8** | Two scoring defects identified below; not two demonstrated model failures |
+| Exact Q&A doc citation occurrences | **26/26** | **23/23** | Claims + verdicts, repeat occurrences counted |
+| Required-source retrieval | **10/10** | **10/10** | Required saved-section IDs across cases, not historical Recall@5 |
+| No-precedence conflict CQ-01 | PASS | PASS | Unknown; opposing sources cited; conflict communicated; clarification |
+| Explicit scoped precedence CQ-02 | PASS | PASS | Documented for policy B; new policy and explicit precedence rule cited |
+| Feedback/document injection questions CQ-07/08 | PASS verdict/quotes | PASS verdict/quotes | Two questions per repeat; not comprehensive attack resistance |
+| Analysis injection-marker heuristic | 0 matches | 0 matches | One injected feedback record per repeat; no general resistance claim |
+| Severity within frozen interval | **17/21** | **17/21** | Cited-record assignments inherit theme severity; diagnostic only |
+| Automated semantic pair support | **13/44 (29.5%)** | **9/41 (22.0%)** | Entire generated claim vs one excerpt at a time; all proposed pairs judged |
+| Semantic judge calibration | **5/6** | **5/6** | Same-model automated judge; one flawed expected control label |
+
+Observed variability: classification unchanged; Q&A citation count 26→23 and semantic pair support 29.5%→22.0%. Two stochastic repeats, not enough for reliable confidence intervals. No combined inflated sample size: each repeats the same 24 records/8 questions.
+
+### Frozen failures and interpretation (no label or score changes)
+- **CQ-05:** expected unknown/clarification for “audit downloads for every workspace.” Both answers correctly state “group A can … group B cannot … therefore not supported for every workspace,” returning not_documented. This is a verified expected-label/clarification mismatch with the literal universal question, not evidence of invented availability.
+- **CQ-06:** both answers return translation not_documented and the separate “saves every customer 500 hours” claim unknown, explicitly requiring measurement. The scorer requires *every* verdict to equal not_documented, so this legitimate decomposition fails. Raw **6/8** retained; no post-hoc 8/8 claimed.
+- **SC-04:** expected supported for “Only group A can download audit logs” from “A can; B cannot.” Judge returned insufficient because other possible groups are not excluded—reasonable entailment reasoning. Raw **5/6** calibration retained; not relabeled after results.
+- **Semantic attribution:** a summary includes reverted offline work, discarded conflicting edits and stale server data. Its single quote about reverted work cannot prove the other two clauses; judge marks insufficient. This exposes claim-to-individual-excerpt attribution gaps but does **not** prove the full summary unsupported by the combined sources. Same-model judging, calibration-label defect and compound claim construction mean these are diagnostic rates, not validated semantic faithfulness.
+
+Automated suite **122/122 baseline → 129/129 final**, 11 files; seven challenge integrity/scoring tests added. Platform automatic application check **build OK at 11:18:54Z**. Standalone typecheck/build commands not manually executed (platform-managed); no separate standalone typecheck result claimed. Human reviews **0/10**.
+
+**PRD readiness:** these results support keeping existing evidence-linked draft generation available for human review, not advancing or claiming validated PRD quality. No PRDs were evaluated/generated here. Next milestone: versioned repair of universal/multi-verdict/control labels with clear predeclared scoring, atomic-claim or citation-set semantic checks, then a separately authored sealed PRD/story challenge. Keep write-capable integrations out.
