@@ -13,3 +13,4 @@
 - [x] Verify existing read-only MCP SDK authorization, owner-scoped live reads and controlled failure handling; document untested production expiry and two-owner checks.
 - [x] Run actual v2 LLM evaluation when access returned; record results and discovered harness limitations without prompt tuning.
 - [ ] Verify new timeout revision after republish and genuine production expired OAuth / second-owner access (blocked: client credentials and second populated authorized workspace unavailable).
+- [ ] Harden conflicting-document and SCIM capability fixtures; preserve historical v2 results, rerun evaluation and regressions, document measured outcomes.
