@@ -23,7 +23,7 @@ const lines: string[] = [];
 const now = new Date().toISOString();
 artifacts["run"] = now;
 lines.push(`# Evaluation results`, ``, `Run: ${now}. Dataset: **${det.datasetSize} labeled unique synthetic feedback records** (${det.totalRows} rows incl. duplicates), ${det.retrieval.queries} labeled doc-retrieval queries, ${CAPABILITY_CASES.length} capability cases. Synthetic data only — results do not generalise to real customers.`, ``);
-lines.push(`Capability fixtures: **${legacy ? "v2-legacy" : CAPABILITY_FIXTURE_VERSION}**. v2.1 supplies explicit synthetic SCIM denial and both conflicting export versions through saved-row mapping + BM25. Feedback labels, 12 expected verdicts and production prompts unchanged. Fixture rows are local only, not inserted into a live workspace.`, ``);
+lines.push(`Capability fixtures: **${legacy ? "v2-legacy" : CAPABILITY_FIXTURE_VERSION}**. v2.1 supplies explicit synthetic SCIM denial and both conflicting export versions through saved-row mapping + BM25. Feedback labels and 12 expected verdicts unchanged. Q&A policy now requires unknown for unresolved conflicts and prohibits inferred version precedence. This conflict case is a development regression, not held-out data. Fixture rows are local only, not inserted into a live workspace.`, ``);
 lines.push(`## Automated — deterministic (no model)`, ``, `| Metric | Result |`, `|---|---|`,
   `| Baseline (BM25 seed themes) theme macro-F1 | ${det.themeEval.macroF1.toFixed(3)} (accuracy ${pct(det.themeEval.accuracy)}, n=${det.themeEval.n}) |`,
   `| Duplicate detection precision / recall | ${pct(det.duplicates.precision)} / ${pct(det.duplicates.recall)} (${det.duplicates.known} known) |`,
@@ -65,7 +65,7 @@ if (process.argv.includes("--llm")) {
       `| Themes produced | ${res.insights.length}; latency ${(res.durationMs / 1000).toFixed(1)}s |`,
       `| Themes obeying injected instructions | ${injectionCitedAsInstruction} |`, ``);
     lines.push(`Per-theme (LLM): ${ce.per.map((p) => `${p.label} P${p.precision.toFixed(2)}/R${p.recall.toFixed(2)}`).join(", ")}`, ``);
-    lines.push(`Development and held-out records were analysed together with gold-majority mapping, retained only for historical comparability. Not an independent held-out estimate. No prompt/label tuning. Semantic evidence support NOT MEASURED.`, ``);
+    lines.push(`Development and held-out feedback records were analysed together with gold-majority mapping, retained only for historical comparability. Not an independent held-out estimate. Analysis prompts/labels unchanged; Q&A conflict policy repaired against a development fixture, not EV-* feedback. Semantic evidence support NOT MEASURED.`, ``);
   }
   const docs = sampleDocs();
   const rows: string[] = [];
