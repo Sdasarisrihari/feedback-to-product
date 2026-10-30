@@ -22,6 +22,7 @@
 - Prompt builders escape `<`/`>` in data; the verifier normalises them back. Why: delimiter safety without false citation rejections.
 - PRDs are append-only revisions with a snapshot of the sources they were verified against. Why: traceability and no silent data loss.
 - Evaluation lives in `src/lib/voc/eval/` + `scripts/eval.ts`; never claim metrics not recorded in `docs/EVALUATION_RESULTS.md`. Why: honest, reproducible results.
+- Capability evaluation fixtures are versioned separately from feedback labels and round-trip through persistence mapping before BM25 retrieval; runners require a distinct output path and retain synthetic inputs/results. Why: evidence repairs must not erase history or masquerade as model improvements.
 - Signed-in AI calls replace browser-sent sources with saved owner-scoped rows (`caller.server.ts` + `source-auth.ts`) before the model and verifier see them; every result carries provenance. Why: citations must trace to authoritative records.
 - Human review scores live in `human-eval.ts`/`human_reviews`, tied to an exact PRD revision; summaries use completed reviews only and are never mixed with model metrics. Why: honest human evaluation.
 - MCP database reads use the shared bounded fetch in `src/lib/mcp/request.ts` with caller cancellation and a per-request deadline. Why: service stalls must fail safely without leaving client requests waiting indefinitely.
