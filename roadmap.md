@@ -10,4 +10,6 @@
 - [x] Signed-in browser e2e (import offer + Q&A label blocked: see QA_REPORT)
 - [ ] Collect ≥10 human reviews (blocked: needs reviewers)
 - [ ] MCP, n8n, GitHub Issues (after storage)
-- [ ] Verify existing read-only MCP authorization, isolation and failure handling; document live-test blockers (no new tools).
+- [x] Verify existing read-only MCP SDK authorization, owner-scoped live reads and controlled failure handling; document untested production expiry and two-owner checks.
+- [x] Run actual v2 LLM evaluation when access returned; record results and discovered harness limitations without prompt tuning.
+- [ ] Verify new timeout revision after republish and genuine production expired OAuth / second-owner access (blocked: client credentials and second populated authorized workspace unavailable).
