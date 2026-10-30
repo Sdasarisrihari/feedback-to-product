@@ -156,3 +156,22 @@ Run commands: `bunx vitest run`; `bun scripts/eval.ts --llm --output docs/evalua
 Final confirmation at 11:10 UTC: **122/122 tests** passed again; deterministic runner repeated 0.865/92 and 90% Recall@5/10; attempting to reuse the final run filename was refused before any model call (observed overwrite-guard PASS).
 
 Remaining risks: one development conflict example, model conflict handling remains instruction-based (citation matching cannot detect semantic contradictions), gold-majority mapping and combined dev/held-out scoring, no semantic support score, no genuine human evaluation, no production deployment check in this milestone. Recommended next milestone: fixed development-only label mapping and separately executed held-out evaluation with new untuned conflict/precedence fixtures; keep write-capable integrations out.
+
+## Untuned challenge separation and semantic diagnostics — 2026-10-30
+
+| Check | Actual result / evidence |
+|---|---|
+| Baseline | **122/122**, 10 files, before changes (`bunx vitest run`). |
+| Independence audit | No independently sourced held-out set exists. 47 sample records/seeds are development; 45 EV examples exposed in prior combined gold-majority evaluation; export-conflict fixture used to repair Q&A instructions. |
+| New challenge separation | 24 new synthetic feedback rows, 8 questions, 6 judge controls; expected labels separate from input module. No exact ID/normalized-text overlap with old corpus, but thematic/author bias remains. |
+| Freeze/no tuning | Hashes of inputs/labels/scoring/prompts/runner captured and unchanged across two repeats. Production prompts untouched; challenge labels never enter model prompts or theme assignment. |
+| Real runner | `bun scripts/eval-challenge.ts --output docs/evaluation-runs/challenge-v1-2026-10-30.md --repeats 2`: **24 model calls**, no errors/blocked cases. Existing model/streaming, no billing change. |
+| Theme metrics | Both repeats macro-F1/P/R **1.000**, n=24; fixed development-seed mapping. **21/21** exact theme citations each; other examples uncited and mapped other. Not comparable with historical majority mapping. |
+| Capability/scoped policies | Frozen score **6/8** both; no-precedence conflict and explicit precedence PASS; both apparent failures are label/scorer defects (universal availability and multi-verdict decomposition), not demonstrated model defects. Raw scores not revised. |
+| Retrieval/citations | Required doc IDs **10/10** both; Q&A exact citation occurrences **26/26**, **23/23**. Local persistence mapping only, not live auth/storage validation. |
+| Semantic support | Same-model automated judge **13/44** and **9/41** full-claim/individual-excerpt pairs supported; all pairs judged. Calibration **5/6** both; “only A” label overclaims what “A can/B cannot” proves. Not validated semantic faithfulness. |
+| Severity/sentiment/confidence | Severity interval **17/21** each, inherited theme severity only. Sentiment rating-derived, confidence citation-count-derived; no semantic sentiment/calibrated confidence claims. |
+| Final tests/application checks | **129/129**, 11 files; automatic log **build OK 11:18:54Z**. No manual build/typecheck commands; standalone typecheck not separately verified. |
+| Scope | Evaluation files/docs only; no production logic changes, MCP additions, n8n/external writes, PRD generation or billing/auth changes. Human reviews **0/10**. |
+
+Failure examples and retained synthetic answers/rationales: `EVALUATION_RESULTS.md` and `evaluation-runs/challenge-v1-2026-10-30.md.json`. Scoring remained frozen despite discovered defects; do not advertise 6/8 as two unsafe model answers or 1.000 as independent generalization. PRD readiness not established by this evaluation; keep current draft/review guardrails and next repair/version scoring, then evaluate unseen PRDs with separately authored cases.
