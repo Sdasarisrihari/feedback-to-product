@@ -1,0 +1,81 @@
+{
+  "method": "Deterministic new-version scoring of retained outputs, not new model runs; changed case scope, not like-for-like improvement",
+  "runs": [
+    {
+      "repeat": 1,
+      "oldScore": "6/8 unchanged",
+      "newChecks": [
+        {
+          "id": "CQ-01",
+          "pass": true
+        },
+        {
+          "id": "CQ-02",
+          "pass": true
+        },
+        {
+          "id": "CQ-03",
+          "pass": true
+        },
+        {
+          "id": "CQ-04",
+          "pass": true
+        },
+        {
+          "id": "CQ-05",
+          "pass": true
+        },
+        {
+          "id": "CQ-06",
+          "pass": true
+        },
+        {
+          "id": "CQ-07",
+          "pass": true
+        },
+        {
+          "id": "CQ-08",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "repeat": 2,
+      "oldScore": "6/8 unchanged",
+      "newChecks": [
+        {
+          "id": "CQ-01",
+          "pass": true
+        },
+        {
+          "id": "CQ-02",
+          "pass": true
+        },
+        {
+          "id": "CQ-03",
+          "pass": true
+        },
+        {
+          "id": "CQ-04",
+          "pass": true
+        },
+        {
+          "id": "CQ-05",
+          "pass": true
+        },
+        {
+          "id": "CQ-06",
+          "pass": true
+        },
+        {
+          "id": "CQ-07",
+          "pass": true
+        },
+        {
+          "id": "CQ-08",
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
