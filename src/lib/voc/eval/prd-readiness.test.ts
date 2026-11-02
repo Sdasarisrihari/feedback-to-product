@@ -4,7 +4,7 @@ import { PRD_EXPECTATIONS } from "./prd-labels-v1";
 import { completeReadiness, READINESS_CATEGORIES } from "./prd-readiness";
 import { buildPrdPrompt } from "../prompt";
 describe("PRD challenge isolation", () => {
-  it("keeps six distinct cases and all thirteen feedback source IDs", () => {
+  it("keeps six distinct cases and all fourteen feedback source IDs", () => {
     expect(PRD_SCENARIOS.length).toBe(6);
     expect(new Set(PRD_SCENARIOS.flatMap((s) => s.input.feedback.map((f) => f.id))).size).toBe(14);
     expect(Object.keys(PRD_EXPECTATIONS).sort()).toEqual(PRD_SCENARIOS.map((s) => s.id).sort());
