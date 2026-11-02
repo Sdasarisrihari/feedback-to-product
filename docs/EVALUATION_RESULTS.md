@@ -109,3 +109,21 @@ Observed variability: classification unchanged; Q&A citation count 26→23 and s
 Automated suite **122/122 baseline → 129/129 final**, 11 files; seven challenge integrity/scoring tests added. Platform automatic application check **build OK at 11:18:54Z**. Standalone typecheck/build commands not manually executed (platform-managed); no separate standalone typecheck result claimed. Human reviews **0/10**.
 
 **PRD readiness:** these results support keeping existing evidence-linked draft generation available for human review, not advancing or claiming validated PRD quality. No PRDs were evaluated/generated here. Next milestone: versioned repair of universal/multi-verdict/control labels with clear predeclared scoring, atomic-claim or citation-set semantic checks, then a separately authored sealed PRD/story challenge. Keep write-capable integrations out.
+
+## New-version scoring repair and PRD readiness attempt
+
+Historical **129/129** preserved; baseline reproduced **129/129**, final **143/143** across 14 test files. All original challenge inputs/scorers and pre-existing run files were checksum-verified unchanged (11 files at the initial verification).
+
+| Measure | Historical frozen result | New-version result |
+|---|---|---|
+| Capability scoring | 6/8 per repeat | 8/8 per repeat under corrected deterministic scorer on the **same retained outputs**; no new model calls, not model improvement |
+| Semantic support | 13/44 and 9/41 full-claim/single-excerpt pairs | **BLOCKED / not measured**; atomic/citation-set units differ |
+| Calibration | 5/6 each, defective exclusive-scope control | **0/8 judged, not 0% accuracy**; first request failed before judgments |
+| PRD readiness | No PRDs assessed | **0/6 generated/assessed**; all six categories unmeasured, no failure rate or acceptance score |
+| Human reviews | 0/10 | **0/10** unchanged |
+
+The first `semantic-v2` calibration request returned **HTTP 402**, mapped to credits exhausted; the second preserved attempt also returned HTTP 402. Each run stopped after one failed call; no atomization, semantic judgment or PRD generation ran. No billing changes. Blocked artifacts: `evaluation-runs/semantic-v2-2026-11-01.md` and `semantic-v2-resumed-2026-11-01.md`, each with raw `.md.json`. The latter is a second blocked attempt, not evidence access was restored. New deterministic capability result: `evaluation-runs/capability-scoring-v2-2026-11-01.json`. Filename dates identify this milestone; artifact timestamps are authoritative execution times.
+
+Calibration criteria and justified corrections are in `semantic-v2-controls.ts`; category contract/tests pass but cannot establish judge accuracy. New PRD input suite: six separately tasked synthetic scenarios, 14 feedback records, three document passages; strong evidence, contradictory preferences, conflicting plans, irrelevant evidence for dark mode, distinct handoff needs, and unsupported operational assumptions. Same AI system and adapted framing; no external/human independence or real-customer representativeness. Production prompts and generator unchanged; expected labels withheld from generation/judge. No representative **new generated failure** exists because no PRDs were generated. Historical compound-claim/control failures remain reported above.
+
+**Recommendation: needs further evaluation.** Existing draft generation may remain available for an explicitly unvalidated, evidence-linked demonstration after model access returns, with human approval safeguards; this milestone does not establish limited-demonstration quality, external-write readiness or production readiness. Next: owner-requested execution of frozen calibration/atomic scoring followed by six PRD cases; inspect automated judge errors and collect genuine reviews separately.

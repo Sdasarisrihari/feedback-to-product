@@ -175,3 +175,22 @@ Remaining risks: one development conflict example, model conflict handling remai
 | Scope | Evaluation files/docs only; no production logic changes, MCP additions, n8n/external writes, PRD generation or billing/auth changes. Human reviews **0/10**. |
 
 Failure examples and retained synthetic answers/rationales: `EVALUATION_RESULTS.md` and `evaluation-runs/challenge-v1-2026-10-30.md.json`. Scoring remained frozen despite discovered defects; do not advertise 6/8 as two unsafe model answers or 1.000 as independent generalization. PRD readiness not established by this evaluation; keep current draft/review guardrails and next repair/version scoring, then evaluate unseen PRDs with separately authored cases.
+
+## Scoring repair and PRD readiness milestone
+
+| Check | Observed outcome |
+|---|---|
+| Historical baseline | PASS: `bunx vitest run` reproduced 129/129 before changes. Historical count retained. |
+| Historical preservation | PASS: checksum comparison across 11 original run/scoring files unchanged at verification; v1 modules/artifacts not edited. |
+| New category/contracts | PASS: supported/partial/unsupported/unassessable accounting, complete IDs, nonempty atoms, delimiters, exclusive-scope correction, six-case isolation, contradictory docs, rubric completeness and multi-verdict repair. These are contract tests, not semantic judge validation. |
+| Final automated suite | PASS: 143/143 tests, 14 files (`bunx vitest run`); 14 new tests, original tests retained. Existing SDK multiple-client warnings occur in controlled tests. |
+| Deterministic capability repair | 8/8 each on retained outputs under new scorer, original 6/8 unchanged; lexical matching and changed methodology, not model performance improvement. |
+| Real new semantic model run | BLOCKED: HTTP 402 at first calibration request; 1 failed call per preserved attempt, no judgments, no further calls. |
+| Six PRD/story generation cases | BLOCKED by confirmed model-credit failure; 0/6 generated/assessed. No simulated results substituted. |
+| Application checks | PASS: automatic log build OK at 12:32:04Z on initial changes; Playwright public `/`, `/prd`, `/review` opened with correct titles, nonempty content, no page errors. Screenshot inspected for PRD empty state. Not a signed-in/generation end-to-end check. |
+| Standalone typecheck | NOT EXECUTED: tsgo command absent; tsc exists but is not an authorized substitute for this project's automated harness. No standalone typecheck pass claimed. |
+| Scope/human reviews | No production feature, auth/billing, data migration, MCP/n8n/external-write changes. Human reviews 0/10. |
+
+Changed files: `src/lib/voc/eval/semantic-v2.ts`, `semantic-v2-controls.ts`, `semantic-v2.test.ts`, `capability-scoring-v2.ts`, `capability-scoring-v2.test.ts`, `prd-inputs-v1.ts`, `prd-labels-v1.ts`, `prd-readiness.ts`, `prd-readiness.test.ts`; `scripts/eval-readiness.ts`; new evaluation artifacts; `AGENTS.md`, `roadmap.md`, this report, EVALUATION.md, EVALUATION_RESULTS.md and ARCHITECTURE.md. INTEGRATION_CONTRACTS.md inspected, unchanged: proposed tools remain unimplemented.
+
+Readiness: **needs further evaluation**, not production ready. Same-model atomization/judging can miss entailment failures; author isolation is procedural within the same AI system, not external independence. Known existing quote-validity labels do not guarantee semantic support. Keep existing draft review guardrails; next milestone is actual frozen PRD evaluation after access restoration, not integrations.
