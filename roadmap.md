@@ -17,3 +17,4 @@
 - [x] Execute frozen untuned synthetic challenge evaluation with label-blind theme mapping and automated semantic judging; report separation risks, repeats, failures and PRD readiness (129 tests; 24 calls; scorer/control label defects retained, independent PRD validation not established).
 - [x] Version semantic/capability scoring repair without changing frozen runs; test explicit categories and retain new scoring artifacts.
 - [ ] Run new atomic semantic scoring and six separately authored PRD/story cases (blocked: first calibration call returned HTTP 402, including resumed attempt; no further calls or billing changes).
+- [ ] Verify PRD evaluation isolation, deterministic scoring/report coverage and historical preservation; document a versioned six-case resume procedure without model calls or new features.
