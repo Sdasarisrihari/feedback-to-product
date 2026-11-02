@@ -15,5 +15,5 @@
 - [ ] Verify new timeout revision after republish and genuine production expired OAuth / second-owner access (blocked: client credentials and second populated authorized workspace unavailable).
 - [x] Harden conflicting-document and SCIM capability fixtures; preserve historical v2 results, rerun evaluation and regressions, document measured outcomes (122 tests; final model 0.971/92, 80/80 citations, 12/12 capabilities; synthetic development regression, not independent validation).
 - [x] Execute frozen untuned synthetic challenge evaluation with label-blind theme mapping and automated semantic judging; report separation risks, repeats, failures and PRD readiness (129 tests; 24 calls; scorer/control label defects retained, independent PRD validation not established).
-- [ ] Version semantic scoring repair without changing frozen runs; test explicit categories and retain new scoring artifacts.
-- [ ] Evaluate separately authored, untuned synthetic PRD/story scenarios with isolated expected labels; document readiness, limitations and actual checks.
+- [x] Version semantic/capability scoring repair without changing frozen runs; test explicit categories and retain new scoring artifacts.
+- [ ] Run new atomic semantic scoring and six separately authored PRD/story cases (blocked: first calibration call returned HTTP 402, including resumed attempt; no further calls or billing changes).
