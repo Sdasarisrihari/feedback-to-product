@@ -21,6 +21,13 @@ bun scripts/eval-readiness.ts --mode prd --output docs/evaluation-runs/prd-chall
 
 The last command generates and evaluates all six scenarios sequentially. The filename **must be unused**, including its `.json` companion. If interrupted, blocked, or rerunning, use `attempt-02`, `attempt-03`, etc.; never delete/overwrite the first artifact. The new **report-v2** version changes coverage/reporting, not scenario inputs, expected answers, production prompts or the semantic rubric. Existing HTTP 402 attempts are untouched.
 
+Expected reports, relative to the project root:
+- Markdown: `docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md`
+- Raw inputs/results/checkpoints: `docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md.json`
+- Scenario identifiers: `syn-01`, `syn-02`, `syn-03`, `syn-04`, `syn-05`, `syn-06`.
+
+This is a **fresh execution**, not an in-place continuation of incomplete checkpoints. Preserve the old pair, select the next unused attempt filename, and rerun all six cases. Inspect both files: a missing final execution summary, in-progress status, missing judgments, or inconsistent/truncated files means incomplete, never a successful assessment. Even `completed` means execution completed, not quality approval.
+
 Optional, separate semantic calibration/history rescoring (not a PRD quality gate):
 
 ```bash
@@ -30,6 +37,18 @@ bun scripts/eval-readiness.ts --mode repair --output docs/evaluation-runs/semant
 If `tsgo` is unavailable in the execution environment, skip it and record NOT EXECUTED; do not claim a pass. Model access and an existing `LOVABLE_API_KEY` are required for live evaluation. An absent credential is refused before calls and before artifact creation; the terminal reports BLOCKED, but no six-scenario report is created. No credential is printed. Do not change billing or inject answers. The CLI has no explicit retry loop, but shared `callStructured` configures SDK `maxRetries: 1`; artifact `calls` counts logical invocations, not necessarily HTTP attempts. Any returned model/schema/ID failure stops further calls and retains partial outputs. For a returned HTTP 402, the artifact records code `credits` and its message (not a guaranteed raw HTTP status), the active scenario receives `blocked_or_error_generation` or `blocked_or_error_assessment`, and untouched scenarios receive `blocked_not_attempted`; these are execution statuses, not quality pass/fail judgments. Semantic interruption receives `incomplete_semantic_scoring`. The CLI has no top-level exception handler: an unexpected thrown exception or file-write failure can leave only the preceding checkpoint; do not interpret a missing final report or an in-progress status as completion. Run files preserve model name, Bun runtime, source/prompt/schema/runner/dependency hashes, inputs and raw results; provider behavior can still change, so this is reproducibility metadata, not guaranteed identical stochastic output. Checkpoints use direct file writes, not transactional storage; interruption during a write remains a limitation.
 
 ## Required report inspection after an actual run
+
+### Human reviewer checklist (separate from automated scoring)
+
+Use the generated draft and its source snapshot. Identify the exact run filename, scenario, requirement/story IDs and, for an in-app review, immutable PRD revision. Record actual reviewer judgments only; do not copy automated scores or author expectations as human verdicts.
+
+- [ ] **Traceability:** each problem, evidence-based requirement and story has correct source IDs and verbatim quotes that support the full claim; identify rejected, missing or irrelevant evidence.
+- [ ] **Assumptions:** proposals, undocumented capabilities and unknown baselines are labeled; flag invented scope, commitments, quantities or benefits, and list needed clarification.
+- [ ] **Acceptance criteria:** each criterion specifies observable behavior and a concrete pass/fail condition; Given/When/Then wording alone is insufficient.
+- [ ] **Conflicting feedback/docs:** both sides are represented and cited; uncertainty is disclosed and a clarification/escalation is requested without invented precedence or consensus.
+- [ ] **Human record:** capture 1–5 evidence-support, requirement-correctness, criteria-quality and usefulness scores, unsupported-claim count, and notes with exact item/source references; record disagreements and representative failures.
+
+Keep these judgments in a separate human-review record tied to the exact output/revision; never edit frozen model artifacts or combine human scores with automated metrics. Count only genuinely completed reviews under the existing review protocol; this checklist itself creates **zero** human reviews.
 
 Read the Markdown **and** companion `.md.json`:
 
