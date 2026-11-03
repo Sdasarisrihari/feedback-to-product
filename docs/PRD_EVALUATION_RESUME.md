@@ -50,3 +50,12 @@ Read the Markdown **and** companion `.md.json`:
 | syn-06 | Visibility versus unsupported operational assumptions | NOT RUN |
 
 Current **0/6 generated or assessed**; all model quality categories unmeasured. Previous access attempt: HTTP 402; current access has not been rechecked. Genuine reviews remain **0/10**; no human judgments created or count query performed here. Recommendation: **needs actual model evaluation**, not PRD readiness or production validation. Resume the frozen six-case evaluation once access returns; keep integrations and external writes out.
+
+## Follow-up local-only audit — 2026-11-03
+
+- Changes: this document (input/rubric boundaries, SDK retries and failure-report limitations clarified) and the audit task in `roadmap.md`. No runner, production, fixture, label, scoring or test changes.
+- Label separation verified by source inspection and existing payload isolation tests. Scenarios are generator inputs; expected answers are withheld from generator/judge; generic rubrics intentionally reach the judge, not the generator. No claim that all scoring criteria are hidden from every model, or that authoring independence is established.
+- Local tests: `node node_modules/vitest/vitest.mjs run src/lib/voc/eval/prd-readiness.test.ts src/lib/voc/eval/prd-report-v2.test.ts src/lib/voc/eval/semantic-v2.test.ts` — **22/22 passed**, three files. First attempt using `bun node_modules/vitest/vitest.mjs ...` failed to import Zod (three suites failed before any tests); retry with installed Node passed, without changing code. No package download was invoked.
+- Standalone `tsgo --noEmit` actually executed, exit 0. Full suite/build not rerun for this documentation-only audit; previous 153/153 remains historical.
+- All **12** existing files under `docs/evaluation-runs/` SHA-256 matched pre-audit checksums, including both blocked attempts and the frozen challenge artifact with its two runs. The documented `prd-challenge-v1-report-v2-attempt-01.md` output and companion are unused. The evaluation command was **not executed**.
+- Failure paths were source-inspected, not model-exercised: returned access failures store execution errors and block remaining cases, not quality pass/fail; missing credential and unexpected exception limitations described above. No network/model calls, billing/secret changes, integrations or new tools. Previous HTTP 402 remains the last access evidence; actual six-scenario assessment and genuine human reviews remain outstanding.
