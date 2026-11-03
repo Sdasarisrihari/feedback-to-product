@@ -1,5 +1,7 @@
 # Evaluation method
 
+Latest local PRD readiness audit and exact six-scenario resume procedure: [PRD_EVALUATION_RESUME.md](PRD_EVALUATION_RESUME.md). Reporting v2 is a new output version; frozen scenarios, labels, semantic rubric and HTTP 402 artifacts are unchanged. Deterministic local contracts validate accounting/report coverage, not model quality or historical independence.
+
 Measured results: see `EVALUATION_RESULTS.md`. Run `bun scripts/eval.ts --llm --output docs/evaluation-runs/<unused-name>.md`; deterministic-only without `--llm`. Existing output paths are refused to preserve history. Companion `.md.json` retains synthetic model inputs/results. `--legacy-capabilities` explicitly uses the old, incomplete sample-doc corpus; it cannot undo later Q&A policy changes.
 
 ## Dataset (v2, synthetic)

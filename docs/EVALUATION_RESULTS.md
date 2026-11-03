@@ -1,5 +1,9 @@
 # Evaluation results
 
+## PRD evaluation readiness audit — 2026-11-02
+
+Baseline **143/143** reproduced; final **153/153** (15 files); targeted **22/22**. `tsgo --noEmit` actually executed, exit 0. No model calls or credit checks: **0/6** PRDs generated/assessed, every model-readiness category unmeasured; historical HTTP 402 attempts and frozen scores unchanged. Reporting-only v2 retains per-item evidence/rejections, recommendation exclusions, atomic judgments/rationales, criteria/assumptions and all six execution statuses. These local fixtures are not generated results or human reviews (**0/10**, carried forward). See [PRD_EVALUATION_RESUME.md](PRD_EVALUATION_RESUME.md) for the exact command, limitations and six-case checklist. Recommendation: needs actual evaluation after model access returns.
+
 Run: 2026-10-21T07:05:30.936Z. Dataset: **92 labeled unique synthetic feedback records** (94 rows incl. duplicates), 10 labeled doc-retrieval queries, 12 capability cases. Synthetic data only — results do not generalise to real customers.
 
 ## Automated — deterministic (no model)

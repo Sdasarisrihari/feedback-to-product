@@ -194,3 +194,14 @@ Failure examples and retained synthetic answers/rationales: `EVALUATION_RESULTS.
 Changed files: `src/lib/voc/eval/semantic-v2.ts`, `semantic-v2-controls.ts`, `semantic-v2.test.ts`, `capability-scoring-v2.ts`, `capability-scoring-v2.test.ts`, `prd-inputs-v1.ts`, `prd-labels-v1.ts`, `prd-readiness.ts`, `prd-readiness.test.ts`; `scripts/eval-readiness.ts`; new evaluation artifacts; `AGENTS.md`, `roadmap.md`, this report, EVALUATION.md, EVALUATION_RESULTS.md and ARCHITECTURE.md. INTEGRATION_CONTRACTS.md inspected, unchanged: proposed tools remain unimplemented.
 
 Readiness: **needs further evaluation**, not production ready. Same-model atomization/judging can miss entailment failures; author isolation is procedural within the same AI system, not external independence. Known existing quote-validity labels do not guarantee semantic support. Keep existing draft review guardrails; next milestone is actual frozen PRD evaluation after access restoration, not integrations.
+
+## PRD evaluation readiness — 2026-11-02 (local only)
+
+- Baseline reproduced **143/143**; final **153/153**, 15 files; targeted reporting/rubric tests **22/22**. Deterministic contract fixtures do not count as six-scenario model evaluation.
+- Standalone `tsgo --noEmit` **executed, exit 0**; no manual application build. Platform build log reports build OK after source edits.
+- Audited generator/assessor/atomizer wiring: expected labels excluded; author focus/rationale isolation tested for all six scenarios. Production prompts and scenario/label/rubric modules untouched. Historical authorship/tuning cannot be independently established from source alone.
+- Reporting v2 adds all-requirement/story source/rejection inventory, recommendation exclusions, criteria/assumption coverage, parent-linked atomic judgments and explicit per-scenario execution statuses; no scoring threshold or quality criteria weakened.
+- Existing-output guard **PASS**: preserved resumed blocked path refused, exit 1, before model calls. Historical HTTP 402 attempts retained. No live model call made; model access not rechecked, **0/6 assessed**, no new LLM metric.
+- Human reviews **0/10** carried forward, not newly queried; no billing, auth, integrations, MCP tools, external writes or production feature changes.
+
+Exact resume command and per-scenario reporting checklist: [PRD_EVALUATION_RESUME.md](PRD_EVALUATION_RESUME.md). Readiness remains **needs further evaluation**. Same-model judge limitations, format-only acceptance-criteria proxies, direct checkpoint writes and non-external synthetic authoring remain disclosed.
