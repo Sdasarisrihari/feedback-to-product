@@ -18,3 +18,4 @@
 - [x] Version semantic/capability scoring repair without changing frozen runs; test explicit categories and retain new scoring artifacts.
 - [ ] Run new atomic semantic scoring and six separately authored PRD/story cases (blocked: first calibration call returned HTTP 402, including resumed attempt; no further calls or billing changes).
 - [x] Verify PRD evaluation isolation and deterministic scoring/report coverage; document a versioned six-case resume procedure without model calls or new features (143 baseline → 153 passing, standalone tsgo executed; actual six-case evaluation still blocked by prior HTTP 402, access not rechecked).
+- [x] Audit resume documentation locally: clarified scenario/generator inputs, expected-label versus judge-rubric separation, SDK retries/failure reporting; 22/22 relevant local tests and standalone tsgo passed, all 12 historical artifacts checksum-unchanged; no network/model calls (2026-11-03).
