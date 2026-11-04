@@ -1,0 +1,288 @@
+{
+  "version": "prd-challenge-v1-report-v2",
+  "date": "2026-11-04T06:57:05.730Z",
+  "runtime": "1.4.4",
+  "model": "openai/gpt-6-astra",
+  "hashes": {
+    "docs/evaluation-runs/challenge-v1-2026-10-30.md.json": "3b3416ffccead71570e8a471c3398e256ad1b198c365375d05452ac752a12ad4",
+    "docs/evaluation-runs/challenge-v1-2026-10-30.md": "629e7ab82e0798d24eb3af570148cae766f611a999c2c1c631402cc4235b99d5",
+    "src/lib/voc/eval/challenge-inputs.ts": "4b4447e01d24c5f04ef5dbd9da24ee8f15453c29adc630cab4485f390bc8c457",
+    "src/lib/voc/eval/challenge-labels.ts": "2b6d838eadd07e39973e84f1474f1d18b312d1347d0249361ed500ebda07b903",
+    "src/lib/voc/eval/challenge.ts": "15de4caa553c01e320bc7a7d55e109f468bc633f503a6a9f0527235f57f46cab",
+    "src/lib/voc/eval/semantic-v2.ts": "2378a8cd01a2b7c4d596f2fba3873801b2a11a1d81f538d2a4d7b72ac262e33c",
+    "src/lib/voc/eval/semantic-v2-controls.ts": "2bf8457ae13a13f8498f3cc8a28ca30735c0df048986d1df217b1e6a80c27f0c",
+    "src/lib/voc/eval/prd-inputs-v1.ts": "b6f60e1b35d91f44624b7afd38a5dd79c17d007763c8894f57e5235077987a4d",
+    "src/lib/voc/eval/prd-labels-v1.ts": "2b03fb3724dd9b89e15043f6be4a53e0a1121a9728e65f2b3aabed951c1778b7",
+    "src/lib/voc/eval/prd-readiness.ts": "ea4187ae83c8508b92def8b512fb0649ab61f78443d2d531754bd04274c3412e",
+    "src/lib/voc/eval/prd-report-v2.ts": "ecbc9af9a4cabe521b1cd472e5b2d63c6ba62bd627ee601bfae403d2f31b1693",
+    "src/lib/voc/prompt.ts": "3567d843c92864b2d7654422bb5cd86b63cea6c42bf99f756b761feee453fbeb",
+    "src/lib/voc/prd-schema.ts": "159ad32b4bd885914dbb3b9d1036ae39b5ea1b0a7eac54dc4da38519d2cefa9d",
+    "src/lib/voc/llm.server.ts": "987710c1b110bd905cc3f351c9f19caf60c3683246253f547459a7ed6f8b1fcd",
+    "scripts/eval-readiness.ts": "45c5380961e32d37c8855885f184064d8dbc567db8743b7ae9cd948a58a4655b",
+    "bun.lock": "7cb4fba2e17dbc458b28487f9f1de1c262706ba62fa33d34acb6a55ec929a7a6",
+    "package.json": "3544f40453bcdcc03f2e76ca2334678d0956e832f7e4830aae6dc39c391e7fc4"
+  },
+  "calls": 1,
+  "errors": [
+    {
+      "ok": false,
+      "code": "credits",
+      "message": "AI credits are exhausted. Add credits in Settings → Plans & credits, then retry."
+    }
+  ],
+  "segments": [],
+  "independence": "Separately tasked synthetic author did not inspect existing prompts/scoring/fixtures according to retained authoring record, not independently established by this audit. Same AI system; no external or human independence established. Expectations withheld from generator and judge. Production prompts unchanged in this milestone.",
+  "frozenUnchanged": true,
+  "scenarios": [
+    {
+      "id": "syn-01",
+      "input": {
+        "theme": {
+          "name": "Unpaid invoice discovery",
+          "summary": "Difficulty locating unpaid invoices",
+          "productArea": "Invoices",
+          "kind": "feature_request"
+        },
+        "feedback": [
+          {
+            "id": "f101",
+            "text": "I have to open each invoice one at a time to see whether it was paid. A filter for unpaid invoices would save me a lot of time when I follow up with customers.",
+            "segment": "smb",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f102",
+            "text": "Please add an unpaid-only invoice view. I currently check every invoice manually before sending reminders.",
+            "segment": "smb",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f103",
+            "text": "Finding overdue invoices takes too many clicks. A filter for unpaid invoices would make collections easier.",
+            "segment": "mid_market",
+            "source": "synthetic_challenge"
+          }
+        ],
+        "docs": []
+      },
+      "status": "blocked_or_error_generation",
+      "generated": {
+        "ok": false,
+        "code": "credits",
+        "message": "AI credits are exhausted. Add credits in Settings → Plans & credits, then retry."
+      }
+    },
+    {
+      "id": "syn-02",
+      "input": {
+        "theme": {
+          "name": "Weekly digest preferences",
+          "summary": "Feedback on digest frequency",
+          "productArea": "Notifications",
+          "kind": "pain_point"
+        },
+        "feedback": [
+          {
+            "id": "f201",
+            "text": "The weekly digest is too noisy; I would rather get fewer notifications.",
+            "segment": "enterprise",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f202",
+            "text": "The weekly digest is useful. Please keep sending it every week.",
+            "segment": "enterprise",
+            "source": "synthetic_challenge"
+          }
+        ],
+        "docs": []
+      },
+      "status": "blocked_not_attempted"
+    },
+    {
+      "id": "syn-03",
+      "input": {
+        "theme": {
+          "name": "Usage report spreadsheet export",
+          "summary": "Finance requests spreadsheet downloads",
+          "productArea": "Reporting",
+          "kind": "feature_request"
+        },
+        "feedback": [
+          {
+            "id": "f301",
+            "text": "We need a way to export the monthly usage report as a spreadsheet for finance.",
+            "segment": "mid_market",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f302",
+            "text": "I can view the monthly usage report, but I cannot download it as a spreadsheet.",
+            "segment": "smb",
+            "source": "synthetic_challenge"
+          }
+        ],
+        "docs": [
+          {
+            "id": "doc-301",
+            "title": "Quarterly roadmap note",
+            "text": "Usage reporting: spreadsheet export is explicitly out of scope for the current quarter."
+          },
+          {
+            "id": "doc-302",
+            "title": "Sales enablement brief",
+            "text": "Usage reporting: spreadsheet export is a committed launch item for the current quarter."
+          }
+        ]
+      },
+      "status": "blocked_not_attempted"
+    },
+    {
+      "id": "syn-04",
+      "input": {
+        "theme": {
+          "name": "Dark mode feature request",
+          "summary": "Assess customer evidence for a dark mode feature request.",
+          "productArea": "Dashboard",
+          "kind": "feature_request"
+        },
+        "feedback": [
+          {
+            "id": "f401",
+            "text": "The dashboard takes a long time to load on Monday mornings.",
+            "segment": "smb",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f402",
+            "text": "The dashboard sometimes freezes when I open the activity chart.",
+            "segment": "mid_market",
+            "source": "synthetic_challenge"
+          }
+        ],
+        "docs": [
+          {
+            "id": "doc-401",
+            "title": "Feature request prompt",
+            "text": "Assess customer evidence for a dark mode feature request."
+          }
+        ]
+      },
+      "status": "blocked_not_attempted"
+    },
+    {
+      "id": "syn-05",
+      "input": {
+        "theme": {
+          "name": "Conversation handoff",
+          "summary": "Ownership and handoff context",
+          "productArea": "Conversations",
+          "kind": "feature_request"
+        },
+        "feedback": [
+          {
+            "id": "f501",
+            "text": "I need to assign a conversation to a teammate, and I also need a way to add a private note before handing it off.",
+            "segment": "smb",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f502",
+            "text": "It is hard to tell who owns a conversation. Assigning it to a specific teammate would help.",
+            "segment": "smb",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f503",
+            "text": "Private internal notes would let our agents leave context for the next person without sending it to the customer.",
+            "segment": "mid_market",
+            "source": "synthetic_challenge"
+          }
+        ],
+        "docs": []
+      },
+      "status": "blocked_not_attempted"
+    },
+    {
+      "id": "syn-06",
+      "input": {
+        "theme": {
+          "name": "Data sync status visibility",
+          "summary": "Customers want to find sync status",
+          "productArea": "Data sync",
+          "kind": "pain_point"
+        },
+        "feedback": [
+          {
+            "id": "f601",
+            "text": "I cannot tell whether the nightly data sync finished without opening the settings page.",
+            "segment": "enterprise",
+            "source": "synthetic_challenge"
+          },
+          {
+            "id": "f602",
+            "text": "A clear status for the data sync would be helpful.",
+            "segment": "unknown",
+            "source": "synthetic_challenge"
+          }
+        ],
+        "docs": []
+      },
+      "status": "blocked_not_attempted"
+    }
+  ],
+  "expectations": {
+    "syn-01": {
+      "focus": "Repeated unpaid-invoice need, no invented design/benefits",
+      "rationale": "Three direct workflow/filter requests; no shipped capability proof.",
+      "topics": [
+        "unpaid"
+      ],
+      "requiredDocs": []
+    },
+    "syn-02": {
+      "focus": "Sparse contradictory preferences; no universal removal/retention",
+      "rationale": "Opposite preferences within one segment cannot establish shared direction.",
+      "topics": [
+        "digest"
+      ],
+      "requiredDocs": []
+    },
+    "syn-03": {
+      "focus": "Both roadmap claims remain unresolved; no invented commitment",
+      "rationale": "No precedence rule reconciles opposing current-quarter plans.",
+      "topics": [
+        "spreadsheet"
+      ],
+      "requiredDocs": [
+        "doc-301",
+        "doc-302"
+      ]
+    },
+    "syn-04": {
+      "focus": "No dark-mode customer evidence; distinguish performance pain",
+      "rationale": "Task topic is not customer demand; complaints concern loading/freezing only.",
+      "topics": [
+        "dark mode"
+      ],
+      "requiredDocs": []
+    },
+    "syn-05": {
+      "focus": "Assignment and private notes are distinct needs/stories",
+      "rationale": "f501 supports both; f502 reinforces assignment; f503 reinforces notes. Each need has two records, not unequal counts.",
+      "topics": [
+        "assign",
+        "note"
+      ],
+      "requiredDocs": []
+    },
+    "syn-06": {
+      "focus": "Visibility only; channels/recovery/compliance remain assumptions/questions",
+      "rationale": "Two limited visibility reports; no proof of real-time alerts or operational guarantees.",
+      "topics": [
+        "sync"
+      ],
+      "requiredDocs": []
+    }
+  }
+}
