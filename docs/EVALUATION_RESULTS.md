@@ -1,5 +1,26 @@
 # Evaluation results
 
+## First north-star PRD quality baseline attempt — 2026-11-04
+
+Actual execution: `bun scripts/eval-readiness.ts --mode prd --output docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md`; started **06:57:05.730Z**, existing `openai/gpt-6-astra` configuration, no prompt/model/integration/secret/billing changes. [Report](evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md) and `.md.json` preserve this new attempt; all 12 earlier artifacts and scenario/label hashes remain unchanged.
+
+| Measure | Observed result |
+|---|---|
+| Scenarios planned / attempted / completed | 6 / 1 / 0 |
+| Blocked scenarios | 6: syn-01 failed generation with HTTP 402; syn-02–syn-06 not attempted after stop |
+| Generated PRDs / assessed PRDs | 0/6 / 0/6 |
+| Model requests | 1 logical invocation, returned HTTP 402 (`credits`); no subsequent calls or retries of the failed invocation |
+| Automated quality categories | All unmeasured: traceability, testability, unsupported claims and conflict handling; no quality successes/failures inferred from access denial |
+| Genuine human review records | 0/10, carried-forward project status; no live review-count query or judgments created |
+| Distinct PRDs actually reviewed in this assessment | 0 |
+| PRDs passing all three north-star criteria | Not measured; no qualifying human judgments |
+| Monthly baseline (November 2026, UTC) | **Not established**; not a measured zero pass rate or production baseline |
+| Local verification | 153/153 tests (15 files); standalone `tsgo --noEmit` executed, exit 0 |
+
+The first generation failed because model access requires credits. No generated-quality failure reasons exist; corrective action is owner-controlled restoration of existing access, followed by a fresh attempt only when authorized/available. Do not purchase credits or bypass 402. Runner exit 0 means files were saved, not success. JSON records `credits`; safe terminal diagnostics recorded raw status 402. Inputs are synthetic source snapshots, not live saved-account ownership verification; expected scenario answers stay withheld from generator/judge, but generic rubrics intentionally reach automated judges. Same-system authorship/judging is not independent human validation.
+
+[Ten-review worksheet](PRD_HUMAN_REVIEW_WORKSHEET.md) is blank and separate from automated scoring. Count completed reviews, distinct whole PRDs reviewed and distinct PRDs passing all three criteria separately; legacy in-app acceptance scores are not the north-star metric. Historical results below remain unchanged. Readiness **not established**. Next: wait for existing model access to return, use the fresh attempt-02 command in [resume guide](PRD_EVALUATION_RESUME.md), then collect genuine independent reviews of immutable outputs.
+
 ## PRD evaluation readiness audit — 2026-11-02
 
 Baseline **143/143** reproduced; final **153/153** (15 files); targeted **22/22**. `tsgo --noEmit` actually executed, exit 0. No model calls or credit checks: **0/6** PRDs generated/assessed, every model-readiness category unmeasured; historical HTTP 402 attempts and frozen scores unchanged. Reporting-only v2 retains per-item evidence/rejections, recommendation exclusions, atomic judgments/rationales, criteria/assumptions and all six execution statuses. These local fixtures are not generated results or human reviews (**0/10**, carried forward). See [PRD_EVALUATION_RESUME.md](PRD_EVALUATION_RESUME.md) for the exact command, limitations and six-case checklist. Recommendation: needs actual evaluation after model access returns.

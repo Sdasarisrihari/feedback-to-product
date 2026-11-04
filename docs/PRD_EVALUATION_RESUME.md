@@ -16,14 +16,14 @@ From the project root, using the existing secure model credential in the environ
 ```bash
 bunx vitest run
 tsgo --noEmit
-bun scripts/eval-readiness.ts --mode prd --output docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md
+bun scripts/eval-readiness.ts --mode prd --output docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-02.md
 ```
 
 The last command generates and evaluates all six scenarios sequentially. The filename **must be unused**, including its `.json` companion. If interrupted, blocked, or rerunning, use `attempt-02`, `attempt-03`, etc.; never delete/overwrite the first artifact. The new **report-v2** version changes coverage/reporting, not scenario inputs, expected answers, production prompts or the semantic rubric. Existing HTTP 402 attempts are untouched.
 
 Expected reports, relative to the project root:
-- Markdown: `docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md`
-- Raw inputs/results/checkpoints: `docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md.json`
+- Markdown: `docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-02.md`
+- Raw inputs/results/checkpoints: `docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-02.md.json`
 - Scenario identifiers: `syn-01`, `syn-02`, `syn-03`, `syn-04`, `syn-05`, `syn-06`.
 
 This is a **fresh execution**, not an in-place continuation of incomplete checkpoints. Preserve the old pair, select the next unused attempt filename, and rerun all six cases. Inspect both files: a missing final execution summary, in-progress status, missing judgments, or inconsistent/truncated files means incomplete, never a successful assessment. Even `completed` means execution completed, not quality approval.
@@ -61,14 +61,16 @@ Read the Markdown **and** companion `.md.json`:
 
 | Scenario | Coverage focus | Current model result |
 |---|---|---|
-| syn-01 | Consistent unpaid-invoice requests; no quantified benefit | NOT RUN |
-| syn-02 | Opposing digest preferences; disclose uncertainty | NOT RUN |
-| syn-03 | Both conflicting planning documents; no invented precedence | NOT RUN |
-| syn-04 | Dark-mode topic unsupported by performance feedback | NOT RUN |
-| syn-05 | Assignment and private notes as distinct needs | NOT RUN |
-| syn-06 | Visibility versus unsupported operational assumptions | NOT RUN |
+| syn-01 | Consistent unpaid-invoice requests; no quantified benefit | BLOCKED at generation (HTTP 402) |
+| syn-02 | Opposing digest preferences; disclose uncertainty | BLOCKED, not attempted |
+| syn-03 | Both conflicting planning documents; no invented precedence | BLOCKED, not attempted |
+| syn-04 | Dark-mode topic unsupported by performance feedback | BLOCKED, not attempted |
+| syn-05 | Assignment and private notes as distinct needs | BLOCKED, not attempted |
+| syn-06 | Visibility versus unsupported operational assumptions | BLOCKED, not attempted |
 
-Current **0/6 generated or assessed**; all model quality categories unmeasured. Previous access attempt: HTTP 402; current access has not been rechecked. Genuine reviews remain **0/10**; no human judgments created or count query performed here. Recommendation: **needs actual model evaluation**, not PRD readiness or production validation. Resume the frozen six-case evaluation once access returns; keep integrations and external writes out.
+Current **0/6 generated or assessed**; all model quality categories unmeasured. Access rechecked 2026-11-04 at 06:57 UTC: first PRD generation returned HTTP 402. Attempt-01 and its `.md.json` companion are now preserved; the next unused path is attempt-02, subject to checking both files remain absent. No additional model calls after that failure. Genuine reviews remain **0/10** (carried-forward, no live count query). Recommendation: **needs actual model evaluation and human reviews**, not PRD readiness or production validation. Resume only after access restoration is confirmed through the existing approved configuration; no automatic retry or billing changes. See [blank ten-review worksheet](PRD_HUMAN_REVIEW_WORKSHEET.md).
+
+The blocked attempt exited 0 because the runner saved its failure report. Exit 0 is not evaluation success: inspect JSON errors and every scenario status. Installed SDK retry logic does not classify HTTP 402 as retryable; the runner has no retry loop. Other transient errors may still have SDK retries under its unchanged `maxRetries: 1` configuration. Incomplete checkpoints remain historical and are not resumable in place.
 
 ## Follow-up local-only audit — 2026-11-03
 

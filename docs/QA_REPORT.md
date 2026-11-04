@@ -1,5 +1,16 @@
 # QA report — signed-in end-to-end run, 2026-10-19
 
+## PRD north-star baseline attempt — 2026-11-04
+
+- Local full suite **153/153 passed**, 15 files; `tsgo --noEmit` actually executed, exit 0. Historical 129/129 and 143/143 results remain unchanged. Existing controlled multiple-client warnings are not test failures.
+- Six scenarios/expected labels unchanged against recorded historical hashes; generator/judge do not receive expected answers. Generic assessment rubrics intentionally reach the judges. Synthetic inputs are source snapshots, not a live persistence/ownership end-to-end test.
+- Documented attempt-01 executed once at 06:57 UTC: **HTTP 402** on syn-01 generation; stopped. **1/6 attempted, 0/6 completed, all 6 blocked**, 0 PRDs generated/assessed, no quality verdicts. No availability probe plus redundant evaluation call; the first generation itself checked access. Installed SDK excludes 402 from retryable statuses. No further calls, billing/secret changes or bypass.
+- New Markdown/JSON artifact pair retains inputs, configuration/hashes, errors and statuses; all 12 historical artifacts unchanged. Exit 0 only confirms report saving. Missing/in-progress checkpoints cannot count as complete.
+- Ten blank human review slots prepared in `PRD_HUMAN_REVIEW_WORKSHEET.md`, with three explicit verdicts and supporting evidence, immutable output references and separate monthly ledger. Human reviews **0/10** carried forward, not newly queried; no judgments fabricated. Monthly quality baseline **not established**.
+- No product/source/route/model configuration changes. No manual application build or browser/network checks beyond the authorized model invocation; local routing test passed. Readiness remains unproven.
+
+Details and exact fresh resume command: `PRD_EVALUATION_RESUME.md`; actual results: `EVALUATION_RESULTS.md`. Remaining blocker: existing model access (HTTP 402), then genuine reviewers. Do not retry until access is restored and execution is authorized.
+
 Account: the project owner's own confirmed account (session injected by Lovable; no credentials or codes handled or logged). Data: synthetic Trellis sample only. Script: `scripts/e2e_persistence.py <step>`; database evidence from read-only owner-scoped counts.
 
 | # | Check | Result | Evidence |
