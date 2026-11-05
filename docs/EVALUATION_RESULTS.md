@@ -1,5 +1,15 @@
 # Evaluation results
 
+## Model-access recovery check — 2026-11-05 (no inference)
+
+- Read-only `credits.get_credit_balance(applicability="ai_gateway")`: **0.00 model-eligible spendable credits** for Oct 30–Nov 30 via `ai_gateway -> run_time -> generic`. General daily-credit balance is not evidence of model funding. Existing credential presence checked without disclosure; model/configuration unchanged.
+- Latest historical attempt-01 remains HTTP 402 / `credits` at syn-01. Current eligible-credit exhaustion supports a funding blocker. Gateway log lookup for Nov 1–5 returned no rows, so no independent upstream diagnosis is claimed.
+- Attempt-02 `.md` and `.md.json` both unused, **not created or executed**. Recovery adds **0 attempted / 0 completed** scenarios; all six still blocked pending eligible access. Historical attempt-01 remains **1/6 attempted, 0/6 completed**, no generated/assessed PRDs. Blocked is not a quality verdict.
+- No new traceability, criteria-testability, unsupported-claim or conflict scores; no representative generated failures exist. No human judgments populated: **0/10 carried forward**, 0 reviewed PRDs in this assessment, qualifying pass count **not measured**, November UTC monthly north-star baseline **not established**.
+- Local full suite **153/153** across 15 files; targeted scoring/report/isolation suite **22/22** across three files; standalone `tsgo --noEmit` **executed, exit 0**. Historical checksums and scenario/label/north-star preservation verified after documentation edits. No manual build or generation/browser checks were run for this documentation-only task.
+
+Next: repeat the read-only model-eligible balance check after existing access changes; do not purchase credits or alter settings here. Once cleared, run the unchanged command in [resume guide](PRD_EVALUATION_RESUME.md) into a fresh attempt pair, inspect each execution stage, then arrange genuine reviews of immutable outputs using the existing worksheet. Readiness remains **unestablished**.
+
 ## First north-star PRD quality baseline attempt — 2026-11-04
 
 Actual execution: `bun scripts/eval-readiness.ts --mode prd --output docs/evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md`; started **06:57:05.730Z**, existing `openai/gpt-6-astra` configuration, no prompt/model/integration/secret/billing changes. [Report](evaluation-runs/prd-challenge-v1-report-v2-attempt-01.md) and `.md.json` preserve this new attempt; all 12 earlier artifacts and scenario/label hashes remain unchanged.
