@@ -1,5 +1,21 @@
 # PRD evaluation readiness audit — 2026-11-02
 
+## Safe model-access recovery check — 2026-11-05
+
+Read-only recovery check: `credits.get_credit_balance` with `applicability: "ai_gateway"` reported **0.00 spendable credits** through `ai_gateway -> run_time -> generic` for the Oct 30–Nov 30 period. The unfiltered balance showed daily credits, but those do **not** establish model funding; use the applicability-filtered result. No inference probe or evaluation was sent. Attempt-02 Markdown and `.md.json` are both unused and remain uncreated.
+
+The latest retained attempt started 2026-11-04T06:57:05.730Z and returned `credits`; its safe terminal diagnostic recorded HTTP 402. Current eligible-credit exhaustion supports a funding blocker, not a demonstrated invalid-key, unavailable-model or provider-policy failure. Project Gateway logs returned no rows for Nov 1–5: they cannot independently confirm the historical failure or supply an upstream reason. The installed configuration is the unchanged Vercel AI SDK Responses path, model `openai/gpt-6-astra`, PRD reasoning medium, streamed structured output; the newer Gateway SDK is not installed. No integration migration is part of this recovery.
+
+Recovery procedure:
+1. Preserve every prior output pair and verify scenario/label hashes against the retained attempt. Confirm only credential **presence**; never print its value or alter secrets.
+2. Read model-eligible balance using the **ai_gateway applicability filter**. Zero means **BLOCKED: exhausted eligible credits**; stop without inference, retries, purchases or billing changes. If the read is denied/unavailable, record availability as unconfirmed rather than assuming the general balance applies.
+3. Positive eligible balance is a funding prerequisite, not proof of model/provider access or enough budget for six cases. Review any documented access denial before proceeding; do not switch models or bypass restrictions. This runner has no standalone non-inference model-health command. Once existing access is otherwise cleared, use the first real scenario generation as the single access confirmation, not a disposable probe followed by a duplicate request.
+4. Check both attempt-02 files immediately before the command below; if either exists, use a fresh attempt number. Execute once, with unchanged configuration. A returned 402/403/401 or other model error stops further logical calls and saves blocked/error statuses; never automatically rerun a failed invocation. Unchanged SDK transient retries are distinct from a script replay; HTTP 402 is not retryable.
+5. Inspect both files even when exit is 0. Record attempted, generated, assessed, completed and blocked counts separately. Incomplete/absent checkpoints are not quality successes or failures; keep them and restart only into a new filename after the blocker is resolved.
+6. Use `PRD_HUMAN_REVIEW_WORKSHEET.md` without prefilling judgments. Preserve the report JSON containing each generated content/source snapshot as an immutable original, record its hash and exact scenario/revision for reviewers, and keep human records separate. No PRDs were produced during this recovery check.
+
+Latest recovery status: **not executed; six scenarios remain blocked pending model-eligible access**. Prior attempt remains 1 attempted / 0 completed; this check adds 0 attempts. Human reviews remain 0/10 carried forward, not freshly queried; monthly baseline remains **not established**. No model, billing, secret, north-star, product or integration changes.
+
 ## Verified locally, not model-evaluated
 
 - Original automated baseline reproduced: **143/143**, 14 files. Final: **153/153**, 15 files. Ten new tests exercise reporting contracts using explicitly hand-authored local fixtures; they are not generated PRDs or semantic truth labels.

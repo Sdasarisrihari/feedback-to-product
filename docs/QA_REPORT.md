@@ -1,5 +1,15 @@
 # QA report — signed-in end-to-end run, 2026-10-19
 
+## Safe recovery audit — 2026-11-05
+
+- **BLOCKED before inference:** read-only model-applicable balance (`ai_gateway`) is **0.00 spendable credits**. Unfiltered daily credits do not prove eligibility. The prior HTTP 402 / `credits` record is consistent with exhausted eligible funding; no invalid credential or provider restriction is demonstrated. Nov 1–5 Gateway logs contained no rows, so historical upstream details cannot be independently confirmed there.
+- Existing Vercel AI SDK/model/error handling inspected, unchanged. Generator and judge exclude scenario expectations; generic rubrics intentionally reach judges. Scenario inputs legitimately reach generation. No model call/probe, purchases, billing/secret changes, integration migration or product changes.
+- Attempt-02 output pair checked unused and left uncreated; no additional scenario attempts. Historical attempt-01 stays 1 attempted, 0 completed, 6 blocked. No quality pass/fail invented. Procedure documents eligible-credit preflight, one first-scenario access confirmation, stop-on-error, fresh paths and incomplete checkpoints.
+- Full local tests **153/153**, 15 files; targeted readiness/report/semantic checks **22/22**, three files; standalone `tsgo --noEmit` **executed, exit 0**. Existing controlled multiple-client warnings remain non-failing. No manual build; local routing test included. Browser/model end-to-end checks not performed.
+- All 14 pre-existing evaluation artifacts plus scenario inputs/labels and saved north star checksum-unchanged. Worksheet untouched and blank; genuine reviews **0/10 carried forward**, no live count query. Monthly metric baseline **not established**; PRD readiness unproven.
+
+Files changed: `docs/PRD_EVALUATION_RESUME.md`, `docs/EVALUATION_RESULTS.md`, `docs/QA_REPORT.md`, `roadmap.md`. Remaining blockers: model-eligible access and genuine reviewers. Exact attempt-02 command and immutable review procedure are in the resume guide.
+
 ## PRD north-star baseline attempt — 2026-11-04
 
 - Local full suite **153/153 passed**, 15 files; `tsgo --noEmit` actually executed, exit 0. Historical 129/129 and 143/143 results remain unchanged. Existing controlled multiple-client warnings are not test failures.
